@@ -4,11 +4,11 @@ name = "pypi"
 verify_ssl = true
 
 [dev-packages]
-pytest == "3.3.*"
-pytest-mock == "1.7.*
-"pytest-pep8" == "*"
+pytest = "==5.4.*"
+pytest-mock = "==1.7.*"
+pytest-pep8 = "*"
 
 [packages]
-rdflib "==4.2.*"
+rdflib = "==4.2.*"
 
 [requires]
