@@ -9,4 +9,4 @@ def test_filters_out_thsys_(tuples_with_thsys):
     assert thsys_tuple not in result
     assert len(result) == len(tuples_with_thsys)-1
     for tpl in result:
-        tpl in tuples_with_thsys
+        assert tpl in tuples_with_thsys
