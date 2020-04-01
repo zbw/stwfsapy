@@ -1,1 +1,5 @@
 .vscode
+.cache
+__pycache__
+.coverage
+cov.xml
