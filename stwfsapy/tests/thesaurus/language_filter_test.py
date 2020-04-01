@@ -1,7 +1,6 @@
 import pytest
 from stwfsapy import thesaurus as t
 import stwfsapy.tests.thesaurus.common as c
-from rdflib.term import URIRef
 
 
 @pytest.fixture

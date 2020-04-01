@@ -1,5 +1,4 @@
 import pytest
-from pytest_mock import mocker
 import stwfsapy.thesaurus as t
 import stwfsapy.tests.thesaurus.common as c
 
@@ -12,7 +11,7 @@ def patch_module(mocker):
     mocker.patch.object(
         thesaurus_module, "_filter_by_prefix")
     mocker.patch.object(
-        thesaurus_module, "_filter_deprecated")
+        thesaurus_module, "_filter_not_deprecated")
     mocker.patch.object(
         thesaurus_module, "_unwrap_labels")
     # return mocker

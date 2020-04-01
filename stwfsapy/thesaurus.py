@@ -15,7 +15,7 @@ def _predicate_deprecated(ref: URIRef, g: Graph):
     return not g.value(ref, OWL.deprecated, default=False)
 
 
-def _filter_deprecated(
+def _filter_not_deprecated(
         tuples: Iterator[Tuple[URIRef, Literal]],
         g: Graph
         ) -> Iterator[Tuple[URIRef, Literal]]:
@@ -68,13 +68,13 @@ def retrieve_concept_labels(
     """Extracts altLabels and prefLabels from a SKOS graph.
 
     Only the labels that are in one of the specified language will be reported.
-    In addition the concept URIs are filterd by a prefix.
+    In addition the concept URIs are filtered by a prefix.
     Args:
-        pth: The path where the file containing the graph
-            in RDF/XML format is located.
+        g: The SKOS graph whose labels are extracted.
 
-        concept_URI_prefix: Only concepts whos URI starts with this prefix
+        concept_URI_prefix: Only concepts whose URI starts with this prefix
             will appear in the output.
+
 
         langs: Only retain labels that are in the given language.
             Add None to the set if you want to keep labels
@@ -98,6 +98,6 @@ def retrieve_concept_labels(
             concept_URI_prefix)
     else:
         filtered_by_prefix = filtered_by_language
-    without_deprecated = _filter_deprecated(filtered_by_prefix, g)
-    unwraped_labels = _unwrap_labels(without_deprecated)
-    return unwraped_labels
+    without_deprecated = _filter_not_deprecated(filtered_by_prefix, g)
+    unwrapped_labels = _unwrap_labels(without_deprecated)
+    return unwrapped_labels

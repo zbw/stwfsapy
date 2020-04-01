@@ -1,4 +1,3 @@
-import pytest
 import stwfsapy.thesaurus as t
 
 

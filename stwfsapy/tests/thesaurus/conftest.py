@@ -1,7 +1,6 @@
 from stwfsapy.tests.thesaurus.common import *
 from rdflib import Graph
-from rdflib.term import Literal
-from rdflib.namespace import SKOS, OWL
+from rdflib.namespace import SKOS
 
 
 @pytest.fixture
