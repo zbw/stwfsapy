@@ -1,0 +1,20 @@
+# Disable sudo to speed up the build
+sudo: false
+
+# Set the build language to Python
+language: python
+
+python: 3.6
+
+# Install the codecov pip dependency
+install:
+  - pip install pipenv
+  - pipenv install --dev --skip-lock
+
+# Run the unit test
+script:
+  - pytest --cov=./
+
+# Push the results back to codecov
+after_success:
+  - codecov
