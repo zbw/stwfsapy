@@ -1,8 +1,8 @@
 import stwfsapy.expansion as e
 from inspect import signature
 
-_name_abbreviation_fun = "_expand_abbreviation_with_punctuation_fun"
-_name_ampersand_fun = "_expand_ampersand_with_spaces_fun"
+_name_abbreviation_fun = e._expand_abbreviation_with_punctuation_fun.__name__
+_name_ampersand_fun = e._expand_ampersand_with_spaces_fun.__name__
 _name_replacer = "replacer"
 
 lower_braces_content = "foo"
@@ -76,6 +76,7 @@ def test_combination_0101():
     assert funs[0].__name__ == _name_replacer
     assert funs[1].__name__ == _name_abbreviation_fun
     assert funs[0](lower_braces_string) == lower_braces_content
+
 
 def test_combination_1001():
     conf = "1001"

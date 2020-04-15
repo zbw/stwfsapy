@@ -1,6 +1,5 @@
-from typing import Iterator, Callable, Pattern
+from typing import Iterator, Callable, Pattern, List
 import re
-from functools import reduce
 
 
 _upper_case_abbreviation_from_braces_expression = re.compile(
@@ -47,7 +46,7 @@ def collect_expansion_functions(
         extract_any_case_from_braces: bool=False,
         expand_ampersand_with_spaces: bool=True,
         expand_abbreviation_with_punctuation: bool=True
-        ) -> Callable[[str], str]:
+        ) -> List[Callable[[str], str]]:
     options = (
         (
             extract_upper_case_from_braces,
