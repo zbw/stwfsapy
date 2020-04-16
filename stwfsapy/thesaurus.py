@@ -11,7 +11,7 @@ def extract_labels(g: Graph,) -> Iterator[Tuple[URIRef, Literal]]:
     return g[:SKOS.prefLabel | SKOS.altLabel]
 
 
-def _predicate_deprecated(ref: URIRef, g: Graph):
+def _predicate_not_deprecated(ref: URIRef, g: Graph):
     return not g.value(ref, OWL.deprecated, default=False)
 
 
@@ -19,7 +19,7 @@ def _filter_not_deprecated(
         tuples: Iterator[Tuple[URIRef, Literal]],
         g: Graph
         ) -> Iterator[Tuple[URIRef, Literal]]:
-    return filter(lambda t: _predicate_deprecated(t[0], g), tuples)
+    return filter(lambda t: _predicate_not_deprecated(t[0], g), tuples)
 
 
 def _predicate_prefix(uri: URIRef, prefix: str) -> bool:
