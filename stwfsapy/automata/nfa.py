@@ -13,7 +13,7 @@
 # limitations under the License.
 
 
-from typing import Dict, Set, List
+from typing import Dict, Set, List, Any
 from stwfsapy.automata.heap import BinaryMinHeap
 from stwfsapy.automata.util import safe_set_add_in_dict
 
@@ -30,7 +30,7 @@ class State:
         """What can be reached using the empty String/Symbol."""
         self.incoming_empty_transitions: Set[int] = set()
         """How this state can be reached using the empty String/Symbol."""
-        self.accepts = []
+        self.accepts: List[Any] = []
         """What is accepted by this State."""
 
 
@@ -38,31 +38,45 @@ class Nfa:
 
     def __init__(self):
         self.states: List[State] = []
+        """All states of the NFA's graph"""
         self.starts: List[int] = []
+        """All start states."""
 
     def add_state(self):
+        """Creates a new state and returns its index."""
         idx = len(self.states)
         self.states.append(State())
         return idx
 
     def add_start(self, idx):
+        """Adds a state, by index to the list of possible start states."""
         self.starts.append(idx)
 
     def add_acceptance(self, idx, accept):
+        """Add acceptance to a state. The state is identified by its index."""
         self.states[idx].accepts.append(accept)
 
     def add_symbol_transition(self, start: int, end: int, symbol: str):
+        """Add a symbol consuming transition between two states.
+        The states are represented by their indices."""
         transitions = self.states[start].symbol_transitions
         safe_set_add_in_dict(transitions, symbol, end)
 
     def add_empty_transition(self, start: int, end: int):
+        """Add an empty Transition between two states.
+        This transition does not consume a symbol.
+        The states are represented by their indices."""
         self.states[start].empty_transitions.add(end)
         self.states[end].incoming_empty_transitions.add(start)
 
     def add_non_word_char_transition(self, start: int, end: int):
+        """Add a non word char consuming transition between two states.
+        The states are represented by their indices."""
         self.states[start].non_word_char_transitions.add(end)
 
     def remove_empty_transitions(self):
+        """Removes all empty transitions in the NFA.
+        Does not support loops of empty transitions."""
         queue = BinaryMinHeap()
         for idx in range(len(self.states)):
             if len(self.states[idx].incoming_empty_transitions) > 0:
@@ -85,7 +99,12 @@ class Nfa:
                         incoming_idx,
                         len(incoming.empty_transitions))
 
-    def _remove_empty_transition(self, start_idx, start, end_idx, end):
+    def _remove_empty_transition(
+            self,
+            start_idx: int,
+            start: State,
+            end_idx: int,
+            end: State):
         for symbol, states in end.symbol_transitions.items():
             for state_idx in states:
                 safe_set_add_in_dict(

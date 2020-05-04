@@ -13,7 +13,7 @@
 # limitations under the License.
 
 
-from typing import Tuple, Set
+from typing import Tuple, Set, Dict, FrozenSet
 from stwfsapy.automata import dfa
 from stwfsapy.automata import nfa
 from queue import Queue
@@ -22,16 +22,23 @@ from stwfsapy.automata.util import safe_set_update_in_dict
 
 
 class NfaToDfaConverter:
+    """Converts a nondeterminisitic finite automaton into a deterministic one."""
 
     def __init__(self, nfa_automaton: nfa.Nfa):
-        self.nfa = nfa_automaton
-        self.dfa = dfa.Dfa()
+        self.nfa: nfa.Nfa = nfa_automaton
+        """The input automaton."""
+        self.dfa: dfa.Dfa = dfa.Dfa()
+        """The resulting automaton."""
         idx0 = self.dfa.add_state()
-        self.queue = Queue()
+        self.queue: Queue = Queue()
+        """Queue for controlling the processing order."""
         self.queue.put(idx0)
         start_states = frozenset(self.nfa.starts)
-        self.state_represents = {idx0: list(start_states)}
-        self.state_cache = {start_states: 0}
+        self.state_represents: Dict[int, FrozenSet[int]] = {
+            idx0: list(start_states)}
+        """Maps a state index of the DFA to a set of NFA state indices."""
+        self.state_cache: Dict[FrozenSet[int], int] = {start_states: 0}
+        """Maps a set of NFA state indices to a DFA state index."""
 
     def start_conversion(self) -> dfa.Dfa:
         while self.queue.qsize() > 0:
@@ -39,7 +46,7 @@ class NfaToDfaConverter:
             self.queue.task_done()
         return self.dfa
 
-    def perform_step(self, dfa_start_state_idx):
+    def perform_step(self, dfa_start_state_idx: int):
         (
             symbol_transitions,
             non_word_char_transitions,
@@ -72,10 +79,10 @@ class NfaToDfaConverter:
 
     def _create_dfa_transitions(
             self,
-            dfa_start_state_idx,
-            symbol_transitions,
-            non_word_char_transitions,
-            accepts):
+            dfa_start_state_idx: int,
+            symbol_transitions: Dict[str, Set[int]],
+            non_word_char_transitions: Set[int],
+            accepts: Set[object]):
         for symbol, nfa_end_state_idxs in symbol_transitions.items():
             dfa_end_state_idx = self._get_or_create_dfa_state(
                 nfa_end_state_idxs)
@@ -92,7 +99,11 @@ class NfaToDfaConverter:
         if len(accepts) > 0:
             self.dfa.add_acceptances(dfa_start_state_idx, accepts)
 
-    def _get_or_create_dfa_state(self, state_idxs) -> int:
+    def _get_or_create_dfa_state(self, state_idxs: Set[int]) -> int:
+        """Retrieves a state index of the DFA representing a set of
+        state indices in the NFA. If such a state does not exist,
+        a new one will be created. The new State will also be added to
+        the state lookup tables."""
         frozen_states = frozenset(state_idxs)
         try:
             dfa_state_idx = self.state_cache[frozen_states]

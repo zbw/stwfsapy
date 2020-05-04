@@ -19,25 +19,37 @@ from stwfsapy.automata import nfa
 
 class ConstructionState:
 
-    def __init__(self, graph: nfa.Nfa, expression: str, accept):
-        self.graph = graph
-        self.expression = expression
-        self.accept = accept
+    def __init__(self, graph: nfa.Nfa, expression: str, accept: object):
+        self.graph :nfa.Nfa = graph
+        """The graph the expression will be added to."""
+        self.expression: str = expression
+        """The expression that will be added to the graph."""
+        self.accept: object = accept
+        """Object returned when the expression matches an input."""
 
     def _set_up(self):
         start = self.graph.add_state()
-        self.expression_start = self.graph.add_state()
+        self.expression_start: int = self.graph.add_state()
+        """Start node of the expression."""
         self.graph.add_start(start)
         self.graph.add_non_word_char_transition(
             start,
             self.expression_start)
-        self.append_to = [self.expression_start]
-        self.before_braces = [[self.expression_start]]
-        self.after_braces = [self.expression_start]
-        self.dangling_alternations = _AlternationManager(self.expression_start)
-        self.escape_next = False
+        self.append_to: List[int] = [self.expression_start]
+        """States that are the start of the next transition."""
+        self.before_braces: List[List[int]] = [[self.expression_start]]
+        """Stack of pointers to states directly preceding an opening brace."""
+        self.after_braces: List[int] = [self.expression_start]
+        """Stack of pointers to states directly following an opening brace."""
+        self.dangling_alternations: _AlternationManager = _AlternationManager(
+            self.expression_start)
+        """Handles the end of alternations."""
+        self.escape_next: bool = False
+        """Indicates whether the next symbol should be taken literally.
+        Even if it is a control symbol."""
 
     def construct(self):
+        """Starts the construction process."""
         self._set_up()
         for i in range(len(self.expression)):
             self._perform_step(i)
@@ -51,6 +63,7 @@ class ConstructionState:
             self.graph.add_non_word_char_transition(end_idx, acceptance_idx)
 
     def _perform_step(self, idx: int):
+        """Consumes a single input character of the input expression."""
         symbol = self.expression[idx]
         if self.escape_next:
             self.escape_next = False

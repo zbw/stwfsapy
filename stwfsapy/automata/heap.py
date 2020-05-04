@@ -13,13 +13,18 @@
 # limitations under the License.
 
 
+from typing import List, Dict, Tuple, Any, SupportsFloat
 
 
 class BinaryMinHeap:
+    """Can be used as a priority queue.
+    Allows changing priorities."""
 
     def __init__(self):
-        self.heap = []
-        self.mapping = dict()
+        self.heap: List[Tuple[SupportsFloat, Any]] = []
+        """The actual heap structure."""
+        self.mapping: Dict[Any, int] = dict()
+        """Maps objects to positions in the heap."""
 
     def push(self, key, val):
         idx = len(self.heap)
