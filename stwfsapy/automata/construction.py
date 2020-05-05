@@ -20,7 +20,7 @@ from stwfsapy.automata import nfa
 class ConstructionState:
 
     def __init__(self, graph: nfa.Nfa, expression: str, accept: object):
-        self.graph :nfa.Nfa = graph
+        self.graph: nfa.Nfa = graph
         """The graph the expression will be added to."""
         self.expression: str = expression
         """The expression that will be added to the graph."""
@@ -29,20 +29,19 @@ class ConstructionState:
 
     def _set_up(self):
         start = self.graph.add_state()
-        self.expression_start: int = self.graph.add_state()
+        self.expression_start_idx: int = self.graph.add_state()
         """Start node of the expression."""
         self.graph.add_start(start)
         self.graph.add_non_word_char_transition(
             start,
-            self.expression_start)
-        self.append_to: List[int] = [self.expression_start]
+            self.expression_start_idx)
+        self.append_to: List[int] = [self.expression_start_idx]
         """States that are the start of the next transition."""
-        self.before_braces: List[List[int]] = [[self.expression_start]]
+        self.before_braces: List[List[int]] = [[self.expression_start_idx]]
         """Stack of pointers to states directly preceding an opening brace."""
-        self.after_braces: List[int] = [self.expression_start]
+        self.after_braces: List[int] = [self.expression_start_idx]
         """Stack of pointers to states directly following an opening brace."""
-        self.dangling_alternations: _AlternationManager = _AlternationManager(
-            self.expression_start)
+        self.dangling_alternations: _AlternationManager = _AlternationManager()
         """Handles the end of alternations."""
         self.escape_next: bool = False
         """Indicates whether the next symbol should be taken literally.
@@ -54,9 +53,12 @@ class ConstructionState:
         for i in range(len(self.expression)):
             self._perform_step(i)
         ends = self.append_to
-        danglings = self.dangling_alternations.pop()
-        if danglings != [self.expression_start]:
-            ends.extend(danglings)
+        try:
+            danglings = self.dangling_alternations.pop()
+            if danglings != [self.expression_start_idx]:
+                ends.extend(danglings)
+        except IndexError:
+            pass
         for end_idx in ends:
             acceptance_idx = self.graph.add_state()
             self.graph.add_acceptance(acceptance_idx, self.accept)
@@ -104,7 +106,11 @@ class ConstructionState:
 
     def _process_alternation(self):
         self.dangling_alternations.push(self.append_to)
-        self.append_to = [self.after_braces[-1]]
+        after_braces = self.after_braces[-1]
+        new_state = self.graph.add_state()
+        self.graph.add_empty_transition(after_braces, new_state)
+        self.after_braces[-1] = new_state
+        self.append_to = [new_state]
 
     def _process_closing_brace(self):
         danglings = self.dangling_alternations.pop()
@@ -127,7 +133,7 @@ class ConstructionState:
 
 class _AlternationManager():
 
-    def __init__(self, start: int):
+    def __init__(self):
         self.stack = []
 
     def pop(self) -> [int]:

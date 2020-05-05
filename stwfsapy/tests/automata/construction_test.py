@@ -58,9 +58,10 @@ def test_adds_accpetance():
     construction.construct()
     assert graph.states[-1].accepts == [accept]
     assert graph.states[-2].accepts == [accept]
-    assert graph.states[2].non_word_char_transitions == {5}
-    assert graph.states[3].non_word_char_transitions == {4}
+    assert graph.states[2].non_word_char_transitions == {6}
+    assert graph.states[4].non_word_char_transitions == {5}
     assert graph.states[1].non_word_char_transitions == set()
+    assert graph.states[1].empty_transitions == {3}
 
 
 def test_handles_multiple_alternations():
@@ -143,7 +144,7 @@ def test_handles_alternation(input_graph):
     construction.before_braces = before_braces.copy()
     construction.after_braces = after_braces.copy()
     construction._perform_step(0)
-    assert construction.append_to == [after_braces[-1]]
+    assert construction.append_to == [len(construction.graph.states)-1]
     assert construction.dangling_alternations.stack[-1] == append_to
 
 
