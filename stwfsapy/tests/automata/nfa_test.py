@@ -15,8 +15,7 @@
 
 import pytest
 from stwfsapy.automata import nfa
-
-symbol = 's'
+from stwfsapy.tests.automata.data import symbol0
 
 
 @pytest.fixture
@@ -35,8 +34,8 @@ def epsilon_tree():
     for i in range(8):
         graph.add_empty_transition(i, 2*i+1)
         graph.add_empty_transition(i, 2*i+2)
-        graph.add_symbol_transition(i, 2*i+1, symbol)
-        graph.add_symbol_transition(i, 2*i+2, symbol)
+        graph.add_symbol_transition(i, 2*i+1, symbol0)
+        graph.add_symbol_transition(i, 2*i+2, symbol0)
         graph.add_non_word_char_transition(i, 2*i+1)
         graph.add_non_word_char_transition(i, 2*i+2)
     return graph
@@ -67,7 +66,7 @@ def test_add_acceptance(two_state_graph):
 def test_add_symbol_transition(two_state_graph):
     symbol = 's'
     two_state_graph.add_symbol_transition(0, 1, symbol)
-    assert 1 in two_state_graph.states[0].symbol_transitions[symbol]
+    assert 1 in two_state_graph.states[0].symbol_transitions[symbol0]
 
 
 def test_add_empty_transition(two_state_graph):
@@ -87,12 +86,11 @@ def test_remove_epsilons(epsilon_tree):
     assert len(state.empty_transitions) == 0
     assert len(state.incoming_empty_transitions) == 0
     for idx in range(1, 16):
-        assert idx in epsilon_tree.states[0].symbol_transitions[symbol]
+        assert idx in epsilon_tree.states[0].symbol_transitions[symbol0]
         assert idx in epsilon_tree.states[0].non_word_char_transitions
         state = epsilon_tree.states[idx]
         assert len(state.empty_transitions) == 0
         assert len(state.incoming_empty_transitions) == 0
-    
 
 
 def test_recognizes_empty_loops(epsilon_circle):

@@ -13,8 +13,6 @@
 # limitations under the License.
 
 
-import pytest
-
 from stwfsapy.automata import conversion as c
 from stwfsapy.tests.automata.data import accept, symbol0, symbol1
 
@@ -69,7 +67,7 @@ def test_creates_new_state(input_graph):
 
 def test_retrieves_existing_state(input_graph):
     converter = c.NfaToDfaConverter(input_graph)
-    new_set = frozenset([0, 1])
+    new_set = frozenset(input_graph.starts)
     converter._get_or_create_dfa_state(new_set)
     assert len(converter.dfa.states) == 1
     assert converter.queue.qsize() == 1
@@ -132,7 +130,7 @@ def test_transition_creation(input_graph):
     set13 = frozenset([1, 3])
     set24 = frozenset([2, 4])
     set5 = frozenset([5])
-    acceptance = [accept]
+    acceptance = {accept}
     non_word_char_transitions = set24
     symbol_transitions = {
         symbol0: set13,

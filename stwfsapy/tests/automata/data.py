@@ -25,7 +25,7 @@ accept = "Acceptance!"
 @pytest.fixture
 def input_graph():
     graph = nfa.Nfa()
-    for i in range(6):
+    for _ in range(6):
         graph.add_state()
     graph.add_start(0)
     graph.add_start(1)
