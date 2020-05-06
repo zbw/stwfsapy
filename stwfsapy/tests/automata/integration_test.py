@@ -44,7 +44,7 @@ def test_alternation_center_kleene():
     assert len(res) == 0
     res = list(dfa_graph.search(' cc '))
     assert len(res) == 0
-    res = list(dfa_graph.search(' ca '))
+    res = list(dfa_graph.search(' ba '))
     assert len(res) == 0
 
 
@@ -68,7 +68,7 @@ def test_alternation_left_kleene():
     assert len(res) == 0
     res = list(dfa_graph.search(' cc '))
     assert len(res) == 0
-    res = list(dfa_graph.search(' ca '))
+    res = list(dfa_graph.search(' ac '))
     assert len(res) == 0
 
 
