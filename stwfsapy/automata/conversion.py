@@ -22,7 +22,9 @@ from stwfsapy.automata.util import safe_set_update_in_dict
 
 
 class NfaToDfaConverter:
-    """Converts a nondeterminisitic finite automaton into a deterministic one."""
+    """Converts a nondeterminisitic finite automaton (NFA)
+    into a deterministic one.
+    The NFA must be free of empty transitions."""
 
     def __init__(self, nfa_automaton: nfa.Nfa):
         self.nfa: nfa.Nfa = nfa_automaton

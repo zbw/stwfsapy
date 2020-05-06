@@ -127,9 +127,16 @@ class ConstructionState:
 
     def _process_kleene_closure(self):
         before_idxs = self.before_braces[-1]
+        after_idx = self.graph.add_state()
+        for state_idx in self.append_to:
+            self.graph.add_empty_transition(state_idx, after_idx)
         for before_idx in before_idxs:
+            self.graph.add_empty_transition(before_idx, after_idx)
             for state_idx in self.append_to:
                 self.graph.add_empty_transition(state_idx, before_idx)
+        self.append_to = [after_idx]
+
+
 
 
 class _AlternationManager():

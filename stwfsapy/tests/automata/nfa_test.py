@@ -64,8 +64,7 @@ def test_add_acceptance(two_state_graph):
 
 
 def test_add_symbol_transition(two_state_graph):
-    symbol = 's'
-    two_state_graph.add_symbol_transition(0, 1, symbol)
+    two_state_graph.add_symbol_transition(0, 1, symbol0)
     assert 1 in two_state_graph.states[0].symbol_transitions[symbol0]
 
 

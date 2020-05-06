@@ -52,7 +52,7 @@ def test_init_with_existing_graph(input_graph):
     assert construction.accept == accept
 
 
-def test_adds_accpetance():
+def test_adds_acceptance():
     graph = nfa.Nfa()
     construction = c.ConstructionState(graph, "a|b", accept)
     construction.construct()
@@ -165,6 +165,9 @@ def test_handles_kleene_closure(input_graph):
     construction.append_to = append_to.copy()
     construction.before_braces = before_braces.copy()
     construction._perform_step(0)
-    for idx in construction.append_to:
+    for idx in append_to:
         for bb_idx in construction.before_braces[-1]:
             assert bb_idx in input_graph.states[idx].empty_transitions
+    for bb_idx in construction.before_braces[-1]:
+        assert len(input_graph.states) - 1 in input_graph.states[
+            bb_idx].empty_transitions
