@@ -13,15 +13,15 @@
 # limitations under the License.
 
 
-from typing import Dict, Set, List, Any
+from collections import defaultdict
+from typing import Set, List, Any, DefaultDict
 from stwfsapy.automata.heap import BinaryMinHeap
-from stwfsapy.automata.util import safe_set_add_in_dict
 
 
 class State:
 
     def __init__(self):
-        self.symbol_transitions: Dict[str, int] = dict()
+        self.symbol_transitions: DefaultDict[str, Set[int]] = defaultdict(set)
         """Determines the states that can be reached
         by consuming a character."""
         self.non_word_char_transitions: Set[int] = set()
@@ -60,7 +60,7 @@ class Nfa:
         """Add a symbol consuming transition between two states.
         The states are represented by their indices."""
         transitions = self.states[start].symbol_transitions
-        safe_set_add_in_dict(transitions, symbol, end)
+        transitions[symbol].add(end)
 
     def add_empty_transition(self, start: int, end: int):
         """Add an empty Transition between two states.
@@ -107,10 +107,7 @@ class Nfa:
             end: State):
         for symbol, states in end.symbol_transitions.items():
             for state_idx in states:
-                safe_set_add_in_dict(
-                    start.symbol_transitions,
-                    symbol,
-                    state_idx)
+                start.symbol_transitions[symbol].add(state_idx)
         for state_idx in end.non_word_char_transitions:
             start.non_word_char_transitions.add(state_idx)
         start.empty_transitions.discard(end_idx)

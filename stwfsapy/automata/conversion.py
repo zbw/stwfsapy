@@ -13,12 +13,11 @@
 # limitations under the License.
 
 
+from collections import defaultdict
 from typing import Tuple, Set, Dict, FrozenSet
 from stwfsapy.automata import dfa
 from stwfsapy.automata import nfa
 from queue import Queue
-
-from stwfsapy.automata.util import safe_set_update_in_dict
 
 
 class NfaToDfaConverter:
@@ -62,7 +61,7 @@ class NfaToDfaConverter:
             accepts)
 
     def _collect_nfa_transitions(self, states: Set[nfa.State]) -> Tuple:
-        symbol_transitions = dict()
+        symbol_transitions = defaultdict(set)
         non_word_char_transitions = set()
         accepts = set()
         for nfa_start_idx in states:
@@ -70,10 +69,7 @@ class NfaToDfaConverter:
                 symbol,
                 nfa_end_state_idxs) in (
                     self.nfa.states[nfa_start_idx].symbol_transitions.items()):
-                safe_set_update_in_dict(
-                    symbol_transitions,
-                    symbol,
-                    nfa_end_state_idxs)
+                        symbol_transitions[symbol].update(nfa_end_state_idxs)
             non_word_char_transitions.update(
                     self.nfa.states[nfa_start_idx].non_word_char_transitions)
             accepts.update(self.nfa.states[nfa_start_idx].accepts)
