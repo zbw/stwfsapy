@@ -14,7 +14,7 @@
 
 
 from collections import defaultdict
-from typing import Tuple, Set, Dict, FrozenSet
+from typing import Tuple, Set, Dict, FrozenSet, Iterable, List
 from stwfsapy.automata import dfa
 from stwfsapy.automata import nfa
 from queue import Queue
@@ -35,7 +35,7 @@ class NfaToDfaConverter:
         """Queue for controlling the processing order."""
         self.queue.put(idx0)
         start_states = frozenset(self.nfa.starts)
-        self.state_represents: Dict[int, FrozenSet[int]] = {
+        self.state_represents: Dict[int, List[int]] = {
             idx0: list(start_states)}
         """Maps a state index of the DFA to a set of NFA state indices."""
         self.state_cache: Dict[FrozenSet[int], int] = {start_states: 0}
@@ -60,7 +60,7 @@ class NfaToDfaConverter:
             non_word_char_transitions,
             accepts)
 
-    def _collect_nfa_transitions(self, states: Set[nfa.State]) -> Tuple:
+    def _collect_nfa_transitions(self, states: FrozenSet[nfa.State]) -> Tuple:
         symbol_transitions = defaultdict(set)
         non_word_char_transitions = set()
         accepts = set()
@@ -97,7 +97,7 @@ class NfaToDfaConverter:
         if len(accepts) > 0:
             self.dfa.add_acceptances(dfa_start_state_idx, accepts)
 
-    def _get_or_create_dfa_state(self, state_idxs: Set[int]) -> int:
+    def _get_or_create_dfa_state(self, state_idxs: Iterable[int]) -> int:
         """Retrieves a state index of the DFA representing a set of
         state indices in the NFA. If such a state does not exist,
         a new one will be created. The new State will also be added to

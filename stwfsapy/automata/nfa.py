@@ -42,13 +42,13 @@ class Nfa:
         self.starts: List[int] = []
         """All start states."""
 
-    def add_state(self):
+    def add_state(self) -> int:
         """Creates a new state and returns its index."""
         idx = len(self.states)
         self.states.append(State())
         return idx
 
-    def add_start(self, idx):
+    def add_start(self, idx: int):
         """Adds a state, by index to the list of possible start states."""
         self.starts.append(idx)
 
