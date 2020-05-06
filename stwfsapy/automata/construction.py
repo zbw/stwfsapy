@@ -28,19 +28,23 @@ class ConstructionState:
         """Object returned when the expression matches an input."""
 
     def _set_up(self):
-        start = self.graph.add_state()
+        start_idx = self.graph.add_state()
         self.expression_start_idx: int = self.graph.add_state()
         """Start node of the expression."""
-        self.graph.add_start(start)
+        self.graph.add_start(start_idx)
         self.graph.add_non_word_char_transition(
-            start,
+            start_idx,
             self.expression_start_idx)
-        self.append_to: List[int] = [self.expression_start_idx]
+        alternation_start_idx = self.graph.add_state()
+        self.graph.add_empty_transition(
+            self.expression_start_idx,
+            alternation_start_idx)
+        self.append_to: List[int] = [alternation_start_idx]
         """States that are the start of the next transition."""
-        self.before_braces: List[List[int]] = [[self.expression_start_idx]]
+        self.before_braces: List[List[int]] = [
+            [self.expression_start_idx],
+            [alternation_start_idx]]
         """Stack of pointers to states directly preceding an opening brace."""
-        self.after_braces: List[int] = [self.expression_start_idx]
-        """Stack of pointers to states directly following an opening brace."""
         self.dangling_alternations: _AlternationManager = _AlternationManager()
         """Handles the end of alternations."""
         self.escape_next: bool = False
@@ -96,27 +100,24 @@ class ConstructionState:
         new_state_idx = self.graph.add_state()
         for state_idx in self.append_to:
             self.graph.add_empty_transition(state_idx, new_state_idx)
-        tmp = self.before_braces.pop()
-        self.after_braces.append(new_state_idx)
         self.dangling_alternations.push_empty()
-        for state_idx in self.append_to:
-            self.before_braces.append([state_idx])
-        self.before_braces.append(tmp)
+        self.before_braces[-1] = self.append_to
+        self.before_braces.append([new_state_idx])
         self.append_to = [new_state_idx]
 
     def _process_alternation(self):
         self.dangling_alternations.push(self.append_to)
-        after_braces = self.after_braces[-1]
+        before_braces = self.before_braces[-2]
         new_state = self.graph.add_state()
-        self.graph.add_empty_transition(after_braces, new_state)
-        self.after_braces[-1] = new_state
+        for before_brace in before_braces:
+            self.graph.add_empty_transition(before_brace, new_state)
+        self.before_braces[-1] = [new_state]
         self.append_to = [new_state]
 
     def _process_closing_brace(self):
         danglings = self.dangling_alternations.pop()
         self.append_to.extend(danglings)
         self.before_braces.pop()
-        self.after_braces.pop()
 
     def _process_optional(self):
         before_idxs = self.before_braces[-1]

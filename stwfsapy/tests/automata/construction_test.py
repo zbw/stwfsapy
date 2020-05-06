@@ -25,13 +25,13 @@ def test_init_with_empty_graph():
     graph = nfa.Nfa()
     construction = c.ConstructionState(graph, expression, accept)
     construction._set_up()
-    assert len(graph.states) == 2
+    assert len(graph.states) == 3
     assert graph.starts == [0]
     assert graph.states[0].non_word_char_transitions == {1}
-    assert construction.append_to == [1]
+    assert graph.states[1].empty_transitions == {2}
+    assert construction.append_to == [2]
     assert construction.expression == expression
-    assert construction.before_braces == [[1]]
-    assert construction.after_braces == [1]
+    assert construction.before_braces == [[1], [2]]
     assert construction.dangling_alternations.stack == []
     assert not construction.escape_next
     assert construction.accept == accept
@@ -40,13 +40,13 @@ def test_init_with_empty_graph():
 def test_init_with_existing_graph(input_graph):
     construction = c.ConstructionState(input_graph, expression, accept)
     construction._set_up()
-    assert len(input_graph.states) == 8
+    assert len(input_graph.states) == 9
     assert 6 in input_graph.starts
     assert input_graph.states[6].non_word_char_transitions == {7}
-    assert construction.append_to == [7]
+    assert input_graph.states[7].empty_transitions == {8}
+    assert construction.append_to == [8]
     assert construction.expression == expression
-    assert construction.before_braces == [[7]]
-    assert construction.after_braces == [7]
+    assert construction.before_braces == [[7], [8]]
     assert construction.dangling_alternations.stack == []
     assert not construction.escape_next
     assert construction.accept == accept
@@ -58,10 +58,10 @@ def test_adds_accpetance():
     construction.construct()
     assert graph.states[-1].accepts == [accept]
     assert graph.states[-2].accepts == [accept]
-    assert graph.states[2].non_word_char_transitions == {6}
-    assert graph.states[4].non_word_char_transitions == {5}
+    assert graph.states[3].non_word_char_transitions == {7}
+    assert graph.states[5].non_word_char_transitions == {6}
     assert graph.states[1].non_word_char_transitions == set()
-    assert graph.states[1].empty_transitions == {3}
+    assert graph.states[1].empty_transitions == {2, 4}
 
 
 def test_handles_multiple_alternations():
@@ -101,13 +101,10 @@ def test_handles_opening_brace(input_graph):
     construction._perform_step(0)
     new_state_idx = len(input_graph.states) - 1
     assert construction.dangling_alternations.pop() == []
-    assert construction.before_braces[
-        :len(before_braces)-1] == before_braces[:len(before_braces)-1]
-    assert construction.before_braces[len(before_braces)-1:-1] == list(
-        map(lambda x: [x], append_to))
-    assert construction.before_braces[-1] == before_braces[-1]
+    assert construction.before_braces[:-2] == before_braces[:-1]
+    assert construction.before_braces[-2] == append_to
+    assert construction.before_braces[-1] == [new_state_idx]
     assert construction.append_to == [new_state_idx]
-    assert construction.after_braces[-1] == new_state_idx
     for idx in append_to:
         assert new_state_idx in input_graph.states[idx].empty_transitions
 
@@ -116,7 +113,6 @@ def test_handles_closing_brace(input_graph, mocker):
     append_to = [2, 4, 5]
     old_append_len = len(append_to)
     before_braces = [[0], [1, 3]]
-    after_braces = [6, 7]
     ret = [12, 14]
     construction = c.ConstructionState(input_graph, ')', accept)
     construction._set_up()
@@ -126,12 +122,10 @@ def test_handles_closing_brace(input_graph, mocker):
         lambda: ret)
     construction.append_to = append_to.copy()
     construction.before_braces = before_braces.copy()
-    construction.after_braces = after_braces.copy()
     construction._perform_step(0)
     assert construction.append_to[:old_append_len] == append_to
     assert construction.append_to[old_append_len:] == ret
     assert construction.before_braces == before_braces[:-1]
-    assert construction.after_braces == after_braces[:-1]
 
 
 def test_handles_alternation(input_graph):
