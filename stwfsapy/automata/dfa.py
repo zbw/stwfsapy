@@ -42,7 +42,7 @@ class Dfa:
         self.states: List[State] = []
         """All the states of this Automaton."""
 
-    def add_state(self)-> int:
+    def add_state(self) -> int:
         """Creates a new state and returns its index."""
         idx = len(self.states)
         state = State()

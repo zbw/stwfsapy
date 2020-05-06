@@ -26,9 +26,9 @@ class BinaryMinHeap:
         self.mapping: Dict[Any, int] = dict()
         """Maps objects to positions in the heap."""
 
-    def push(self, key, val):
+    def push(self, val, priority):
         idx = len(self.heap)
-        self.heap.append((key, val))
+        self.heap.append((priority, val))
         self.mapping[val] = idx
         self._sift_up(idx)
 
@@ -42,13 +42,13 @@ class BinaryMinHeap:
             self._sift_down(0)
         return head
 
-    def change_key(self, val, key):
+    def change_priority(self, val, priority):
         idx = self.mapping[val]
-        old_key = self.heap[idx][0]
-        if old_key == key:
+        old_priority = self.heap[idx][0]
+        if old_priority == priority:
             return
-        self.heap[idx] = (key, val)
-        if key < old_key:
+        self.heap[idx] = (priority, val)
+        if priority < old_priority:
             self._sift_up(idx)
         else:
             self._sift_down(idx)

@@ -80,7 +80,7 @@ class Nfa:
         queue = BinaryMinHeap()
         for idx in range(len(self.states)):
             if len(self.states[idx].incoming_empty_transitions) > 0:
-                queue.push(len(self.states[idx].empty_transitions), idx)
+                queue.push(idx, len(self.states[idx].empty_transitions))
         while len(queue.heap) > 0:
             ptr_idx = queue.pop()
             ptr = self.states[ptr_idx]
@@ -95,7 +95,7 @@ class Nfa:
                     ptr_idx,
                     ptr)
                 if len(incoming.incoming_empty_transitions) > 0:
-                    queue.change_key(
+                    queue.change_priority(
                         incoming_idx,
                         len(incoming.empty_transitions))
 

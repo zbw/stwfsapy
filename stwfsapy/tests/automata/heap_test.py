@@ -71,7 +71,7 @@ def test_parent_idx():
 
 def test_push_empty():
     queue = heap.BinaryMinHeap()
-    queue.push(0, 5)
+    queue.push(5, 0)
     assert len(queue.heap) == 1
     assert len(queue.mapping) == 1
     assert queue.heap[0] == (0, 5)
@@ -80,7 +80,7 @@ def test_push_empty():
 
 def test_push(some_heap, mocker):
     spy = mocker.spy(some_heap, "_sift_up")
-    some_heap.push(13, 15)
+    some_heap.push(15, 13)
     spy.assert_called_once_with(len(some_heap.heap)-1)
 
 
@@ -102,7 +102,7 @@ def test_can_increase_key(some_heap, mocker):
     spy_down = mocker.spy(some_heap, "_sift_down")
     spy_up = mocker.spy(some_heap, "_sift_up")
     top = some_heap.heap[0]
-    some_heap.change_key(top[1], 256)
+    some_heap.change_priority(top[1], 256)
     check_heap(some_heap)
     spy_down.assert_called_once_with(0)
     spy_up.assert_not_called()
@@ -112,7 +112,7 @@ def test_can_decrease_key(some_heap, mocker):
     spy_down = mocker.spy(some_heap, "_sift_down")
     spy_up = mocker.spy(some_heap, "_sift_up")
     last = some_heap.heap[-1]
-    some_heap.change_key(last[1], 0)
+    some_heap.change_priority(last[1], 0)
     check_heap(some_heap)
     spy_up.assert_called_once_with(len(some_heap.heap)-1)
     spy_down.assert_not_called()
@@ -122,6 +122,6 @@ def test_can_set_equal_key(some_heap, mocker):
     spy_down = mocker.spy(some_heap, "_sift_down")
     spy_up = mocker.spy(some_heap, "_sift_up")
     middle = some_heap.heap[5]
-    some_heap.change_key(middle[1], middle[0])
+    some_heap.change_priority(middle[1], middle[0])
     spy_up.assert_not_called()
     spy_down.assert_not_called()
