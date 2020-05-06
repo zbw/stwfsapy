@@ -80,7 +80,7 @@ class Dfa:
                 except IndexError:
                     continue
                 try:
-                    transition = state.symbol_transitions[text[position]]
+                    transition = state.symbol_transitions[symbol]
                     stack.append((transition, position+1))
                 except KeyError:
                     pass
