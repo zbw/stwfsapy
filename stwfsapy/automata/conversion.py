@@ -60,7 +60,7 @@ class NfaToDfaConverter:
             non_word_char_transitions,
             accepts)
 
-    def _collect_nfa_transitions(self, states: Iterable[nfa.State]) -> Tuple:
+    def _collect_nfa_transitions(self, states: Iterable[int]) -> Tuple:
         symbol_transitions = defaultdict(set)
         non_word_char_transitions = set()
         accepts = set()
