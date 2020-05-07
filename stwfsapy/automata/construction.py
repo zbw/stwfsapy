@@ -142,7 +142,7 @@ class _AlternationManager():
     def __init__(self):
         self.stack = []
 
-    def pop(self) -> [int]:
+    def pop(self) -> List[int]:
         return self.stack.pop()
 
     def push(self, states: List[int]):

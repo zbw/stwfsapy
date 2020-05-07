@@ -110,7 +110,7 @@ class NfaToDfaConverter:
             self.queue.put(dfa_state_idx)
             self.state_represents[dfa_state_idx] = list(frozen_states)
             self.state_cache[frozen_states] = dfa_state_idx
-            acceptance = set()
+            acceptance: Set = set()
             for state_idx in state_idxs:
                 acceptance.union(self.nfa.states[state_idx].accepts)
             dfa_state = self.dfa.states[dfa_state_idx]
