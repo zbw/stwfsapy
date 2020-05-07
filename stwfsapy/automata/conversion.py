@@ -69,7 +69,7 @@ class NfaToDfaConverter:
                 symbol,
                 nfa_end_state_idxs) in (
                     self.nfa.states[nfa_start_idx].symbol_transitions.items()):
-                        symbol_transitions[symbol].update(nfa_end_state_idxs)
+                symbol_transitions[symbol].update(nfa_end_state_idxs)
             non_word_char_transitions.update(
                     self.nfa.states[nfa_start_idx].non_word_char_transitions)
             accepts.update(self.nfa.states[nfa_start_idx].accepts)

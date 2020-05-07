@@ -137,8 +137,6 @@ class ConstructionState:
         self.append_to = [after_idx]
 
 
-
-
 class _AlternationManager():
 
     def __init__(self):

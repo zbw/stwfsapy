@@ -77,8 +77,8 @@ def _unwrap_labels(
 
 def retrieve_concept_labels(
         g: Graph,
-        concept_URI_prefix: str="",
-        langs: Set[str]={}
+        concept_URI_prefix: str = "",
+        langs: Set[str] = {}
         ) -> Iterator[Tuple[URIRef, str]]:
     """Extracts altLabels and prefLabels from a SKOS graph.
 

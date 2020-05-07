@@ -57,10 +57,10 @@ def _expand_abbreviation_with_punctuation_fun(label: str) -> str:
 
 
 def collect_expansion_functions(
-        extract_upper_case_from_braces: bool=True,
-        extract_any_case_from_braces: bool=False,
-        expand_ampersand_with_spaces: bool=True,
-        expand_abbreviation_with_punctuation: bool=True
+        extract_upper_case_from_braces: bool = True,
+        extract_any_case_from_braces: bool = False,
+        expand_ampersand_with_spaces: bool = True,
+        expand_abbreviation_with_punctuation: bool = True
         ) -> List[Callable[[str], str]]:
     options = (
         (

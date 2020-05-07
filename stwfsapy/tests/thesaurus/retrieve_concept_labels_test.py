@@ -33,46 +33,32 @@ def patch_module(mocker):
 
 
 def test_no_language_option(label_graph, patch_module):
-    labels = t.retrieve_concept_labels(
-        label_graph,
-        langs=set()
-    )
+    t.retrieve_concept_labels(label_graph, langs=set())
     t._filter_by_langs.assert_not_called()
 
 
 def test_none_language_option(label_graph, patch_module):
-    labels = t.retrieve_concept_labels(
-        label_graph,
-        langs=None
-    )
+    t.retrieve_concept_labels(label_graph, langs=None)
     t._filter_by_langs.assert_not_called()
 
 
 def test_language_option(label_graph, patch_module):
-    labels = t.retrieve_concept_labels(
-        label_graph,
-        langs={"en"}
-    )
+    t.retrieve_concept_labels(label_graph, langs={"en"})
     t._filter_by_langs.assert_called()
 
 
 def test_no_prefix_option(label_graph, patch_module):
-    labels = t.retrieve_concept_labels(
-        label_graph,
-    )
+    t.retrieve_concept_labels(label_graph)
     t._filter_by_prefix.assert_not_called()
 
 
 def test_none_prefix_option(label_graph, patch_module):
-    labels = t.retrieve_concept_labels(
-        label_graph,
-        concept_URI_prefix=None
-    )
+    t.retrieve_concept_labels(label_graph, concept_URI_prefix=None)
     t._filter_by_prefix.assert_not_called()
 
 
 def test_prefix_option(label_graph, patch_module):
-    labels = t.retrieve_concept_labels(
+    t.retrieve_concept_labels(
         label_graph,
         concept_URI_prefix=c.test_URI_prefix
     )

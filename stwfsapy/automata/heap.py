@@ -100,4 +100,4 @@ def _lchild_index(idx: int):
 
 
 def _rchild_index(idx: int):
-        return 2*idx+2
+    return 2*idx+2
