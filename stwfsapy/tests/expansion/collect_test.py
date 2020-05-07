@@ -200,7 +200,7 @@ def test_all_abbreviation_from_braces():
     string = "GDP (gross domestic product)"
     for fun in funs:
         string = fun(string)
-    assert string == "G.?D.?P.?\\W"
+    assert string == "G\\.?D\\.?P\\.?"
 
 
 def test_all_ampersand_from_braces():
@@ -210,7 +210,7 @@ def test_all_ampersand_from_braces():
     string = "(R&D) research and discovery"
     for fun in funs:
         string = fun(string)
-    assert string == "R ?& ?D\\W"
+    assert string == "R ?& ?D"
 
 
 def test_all_lower_braces():

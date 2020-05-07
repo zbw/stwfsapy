@@ -47,20 +47,20 @@ def _replace_by_pattern_fun(pattern: Pattern[str]) -> Callable[[str], str]:
 
 def _expand_ampersand_with_spaces_fun(label: str) -> str:
     return _ampersand_abbreviation_matcher.sub(
-        r"\g<1> ?& ?\g<2>\\W", label)
+        r"\g<1> ?& ?\g<2>", label)
 
 
 def _expand_abbreviation_with_punctuation_fun(label: str) -> str:
     if label.isupper() and label.isalpha():
-        return _upper_case_matcher.sub(r"\g<0>.?", label) + "\\W"
+        return _upper_case_matcher.sub(r"\g<0>\\.?", label)
     return label
 
 
 def collect_expansion_functions(
-        extract_upper_case_from_braces: bool=True,
-        extract_any_case_from_braces: bool=False,
-        expand_ampersand_with_spaces: bool=True,
-        expand_abbreviation_with_punctuation: bool=True
+        extract_upper_case_from_braces: bool = True,
+        extract_any_case_from_braces: bool = False,
+        expand_ampersand_with_spaces: bool = True,
+        expand_abbreviation_with_punctuation: bool = True
         ) -> List[Callable[[str], str]]:
     options = (
         (

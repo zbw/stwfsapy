@@ -32,9 +32,9 @@ def test_does_not_change_with_symbol():
 
 def test_inserts_punctuation():
     result = e._expand_abbreviation_with_punctuation_fun(upper_case_string)
-    assert len(result) == 3 * len(upper_case_string) + 2
+    assert len(result) == 4 * len(upper_case_string)
     for i in range(len(upper_case_string)):
-        assert result[3*i] == upper_case_string[i]
-        assert result[3*i+1] == '.'
-        assert result[3*i+2] == '?'
-    assert result[-2:] == "\\W"
+        assert result[4*i] == upper_case_string[i]
+        assert result[4*i+1] == '\\'
+        assert result[4*i+2] == '.'
+        assert result[4*i+3] == '?'
