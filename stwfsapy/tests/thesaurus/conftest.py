@@ -14,7 +14,7 @@
 
 
 import pytest
-from stwfsapy.tests.thesaurus.common import *
+from stwfsapy.tests.thesaurus import common as c
 from rdflib import Graph
 from rdflib.namespace import SKOS
 
@@ -22,15 +22,15 @@ from rdflib.namespace import SKOS
 @pytest.fixture
 def tuples():
     return[
-        (concept_ref_printed, concept_prefLabel_printed_en),
-        (concept_ref_media, concept_prefLabel_media_en),
-        (concept_ref_printed, concept_prefLabel_printed_missing)
+        (c.concept_ref_printed, c.concept_prefLabel_printed_en),
+        (c.concept_ref_media, c.concept_prefLabel_media_en),
+        (c.concept_ref_printed, c.concept_prefLabel_printed_missing)
     ]
 
 
 @pytest.fixture
 def tuples_with_thsys(tuples):
-    tuples.append((thsys_ref_print, thsys_prefLabel_print_en))
+    tuples.append((c.thsys_ref_print, c.thsys_prefLabel_print_en))
     return tuples
 
 
@@ -38,13 +38,13 @@ def tuples_with_thsys(tuples):
 def label_graph():
     g = Graph()
     g.add((
-        concept_ref_printed,
+        c.concept_ref_printed,
         SKOS.prefLabel,
-        concept_prefLabel_printed_en))
+        c.concept_prefLabel_printed_en))
     g.add((
-        concept_ref_printed,
+        c.concept_ref_printed,
         SKOS.altLabel,
-        concept_altLabel_printed_en))
+        c.concept_altLabel_printed_en))
     return g
 
 
@@ -52,11 +52,11 @@ def label_graph():
 def full_graph(label_graph):
     g = label_graph
     g.add((
-        concept_ref_printed,
+        c.concept_ref_printed,
         SKOS.prefLabel,
-        concept_prefLabel_printed_de))
+        c.concept_prefLabel_printed_de))
     g.add((
-        thsys_ref_print,
+        c.thsys_ref_print,
         SKOS.prefLabel,
-        thsys_prefLabel_print_en))
+        c.thsys_prefLabel_print_en))
     return g
