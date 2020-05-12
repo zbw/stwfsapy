@@ -13,6 +13,7 @@
 # limitations under the License.
 
 
+import pytest
 from stwfsapy.tests.thesaurus.common import *
 from rdflib import Graph
 from rdflib.namespace import SKOS
