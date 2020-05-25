@@ -17,7 +17,7 @@ import pytest
 from rdflib.term import URIRef, Literal
 
 
-test_URI_prefix = "http://zbw.eu/stw/descriptor"
+test_ref_type = URIRef("http://zbw.eu/stw/descriptor")
 
 _thsys_uri_print = "http://zbw.eu/stw/thsys/70265"
 

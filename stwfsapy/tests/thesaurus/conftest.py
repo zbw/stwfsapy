@@ -16,7 +16,7 @@
 import pytest
 from stwfsapy.tests.thesaurus import common as c
 from rdflib import Graph
-from rdflib.namespace import SKOS
+from rdflib.namespace import SKOS, OWL
 
 
 @pytest.fixture
@@ -29,12 +29,6 @@ def tuples():
 
 
 @pytest.fixture
-def tuples_with_thsys(tuples):
-    tuples.append((c.thsys_ref_print, c.thsys_prefLabel_print_en))
-    return tuples
-
-
-@pytest.fixture
 def label_graph():
     g = Graph()
     g.add((
@@ -43,6 +37,10 @@ def label_graph():
         c.concept_prefLabel_printed_en))
     g.add((
         c.concept_ref_printed,
+        SKOS.altLabel,
+        c.concept_altLabel_printed_en))
+    g.add((
+        c.concept_ref_media,
         SKOS.altLabel,
         c.concept_altLabel_printed_en))
     return g
@@ -59,4 +57,12 @@ def full_graph(label_graph):
         c.thsys_ref_print,
         SKOS.prefLabel,
         c.thsys_prefLabel_print_en))
+    g.add((
+        c.concept_ref_media,
+        OWL.type,
+        c.test_ref_type))
+    g.add((
+        c.concept_ref_printed,
+        OWL.type,
+        c.test_ref_type))
     return g
