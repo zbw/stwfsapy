@@ -34,11 +34,11 @@ def set_closure(
             else:
                 if current not in sets:
                     stack.pop()
-                    closure[current] = {current}
+                    closure[current] = set()
                 else:
                     all_known = True
                     for child in sets[current]:
-                        if child not in closure:
+                        if child not in closure and child != current:
                             if child in ancestors:
                                 raise PartialOrderLoopException()
                             all_known = False
@@ -46,18 +46,15 @@ def set_closure(
                             new_ancestors.add(current)
                             stack.append((child, new_ancestors))
                     if all_known:
-                        closure[current] = {
-                            closure_object
-                            for
-                            child_object
-                            in
-                            sets[current]
-                            for
-                            closure_object
-                            in
-                            closure[child_object]
-                            }
-                        closure[current].add(current)
+                        element_closure = set()
+                        for child in sets[current]:
+                            element_closure.add(child)
+                            try:
+                                for closure_object in closure[child]:
+                                    element_closure.add(closure_object)
+                            except KeyError:
+                                pass
+                        closure[current] = element_closure
                         stack.pop()
     return closure
 

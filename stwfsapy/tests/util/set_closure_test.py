@@ -68,6 +68,19 @@ def double_diamond(single_diamond):
         additionals)
 
 
+@fixture
+def double_diamond_reflexive(double_diamond):
+    tree_po, additionals = double_diamond
+    for n in tree_po:
+        tree_po, additionals = _add_edge_to_tree_po(
+            tree_po,
+            n,
+            n,
+            additionals
+        )
+    return tree_po, additionals
+
+
 def check_closure_edge(closures, start, end):
     hlp_start = start
     while hlp_start > 0:
@@ -80,7 +93,6 @@ def check_tree_closure(closures, additional_relations={}):
     totals = _internal_nodes+_leafs
     assert len(closures) == totals
     for start in range(_internal_nodes):
-        check_closure_edge(closures, start, start)
         for end in range(1, _branching_k+1):
             check_closure_edge(closures, start, start*_branching_k + end)
     for start in range(totals):
@@ -107,6 +119,14 @@ def test_closure_double_diamond(double_diamond):
     p_order, additionals = double_diamond
     closures = set_closure(p_order)
     check_tree_closure(closures, additionals)
+
+
+def test_closure_double_diamond_reflexive(double_diamond_reflexive):
+    p_order, additionals = double_diamond_reflexive
+    closures = set_closure(p_order)
+    check_tree_closure(closures, additionals)
+    for n in p_order:
+        assert n in closures[n]
 
 
 def test_exception_on_cycle(tree_po):
