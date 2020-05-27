@@ -16,7 +16,7 @@
 from typing import Tuple, Set, Iterable, Any
 from rdflib import Graph
 from rdflib.term import Literal, URIRef
-from rdflib.namespace import SKOS, OWL
+from rdflib.namespace import SKOS, OWL, RDF
 
 
 def extract_labels(g: Graph) -> Iterable[Tuple[URIRef, Literal]]:
@@ -32,7 +32,7 @@ def extract_by_type_uri(
         remove: Set[URIRef] = None) -> Iterable[URIRef]:
     """Extract all elements of a specific type from a rdflib graph.
     Allows to exclude the elements that are in a specified set."""
-    by_type = g[:OWL.type:type_URI]
+    by_type = g[:RDF.type:type_URI]
     if remove is None or len(remove) == 0:
         return by_type
     else:
