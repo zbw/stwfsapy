@@ -16,7 +16,7 @@
 import pytest
 from stwfsapy.tests.thesaurus import common as c
 from rdflib import Graph
-from rdflib.namespace import SKOS, OWL
+from rdflib.namespace import SKOS, OWL, RDF
 
 
 @pytest.fixture
@@ -47,7 +47,7 @@ def label_graph():
 
 
 @pytest.fixture
-def full_graph(label_graph):
+def typed_label_graph(label_graph):
     g = label_graph
     g.add((
         c.concept_ref_printed,
@@ -59,10 +59,10 @@ def full_graph(label_graph):
         c.thsys_prefLabel_print_en))
     g.add((
         c.concept_ref_media,
-        OWL.type,
+        RDF.type,
         c.test_ref_type))
     g.add((
         c.concept_ref_printed,
-        OWL.type,
+        RDF.type,
         c.test_ref_type))
     return g

@@ -29,12 +29,14 @@ def patch_module(mocker):
         thesaurus_module, "_unwrap_labels")
     # return mocker
 
+
 @pytest.fixture
 def concept_set():
     return {
         c.concept_ref_printed,
         c.concept_ref_media
     }
+
 
 def test_no_language_option(label_graph, patch_module):
     t.retrieve_concept_labels(label_graph, langs=set())
@@ -60,6 +62,7 @@ def test_none_prefix_option(label_graph, patch_module):
     t.retrieve_concept_labels(label_graph, allowed=None)
     t._filter_subject_tuples_from_set.assert_not_called()
 
+
 def test_prefix_option(label_graph, concept_set, patch_module):
     t.retrieve_concept_labels(
         label_graph,
@@ -68,9 +71,9 @@ def test_prefix_option(label_graph, concept_set, patch_module):
     t._filter_subject_tuples_from_set.assert_called()
 
 
-def test_integration(full_graph, concept_set):
+def test_integration(typed_label_graph, concept_set):
     result = list(t.retrieve_concept_labels(
-        full_graph,
+        typed_label_graph,
         allowed=concept_set,
         langs={"en"},
     ))
