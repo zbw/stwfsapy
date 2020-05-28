@@ -10,5 +10,6 @@ pytest-pep8 = "*"
 
 [packages]
 rdflib = "==4.2.*"
+scikit-learn = "==0.22.*"
 
 [requires]
