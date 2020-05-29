@@ -13,7 +13,7 @@
 # limitations under the License.
 
 
-from typing import Set, List, Iterable, Container
+from typing import Set, List, Iterable, Container, Tuple, TypeVar
 import rdflib
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.pipeline import Pipeline
@@ -24,8 +24,14 @@ from stwfsapy.automata import nfa, construction, conversion
 from stwfsapy.thesaurus_features import ThesaurusFeatureTransformation
 
 
-class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
+T = TypeVar('T')
+N = TypeVar('N', int, float)
+Nl = TypeVar('Nl', List[int], List[float])
 
+
+class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
+    """Finds labels of thesaurus concepts in texts
+    and assigns them a score."""
     def __init__(
             self,
             graph: rdflib.graph.Graph,
@@ -96,7 +102,12 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             doc_counts
         )
 
-    def suggest_proba(self, texts):
+    def suggest_proba(
+            self,
+            texts
+            ) -> List[List[Tuple[rdflib.term.URIRef, float]]]:
+        """For a given list of texts,
+        this methods returns the matched concepts and their scores."""
         match_X, doc_counts = self.match_and_extend(texts)
         predictions = self.pipeline_.predict_proba(match_X)
         combined = StwfsapyPredictor._collect_prediction_results(
@@ -123,7 +134,12 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             doc_counts
         )
 
-    def _create_sparse_matrix(self, values, concepts, doc_counts):
+    def _create_sparse_matrix(
+            self,
+            values: Nl,
+            concepts: List[T],
+            doc_counts: List[int]
+            ) -> csr_matrix:
         return csr_matrix(
             (
                 values,
@@ -145,7 +161,11 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
         )
 
     @staticmethod
-    def _collect_prediction_results(values, concepts, doc_counts):
+    def _collect_prediction_results(
+            values: Nl,
+            concepts: List[T],
+            doc_counts: List[int]
+            ) -> List[Tuple[List[T], Nl]]:
         ret = []
         start = 0
         for count in doc_counts:
@@ -157,7 +177,13 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
     def match_and_extend(
             self,
             texts: Iterable[str],
-            truth_refss: Iterable[Container[int]] = None):
+            truth_refss: Iterable[Container[int]] = None
+            ) -> Tuple[List[rdflib.term.URIRef], List[int]]:
+        """Retrieves concepts by their labels from text.
+        If ground truth values are present,
+        it will also return a list of labels for scoring matches.
+        If no ground truth values are present, a list
+        with the number of matched concepts for each document is returned."""
         concepts = []
         if truth_refss is not None:
             ret_y = []

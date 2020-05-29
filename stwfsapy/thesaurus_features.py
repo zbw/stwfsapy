@@ -34,6 +34,8 @@ class ThesaurusFeatureTransformation(BaseEstimator, TransformerMixin):
         self.thesauri = thesauri
 
     def fit(self, X=None, y=None):
+        """Creates the mapping from concepts
+        to the thesauri that are broader than the concept."""
         broaders = list(t.extract_broader(self.graph))
         concept_po = _collect_po_from_tuples(
             t._filter_subject_tuples_from_set(broaders, self.concepts))
