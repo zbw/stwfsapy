@@ -95,7 +95,7 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
 
     def predict_proba(self, X) -> csr_matrix:
         match_X, doc_counts = self.match_and_extend(X)
-        predictions = self.pipeline_.predict_proba(match_X)
+        predictions = self.pipeline_.predict_proba(match_X)[:, 1]
         return self._create_sparse_matrix(
             predictions,
             match_X,
@@ -107,9 +107,9 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             texts
             ) -> List[List[Tuple[rdflib.term.URIRef, float]]]:
         """For a given list of texts,
-        this methods returns the matched concepts and their scores."""
+        this method returns the matched concepts and their scores."""
         match_X, doc_counts = self.match_and_extend(texts)
-        predictions = self.pipeline_.predict_proba(match_X)
+        predictions = self.pipeline_.predict_proba(match_X)[:, 1]
         combined = StwfsapyPredictor._collect_prediction_results(
             predictions,
             match_X,

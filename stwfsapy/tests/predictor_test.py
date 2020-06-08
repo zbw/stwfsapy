@@ -18,12 +18,13 @@ from stwfsapy.automata.dfa import Dfa
 import stwfsapy.tests.common as c
 import pytest
 from scipy.sparse import csr_matrix
+import numpy as np
 
 _doc_counts = [2, 4, 3]
 _concepts = list(range(9, 18))
 _proto_preds = list(range(2, 11))
-_predictions = [i/10 for i in _proto_preds]
-_classifications = [i % 2 for i in _proto_preds]
+_predictions = np.array([[0, i/10] for i in _proto_preds])
+_classifications = np.array([i % 2 for i in _proto_preds])
 _concept_map = dict(zip(reversed(range(23)), range(23)))
 _collection_result = [
     ([9, 10], [0.2, 0.3]),
@@ -72,18 +73,18 @@ def mocked_predictor(mocker):
 
 def test_result_collection():
     res = p.StwfsapyPredictor._collect_prediction_results(
-        _predictions,
+        _predictions[:, 1],
         _concepts,
         _doc_counts
     )
-    assert res == _collection_result
+    assert [(r[0], list(r[1])) for r in res] == _collection_result
 
 
 def test_sparse_matrix_creation():
     predictor = p.StwfsapyPredictor(None, None, None)
     predictor.concept_map_ = _concept_map
     res = predictor._create_sparse_matrix(
-        _predictions,
+        _predictions[:, 1],
         _concepts,
         _doc_counts
     )
@@ -97,7 +98,7 @@ def test_sparse_matrix_creation():
         assert list(row.nonzero()[1]) == list(reversed([
             22-i for i in _concepts[slice_start: slice_start+count]]))
         assert list(row.data) == list(reversed(
-            _predictions[slice_start:slice_start+count]))
+            _predictions[slice_start:slice_start+count, 1]))
 
 
 def test_match_and_extend_with_truth(patched_dfa):
@@ -171,7 +172,7 @@ def test_predict_proba(mocked_predictor):
     # TODO check calls
     res = mocked_predictor.predict_proba([])
     assert (
-        res.toarray() == make_test_result_matrix(_predictions).toarray()).all()
+        res.toarray() == make_test_result_matrix(_predictions[:, 1]).toarray()).all()
     mocked_predictor.match_and_extend.assert_called_once_with(
         []
     )
