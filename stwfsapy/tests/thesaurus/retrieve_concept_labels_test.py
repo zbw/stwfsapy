@@ -24,7 +24,7 @@ def patch_module(mocker):
     mocker.patch.object(
         thesaurus_module, "_filter_by_langs")
     mocker.patch.object(
-        thesaurus_module, "_filter_subject_tuples_from_set")
+        thesaurus_module, "filter_subject_tuples_from_set")
     mocker.patch.object(
         thesaurus_module, "_unwrap_labels")
     # return mocker
@@ -55,12 +55,12 @@ def test_language_option(label_graph, patch_module):
 
 def test_no_prefix_option(label_graph, patch_module):
     t.retrieve_concept_labels(label_graph)
-    t._filter_subject_tuples_from_set.assert_not_called()
+    t.filter_subject_tuples_from_set.assert_not_called()
 
 
 def test_none_prefix_option(label_graph, patch_module):
     t.retrieve_concept_labels(label_graph, allowed=None)
-    t._filter_subject_tuples_from_set.assert_not_called()
+    t.filter_subject_tuples_from_set.assert_not_called()
 
 
 def test_prefix_option(label_graph, concept_set, patch_module):
@@ -68,7 +68,7 @@ def test_prefix_option(label_graph, concept_set, patch_module):
         label_graph,
         concept_set
     )
-    t._filter_subject_tuples_from_set.assert_called()
+    t.filter_subject_tuples_from_set.assert_called()
 
 
 def test_integration(typed_label_graph, concept_set):

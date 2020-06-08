@@ -39,9 +39,9 @@ class ThesaurusFeatureTransformation(BaseEstimator, TransformerMixin):
         to the thesauri that are broader than the concept."""
         broaders = list(t.extract_broader(self.graph))
         concept_po = _collect_po_from_tuples(
-            t._filter_subject_tuples_from_set(broaders, self.concepts))
+            t.filter_subject_tuples_from_set(broaders, self.concepts))
         thesauri_po = _collect_po_from_tuples(
-            t._filter_subject_tuples_from_set(broaders, self.thesauri),
+            t.filter_subject_tuples_from_set(broaders, self.thesauri),
             self.thesauri)
         for thesaurus in self.thesauri:
             thesauri_po[thesaurus].add(thesaurus)

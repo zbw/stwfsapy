@@ -18,7 +18,7 @@ from stwfsapy.tests.thesaurus import common as c
 
 def test_filter_subject_tuples_from_set(tuples):
     res = list(
-        t._filter_subject_tuples_from_set(tuples, {c.concept_ref_printed}))
+        t.filter_subject_tuples_from_set(tuples, {c.concept_ref_printed}))
     assert len(res) == 2
     assert res[0][0] == c.concept_ref_printed
     assert res[1][0] == c.concept_ref_printed

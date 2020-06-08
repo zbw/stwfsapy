@@ -51,7 +51,7 @@ def _predicate_uri_from_set(uri: URIRef, uri_set: Set[URIRef]):
     return uri in uri_set
 
 
-def _filter_subject_tuples_from_set(
+def filter_subject_tuples_from_set(
         tuples: Iterable[Tuple[URIRef, Any]],
         uri_set: Set[URIRef]
         ) -> Iterable[Tuple[URIRef, Any]]:
@@ -128,7 +128,7 @@ def retrieve_concept_labels(
     else:
         filtered_by_language = refs_with_labels
     if allowed:
-        filtered_by_set = _filter_subject_tuples_from_set(
+        filtered_by_set = filter_subject_tuples_from_set(
             filtered_by_language,
             allowed)
     else:
