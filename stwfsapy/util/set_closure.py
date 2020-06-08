@@ -19,9 +19,9 @@ from typing import Set, Dict, Hashable, Tuple, List
 def set_closure(
         sets: Dict[Hashable, Set[Hashable]]
         ) -> Dict[Hashable, Set[Hashable]]:
-    """Computes the closure for each element of a partial order(PO).
-    The PO is given by a mapping from elements to a set of related elements.
-    Raises a PartialOrderLoopException if the PO relation has circles."""
+    """Computes the closure for each element of a antisymmetric relation.
+    The relation is given by a mapping from elements to a set of related elements.
+    Raises a RelationLoopException if the relation has circles."""
     closure: Dict[Hashable, Set[Hashable]] = dict()
     for key in sets:
         stack: List[Tuple[Hashable, Set[Hashable]]] = [(key, set())]
@@ -40,7 +40,7 @@ def set_closure(
                     for child in sets[current]:
                         if child not in closure and child != current:
                             if child in ancestors:
-                                raise PartialOrderLoopException()
+                                raise RelationLoopException()
                             all_known = False
                             new_ancestors = ancestors.copy()
                             new_ancestors.add(current)
@@ -59,5 +59,5 @@ def set_closure(
     return closure
 
 
-class PartialOrderLoopException(Exception):
+class RelationLoopException(Exception):
     pass

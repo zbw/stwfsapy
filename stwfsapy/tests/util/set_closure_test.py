@@ -13,7 +13,7 @@
 # limitations under the License.
 
 
-from stwfsapy.util.set_closure import set_closure, PartialOrderLoopException
+from stwfsapy.util.set_closure import set_closure, RelationLoopException
 from pytest import fixture, raises
 
 _branching_k = 3
@@ -23,7 +23,7 @@ _leafs = _branching_k ** _depth
 
 
 @fixture
-def tree_po():
+def tree_relation():
     return {
         i: {i * _branching_k + j for j in range(1, _branching_k+1)}
         for
@@ -32,37 +32,37 @@ def tree_po():
     }
 
 
-def _add_edge_to_tree_po(po, start, end, additionals=set()):
-    po[start].add(end)
+def _add_edge_to_tree_relation(relation, start, end, additionals=set()):
+    relation[start].add(end)
     ret = additionals.copy()
     hlp_start = start
     # add all relations that should end up in the closure
     while hlp_start > 0:
         ret.add((hlp_start, end))
         hlp_start = (hlp_start-1) // _branching_k
-    return po, ret
+    return relation, ret
 
 
 @fixture
-def single_diamond(tree_po):
+def single_diamond(tree_relation):
     diamond_top = _branching_k+1
     diamond_left = diamond_top*_branching_k+(_branching_k-1)
     diamond_right = diamond_top*_branching_k+_branching_k
     diamond_bottom = diamond_left*_branching_k+_branching_k
-    return _add_edge_to_tree_po(tree_po, diamond_right, diamond_bottom)
+    return _add_edge_to_tree_relation(tree_relation, diamond_right, diamond_bottom)
 
 
 @fixture
 def double_diamond(single_diamond):
-    tree_po, additionals = single_diamond
+    tree_relation, additionals = single_diamond
     diamond_top = 1
     diamond_left = diamond_top*_branching_k+(_branching_k-1)
     diamond_right = diamond_top*_branching_k+_branching_k
     diamond_bottom = diamond_left*_branching_k+_branching_k
-    tree_po[diamond_right].add(diamond_bottom)
+    tree_relation[diamond_right].add(diamond_bottom)
     additionals.add((diamond_right, diamond_bottom))
-    return _add_edge_to_tree_po(
-        tree_po,
+    return _add_edge_to_tree_relation(
+        tree_relation,
         diamond_right,
         diamond_bottom,
         additionals)
@@ -70,15 +70,15 @@ def double_diamond(single_diamond):
 
 @fixture
 def double_diamond_reflexive(double_diamond):
-    tree_po, additionals = double_diamond
-    for n in tree_po:
-        tree_po, additionals = _add_edge_to_tree_po(
-            tree_po,
+    tree_relation, additionals = double_diamond
+    for n in tree_relation:
+        tree_relation, additionals = _add_edge_to_tree_relation(
+            tree_relation,
             n,
             n,
             additionals
         )
-    return tree_po, additionals
+    return tree_relation, additionals
 
 
 def check_closure_edge(closures, start, end):
@@ -104,8 +104,8 @@ def check_tree_closure(closures, additional_relations={}):
                     end == start)
 
 
-def test_closure_of_tree(tree_po):
-    closures = set_closure(tree_po)
+def test_closure_of_tree(tree_relation):
+    closures = set_closure(tree_relation)
     check_tree_closure(closures)
 
 
@@ -129,13 +129,13 @@ def test_closure_double_diamond_reflexive(double_diamond_reflexive):
         assert n in closures[n]
 
 
-def test_exception_on_cycle(tree_po):
-    tree_po[_internal_nodes-2].add(_branching_k)
-    with raises(PartialOrderLoopException):
-        set_closure(tree_po)
+def test_exception_on_cycle(tree_relation):
+    tree_relation[_internal_nodes-2].add(_branching_k)
+    with raises(RelationLoopException):
+        set_closure(tree_relation)
 
 
-def test_no_exception_on_non_cycle_backedge(tree_po):
-    tree_po, additionals = _add_edge_to_tree_po(tree_po, _internal_nodes-2, 1)
-    closures = set_closure(tree_po)
+def test_no_exception_on_non_cycle_backedge(tree_relation):
+    tree_relation, additionals = _add_edge_to_tree_relation(tree_relation, _internal_nodes-2, 1)
+    closures = set_closure(tree_relation)
     check_tree_closure(closures, additionals)
