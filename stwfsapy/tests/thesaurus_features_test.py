@@ -19,7 +19,8 @@ from stwfsapy import thesaurus_features as tf
 from stwfsapy.tests.thesaurus import common as tc
 from stwfsapy.tests import common as c
 from scipy.sparse import coo_matrix
-
+from sklearn.exceptions import NotFittedError
+import pytest
 
 def test_collect_po_from_tuples():
     tuples = [
@@ -32,6 +33,12 @@ def test_collect_po_from_tuples():
         tc.concept_ref_printed: {tc.concept_ref_media, tc.thsys_ref_print},
         tc.concept_ref_media: {tc.thsys_ref_media}
     }
+
+
+def unfitted_raises():
+    feat = tf.ThesaurusFeatureTransformation(None, None, None)
+    with pytest.raises(NotFittedError):
+        feat.transform([])
 
 
 def test_transform():

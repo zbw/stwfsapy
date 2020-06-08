@@ -17,6 +17,7 @@ from typing import Set, Iterable, Tuple, DefaultDict
 import rdflib
 from scipy.sparse import csr_matrix, vstack
 from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.exceptions import NotFittedError
 from stwfsapy import thesaurus as t
 from stwfsapy.util.set_closure import set_closure
 from collections import defaultdict
@@ -77,6 +78,8 @@ class ThesaurusFeatureTransformation(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X) -> csr_matrix:
+        if not self.mapping_:
+            raise NotFittedError
         return vstack([self.mapping_[x] for x in X])
 
 
