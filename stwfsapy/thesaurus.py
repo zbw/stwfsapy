@@ -13,7 +13,7 @@
 # limitations under the License.
 
 
-from typing import Tuple, Set, Iterable, Any
+from typing import Tuple, Set, Iterable, Any, Optional
 from rdflib import Graph
 from rdflib.term import Literal, URIRef
 from rdflib.namespace import SKOS, OWL, RDF
@@ -33,7 +33,7 @@ def extract_by_type_uri(
     """Extract all elements of a specific type from a rdflib graph.
     Allows to exclude the elements that are in a specified set."""
     by_type = g[:RDF.type:type_URI]
-    if remove is None or len(remove) == 0:
+    if not remove:
         return by_type
     else:
         return _filter_refs_from_set_complement(by_type, remove)
@@ -56,7 +56,7 @@ def _filter_subject_tuples_from_set(
         uri_set: Set[URIRef]
         ) -> Iterable[Tuple[URIRef, Any]]:
     """Filters an iterable of tuples.
-    Keeps only tuples where the first elemnt is present in the provided set."""
+    Keeps only tuples where the first element is present in the provided set."""
     return filter(lambda t: _predicate_uri_from_set(t[0], uri_set), tuples)
 
 
@@ -96,7 +96,7 @@ def _unwrap_labels(
 
 def retrieve_concept_labels(
         g: Graph,
-        allowed: Set[URIRef] = set(),
+        allowed: Optional[Set[URIRef]] = set(),
         langs: Set[str] = set()
         ) -> Iterable[Tuple[URIRef, str]]:
     """Extracts altLabels and prefLabels from a SKOS graph.
@@ -127,7 +127,7 @@ def retrieve_concept_labels(
         filtered_by_language = _filter_by_langs(refs_with_labels, langs)
     else:
         filtered_by_language = refs_with_labels
-    if allowed is not None and len(allowed) > 0:
+    if allowed:
         filtered_by_set = _filter_subject_tuples_from_set(
             filtered_by_language,
             allowed)

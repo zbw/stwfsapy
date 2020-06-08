@@ -23,7 +23,7 @@ _thsys_uri_print = "http://zbw.eu/stw/thsys/70265"
 _thsys_uri_media = "https://zbw.eu/stw/thsys/181994"
 
 thsys_ref_print = URIRef(_thsys_uri_print)
-thsys_ref_media = URIRef(_thsys_uri_print)
+thsys_ref_media = URIRef(_thsys_uri_media)
 
 thsys_prefLabel_print_en = Literal("Printed matters", lang="en")
 

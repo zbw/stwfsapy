@@ -177,7 +177,7 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
     def match_and_extend(
             self,
             texts: Iterable[str],
-            truth_refss: Iterable[Container[int]] = None
+            truth_refss: Iterable[Container] = None
             ) -> Tuple[List[rdflib.term.URIRef], List[int]]:
         """Retrieves concepts by their labels from text.
         If ground truth values are present,

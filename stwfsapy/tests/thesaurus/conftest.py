@@ -16,7 +16,7 @@
 import pytest
 from stwfsapy.tests.thesaurus import common as c
 from rdflib import Graph
-from rdflib.namespace import SKOS, OWL, RDF
+from rdflib.namespace import SKOS, RDF
 
 
 @pytest.fixture
