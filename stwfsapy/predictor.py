@@ -13,7 +13,7 @@
 # limitations under the License.
 
 
-from typing import Set, List, Iterable, Container, Tuple, TypeVar
+from typing import FrozenSet, List, Iterable, Container, Tuple, TypeVar
 import rdflib
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.pipeline import Pipeline
@@ -38,7 +38,7 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             concept_type_uri: rdflib.term.URIRef,
             thesaurus_type_uri: rdflib.term.URIRef,
             remove_deprecated: bool = True,
-            langs: Set[str] = set(),
+            langs: FrozenSet[str] = frozenset(),
             ):
         self.graph = graph
         self.concept_type_uri = concept_type_uri

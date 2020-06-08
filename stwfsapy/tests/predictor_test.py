@@ -172,7 +172,8 @@ def test_predict_proba(mocked_predictor):
     # TODO check calls
     res = mocked_predictor.predict_proba([])
     assert (
-        res.toarray() == make_test_result_matrix(_predictions[:, 1]).toarray()).all()
+        res.toarray() == make_test_result_matrix(
+            _predictions[:, 1]).toarray()).all()
     mocked_predictor.match_and_extend.assert_called_once_with(
         []
     )

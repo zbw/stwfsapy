@@ -13,7 +13,7 @@
 # limitations under the License.
 
 
-from typing import Tuple, Set, Iterable, Any, Optional
+from typing import Tuple, FrozenSet, Iterable, Any, Optional
 from rdflib import Graph
 from rdflib.term import Literal, URIRef
 from rdflib.namespace import SKOS, OWL, RDF
@@ -29,7 +29,7 @@ def extract_labels(g: Graph) -> Iterable[Tuple[URIRef, Literal]]:
 def extract_by_type_uri(
         g: Graph,
         type_URI: URIRef,
-        remove: Set[URIRef] = None) -> Iterable[URIRef]:
+        remove: Optional[FrozenSet[URIRef]] = None) -> Iterable[URIRef]:
     """Extract all elements of a specific type from a rdflib graph.
     Allows to exclude the elements that are in a specified set."""
     by_type = g[:RDF.type:type_URI]
@@ -47,39 +47,42 @@ def extract_broader(g: Graph) -> Iterable[Tuple[URIRef, URIRef]]:
     return g[:SKOS.broader:]
 
 
-def _predicate_uri_from_set(uri: URIRef, uri_set: Set[URIRef]):
+def _predicate_uri_from_set(uri: URIRef, uri_set: FrozenSet[URIRef]):
     return uri in uri_set
 
 
 def filter_subject_tuples_from_set(
         tuples: Iterable[Tuple[URIRef, Any]],
-        uri_set: Set[URIRef]
+        uri_set: FrozenSet[URIRef]
         ) -> Iterable[Tuple[URIRef, Any]]:
     """Filters an iterable of tuples.
-    Keeps only tuples where the first element is present in the provided set."""
+    Keeps only tuples where the first element is
+    present in the provided set."""
     return filter(lambda t: _predicate_uri_from_set(t[0], uri_set), tuples)
 
 
-def _predicate_refs_from_set_complement(uri: URIRef, uri_set: Set[URIRef]):
+def _predicate_refs_from_set_complement(
+        uri: URIRef,
+        uri_set: FrozenSet[URIRef]):
     return uri not in uri_set
 
 
 def _filter_refs_from_set_complement(
         tuples: Iterable[URIRef],
-        uri_set: Set[URIRef],
+        uri_set: FrozenSet[URIRef],
         ):
     return filter(
         lambda t: _predicate_refs_from_set_complement(t, uri_set),
         tuples)
 
 
-def _predicate_langs(lit: Literal, langs: Set[str]) -> bool:
+def _predicate_langs(lit: Literal, langs: FrozenSet[str]) -> bool:
     return lit.language in langs
 
 
 def _filter_by_langs(
         tuples: Iterable[Tuple[URIRef, Literal]],
-        langs: Set[str]
+        langs: FrozenSet[str]
         ) -> Iterable[Tuple[URIRef, Literal]]:
     return filter(lambda t: _predicate_langs(t[1], langs), tuples)
 
@@ -96,8 +99,8 @@ def _unwrap_labels(
 
 def retrieve_concept_labels(
         g: Graph,
-        allowed: Optional[Set[URIRef]] = set(),
-        langs: Set[str] = set()
+        allowed: Optional[FrozenSet[URIRef]] = frozenset(),
+        langs: FrozenSet[str] = frozenset()
         ) -> Iterable[Tuple[URIRef, str]]:
     """Extracts altLabels and prefLabels from a SKOS graph.
 

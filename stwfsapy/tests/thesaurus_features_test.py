@@ -22,6 +22,7 @@ from scipy.sparse import coo_matrix
 from sklearn.exceptions import NotFittedError
 import pytest
 
+
 def test_collect_po_from_tuples():
     tuples = [
         (tc.concept_ref_printed, tc.concept_ref_media),
