@@ -33,6 +33,7 @@ class ThesaurusFeatureTransformation(BaseEstimator, TransformerMixin):
         self.graph = graph
         self.concepts = concepts
         self.thesauri = thesauri
+        self.mapping_ = None
 
     def fit(self, X=None, y=None):
         """Creates the mapping from concepts

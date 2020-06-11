@@ -36,7 +36,7 @@ def test_collect_po_from_tuples():
     }
 
 
-def unfitted_raises():
+def test_unfitted_raises():
     feat = tf.ThesaurusFeatureTransformation(None, None, None)
     with pytest.raises(NotFittedError):
         feat.transform([])
