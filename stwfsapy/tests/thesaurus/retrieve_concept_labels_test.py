@@ -24,12 +24,18 @@ def patch_module(mocker):
     mocker.patch.object(
         thesaurus_module, "_filter_by_langs")
     mocker.patch.object(
-        thesaurus_module, "_filter_by_prefix")
-    mocker.patch.object(
-        thesaurus_module, "_filter_not_deprecated")
+        thesaurus_module, "filter_subject_tuples_from_set")
     mocker.patch.object(
         thesaurus_module, "_unwrap_labels")
     # return mocker
+
+
+@pytest.fixture
+def concept_set():
+    return {
+        c.concept_ref_printed,
+        c.concept_ref_media
+    }
 
 
 def test_no_language_option(label_graph, patch_module):
@@ -49,26 +55,26 @@ def test_language_option(label_graph, patch_module):
 
 def test_no_prefix_option(label_graph, patch_module):
     t.retrieve_concept_labels(label_graph)
-    t._filter_by_prefix.assert_not_called()
+    t.filter_subject_tuples_from_set.assert_not_called()
 
 
 def test_none_prefix_option(label_graph, patch_module):
-    t.retrieve_concept_labels(label_graph, concept_URI_prefix=None)
-    t._filter_by_prefix.assert_not_called()
+    t.retrieve_concept_labels(label_graph, allowed=None)
+    t.filter_subject_tuples_from_set.assert_not_called()
 
 
-def test_prefix_option(label_graph, patch_module):
+def test_prefix_option(label_graph, concept_set, patch_module):
     t.retrieve_concept_labels(
         label_graph,
-        concept_URI_prefix=c.test_URI_prefix
+        concept_set
     )
-    t._filter_by_prefix.assert_called()
+    t.filter_subject_tuples_from_set.assert_called()
 
 
-def test_integration(full_graph):
+def test_integration(typed_label_graph, concept_set):
     result = list(t.retrieve_concept_labels(
-        full_graph,
-        concept_URI_prefix=c.test_URI_prefix,
+        typed_label_graph,
+        allowed=concept_set,
         langs={"en"},
     ))
     assert (

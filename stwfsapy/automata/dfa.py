@@ -84,7 +84,7 @@ class Dfa:
                     stack.append((transition, position+1))
                 except KeyError:
                     pass
-                if not symbol.isalpha():
+                if not symbol.isalnum():
                     try:
                         stack.append(
                             (state.non_word_char_transition, position+1))

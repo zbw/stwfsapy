@@ -12,16 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from rdflib import graph
+from rdflib.namespace import SKOS
 
-import stwfsapy.thesaurus as t
-import stwfsapy.tests.thesaurus.common as c
+from stwfsapy import thesaurus as t
 
 
-def test_filters_out_thsys_(tuples_with_thsys):
-    thsys_tuple = (c.thsys_ref_print, c.thsys_prefLabel_print_en)
-    assert thsys_tuple in tuples_with_thsys
-    result = list(t._filter_by_prefix(tuples_with_thsys, c.test_URI_prefix))
-    assert thsys_tuple not in result
-    assert len(result) == len(tuples_with_thsys)-1
-    for tpl in result:
-        assert tpl in tuples_with_thsys
+def test_extract_broader(mocker):
+    g = graph.Graph()
+    spy = mocker.spy(g, "subject_objects")
+    t.extract_broader(g)
+    spy.assert_called_once_with(SKOS.broader)

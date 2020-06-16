@@ -13,55 +13,77 @@
 # limitations under the License.
 
 
-from typing import Tuple, Set, Iterator
+from typing import Tuple, FrozenSet, Iterable, Any, Optional
 from rdflib import Graph
 from rdflib.term import Literal, URIRef
-from rdflib.namespace import SKOS, OWL
+from rdflib.namespace import SKOS, OWL, RDF
 
 
-def extract_labels(g: Graph,) -> Iterator[Tuple[URIRef, Literal]]:
+def extract_labels(g: Graph) -> Iterable[Tuple[URIRef, Literal]]:
     """
     Extracts SKOS.prefLabels and SKOS.altLabels from a rdflib.Graph
     """
-    return g[:SKOS.prefLabel | SKOS.altLabel]
+    return g[: SKOS.prefLabel | SKOS.altLabel]
 
 
-def _predicate_not_deprecated(ref: URIRef, g: Graph):
-    return not g.value(ref, OWL.deprecated, default=False)
+def extract_by_type_uri(
+        g: Graph,
+        type_URI: URIRef,
+        remove: Optional[FrozenSet[URIRef]] = None) -> Iterable[URIRef]:
+    """Extract all elements of a specific type from a rdflib graph.
+    Allows to exclude the elements that are in a specified set."""
+    by_type = g[:RDF.type:type_URI]
+    if not remove:
+        return by_type
+    else:
+        return _filter_refs_from_set_complement(by_type, remove)
 
 
-def _filter_not_deprecated(
-        tuples: Iterator[Tuple[URIRef, Literal]],
-        g: Graph
-        ) -> Iterator[Tuple[URIRef, Literal]]:
-    return filter(lambda t: _predicate_not_deprecated(t[0], g), tuples)
+def extract_deprecated(g: Graph):
+    return g[:OWL.deprecated: Literal(True)]
 
 
-def _predicate_prefix(uri: URIRef, prefix: str) -> bool:
-    """Checks whether a string starts with the given prefix."""
-    return uri.toPython().startswith(prefix)
+def extract_broader(g: Graph) -> Iterable[Tuple[URIRef, URIRef]]:
+    return g[:SKOS.broader:]
 
 
-def _filter_by_prefix(
-        tuples: Iterator[Tuple[URIRef, str]],
-        prefix: str
-        ) -> Iterator[Tuple[URIRef, str]]:
-    """
-    Consumes an interator of (URI string, _) tuples.
-    Removes any items where the URI string
-    does not start with the given prefix.
-    """
-    return filter(lambda t: _predicate_prefix(t[0], prefix), tuples)
+def _predicate_uri_from_set(uri: URIRef, uri_set: FrozenSet[URIRef]):
+    return uri in uri_set
 
 
-def _predicate_langs(lit: Literal, langs: Set[str]) -> bool:
+def filter_subject_tuples_from_set(
+        tuples: Iterable[Tuple[URIRef, Any]],
+        uri_set: FrozenSet[URIRef]
+        ) -> Iterable[Tuple[URIRef, Any]]:
+    """Filters an iterable of tuples.
+    Keeps only tuples where the first element is
+    present in the provided set."""
+    return filter(lambda t: _predicate_uri_from_set(t[0], uri_set), tuples)
+
+
+def _predicate_refs_from_set_complement(
+        uri: URIRef,
+        uri_set: FrozenSet[URIRef]):
+    return uri not in uri_set
+
+
+def _filter_refs_from_set_complement(
+        tuples: Iterable[URIRef],
+        uri_set: FrozenSet[URIRef],
+        ):
+    return filter(
+        lambda t: _predicate_refs_from_set_complement(t, uri_set),
+        tuples)
+
+
+def _predicate_langs(lit: Literal, langs: FrozenSet[str]) -> bool:
     return lit.language in langs
 
 
 def _filter_by_langs(
-        tuples: Iterator[Tuple[URIRef, Literal]],
-        langs: Set[str]
-        ) -> Iterator[Tuple[URIRef, Literal]]:
+        tuples: Iterable[Tuple[URIRef, Literal]],
+        langs: FrozenSet[str]
+        ) -> Iterable[Tuple[URIRef, Literal]]:
     return filter(lambda t: _predicate_langs(t[1], langs), tuples)
 
 
@@ -70,25 +92,26 @@ def _unwrap_label(tuple: Tuple[URIRef, Literal]) -> Tuple[URIRef, str]:
 
 
 def _unwrap_labels(
-        tuples: Iterator[Tuple[URIRef, Literal]]
-        ) -> Iterator[Tuple[URIRef, str]]:
+        tuples: Iterable[Tuple[URIRef, Literal]]
+        ) -> Iterable[Tuple[URIRef, str]]:
     return map(_unwrap_label, tuples)
 
 
 def retrieve_concept_labels(
         g: Graph,
-        concept_URI_prefix: str = "",
-        langs: Set[str] = set()
-        ) -> Iterator[Tuple[URIRef, str]]:
+        allowed: Optional[FrozenSet[URIRef]] = frozenset(),
+        langs: FrozenSet[str] = frozenset()
+        ) -> Iterable[Tuple[URIRef, str]]:
     """Extracts altLabels and prefLabels from a SKOS graph.
 
     Only the labels that are in one of the specified language will be reported.
-    In addition the concept URIs are filtered by a prefix.
+    In addition the concept URIs can be limited by a set.
     Args:
         g: The SKOS graph whose labels are extracted.
 
-        concept_URI_prefix: Only concepts whose URI starts with this prefix
-            will appear in the output.
+        allowed: Only concepts present in the set are retained.
+            If None or the set is empty
+            all concepts will be present in the result.
 
 
         langs: Only retain labels that are in the given language.
@@ -107,12 +130,11 @@ def retrieve_concept_labels(
         filtered_by_language = _filter_by_langs(refs_with_labels, langs)
     else:
         filtered_by_language = refs_with_labels
-    if concept_URI_prefix is not None and len(concept_URI_prefix) > 0:
-        filtered_by_prefix = _filter_by_prefix(
+    if allowed:
+        filtered_by_set = filter_subject_tuples_from_set(
             filtered_by_language,
-            concept_URI_prefix)
+            allowed)
     else:
-        filtered_by_prefix = filtered_by_language
-    without_deprecated = _filter_not_deprecated(filtered_by_prefix, g)
-    unwrapped_labels = _unwrap_labels(without_deprecated)
+        filtered_by_set = filtered_by_language
+    unwrapped_labels = _unwrap_labels(filtered_by_set)
     return unwrapped_labels
