@@ -17,11 +17,13 @@ from typing import FrozenSet, List, Iterable, Container, Tuple, TypeVar
 import rdflib
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
 from sklearn.tree import DecisionTreeClassifier
 from scipy.sparse import csr_matrix
 from stwfsapy import thesaurus as t
 from stwfsapy.automata import nfa, construction, conversion
 from stwfsapy.thesaurus_features import ThesaurusFeatureTransformation
+from stwfsapy.text_features import mk_text_features
 
 
 T = TypeVar('T')
@@ -78,7 +80,9 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
         converter = conversion.NfaToDfaConverter(nfautomat)
         self.dfa_ = converter.start_conversion()
         self.pipeline_ = Pipeline([
-            ("Thesaurus Features", thesaurus_features),
+            ("Combined Features", ColumnTransformer([
+                ("Thesaurus Features", thesaurus_features, 0),
+                ("Text Features", mk_text_features(), 1)])),
             ("Classifier", DecisionTreeClassifier(
                 min_samples_leaf=25,
                 max_leaf_nodes=100))
@@ -190,7 +194,8 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             for text, truth_refs in zip(texts, truth_refss):
                 for match in self.dfa_.search(" {} ".format(text)):
                     concept = match[0]
-                    concepts.append(concept)
+                    text = match[1]
+                    concepts.append((concept, text))
                     ret_y.append(int(concept in truth_refs))
             return concepts, ret_y
         else:
@@ -199,6 +204,8 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
                 count = 0
                 for match in self.dfa_.search(" {} ".format(text)):
                     count += 1
-                    concepts.append(match[0])
+                    concept = match[0]
+                    text = match[1]
+                    concepts.append((concept, text))
                 doc_counts.append(count)
             return concepts, doc_counts

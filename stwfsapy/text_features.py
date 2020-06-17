@@ -56,6 +56,7 @@ class CountFeature(BaseEstimator, TransformerMixin):
 
     def fit(self, X, y=None):
         self.function_ = self.fun_from_type(self.ctype)
+        return self
 
     def transform(self, X):
         if not self.function_:
