@@ -141,7 +141,7 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
     def _create_sparse_matrix(
             self,
             values: Nl,
-            concepts: List[T],
+            tuples: List[Tuple[T, str]],
             doc_counts: List[int]
             ) -> csr_matrix:
         return csr_matrix(
@@ -156,9 +156,9 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
                         in range(doc_counts[doc_idx])
                         ],
                     [
-                        self.concept_map_.get(concept)
-                        for concept
-                        in concepts
+                        self.concept_map_.get(tpl[0])
+                        for tpl
+                        in tuples
                     ]
                 )),
             shape=(len(doc_counts), len(self.concept_map_))
@@ -167,14 +167,14 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
     @staticmethod
     def _collect_prediction_results(
             values: Nl,
-            concepts: List[T],
+            tuples: List[Tuple[T, str]],
             doc_counts: List[int]
             ) -> List[Tuple[List[T], Nl]]:
         ret = []
         start = 0
         for count in doc_counts:
             end = start+count
-            ret.append((concepts[start:end], values[start:end]))
+            ret.append(([t[0] for t in tuples[start:end]], values[start:end]))
             start = end
         return ret
 
