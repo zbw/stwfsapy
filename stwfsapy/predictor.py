@@ -182,7 +182,7 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             self,
             texts: Iterable[str],
             truth_refss: Iterable[Container] = None
-            ) -> Tuple[List[rdflib.term.URIRef], List[int]]:
+            ) -> Tuple[List[Tuple[rdflib.term.URIRef, str]], List[int]]:
         """Retrieves concepts by their labels from text.
         If ground truth values are present,
         it will also return a list of labels for scoring matches.
