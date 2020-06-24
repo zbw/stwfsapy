@@ -192,7 +192,7 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
         if truth_refss is not None:
             ret_y = []
             for text, truth_refs in zip(texts, truth_refss):
-                for match in self.dfa_.search(" {} ".format(text)):
+                for match in self.dfa_.search(text):
                     concept = match[0]
                     text = match[1]
                     concepts.append((concept, text))
@@ -202,7 +202,7 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             doc_counts: List[int] = []
             for text in texts:
                 count = 0
-                for match in self.dfa_.search(" {} ".format(text)):
+                for match in self.dfa_.search(text):
                     count += 1
                     concept = match[0]
                     text = match[1]

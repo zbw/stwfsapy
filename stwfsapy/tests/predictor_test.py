@@ -55,9 +55,9 @@ def patched_dfa(mocker):
     dfa = Dfa()
 
     def mock_search(text):
-        # subtract 2 for spaces in search
-        for i in range(len(text)-2):
+        for i in range(len(text)):
             yield (i*2+9, text)
+
     mocker.patch.object(dfa, "search", mock_search)
     return dfa
 
@@ -112,9 +112,9 @@ def test_match_and_extend_with_truth(patched_dfa):
         [[], [11, 14], [9]]
     )
     assert concepts == [
-        (9, " a "), (9, " bbb "),
-        (11, " bbb "), (13, " bbb "),
-        (9, " xx "), (11, " xx ")]
+        (9, "a"), (9, "bbb"),
+        (11, "bbb"), (13, "bbb"),
+        (9, "xx"), (11, "xx")]
     assert ys == [0, 0, 1, 0, 1, 0]
 
 
@@ -123,9 +123,9 @@ def test_match_and_extend_without_truth(patched_dfa):
     predictor.dfa_ = patched_dfa
     concepts, counts = predictor.match_and_extend(["a", "bbb", "xx"])
     assert concepts == [
-        (9, " a "), (9, " bbb "),
-        (11, " bbb "), (13, " bbb "),
-        (9, " xx "), (11, " xx ")]
+        (9, "a"), (9, "bbb"),
+        (11, "bbb"), (13, "bbb"),
+        (9, "xx"), (11, "xx")]
     assert counts == [1, 3, 2]
 
 
@@ -164,10 +164,10 @@ def test_init_and_fit(full_graph, mocker):
     predictor._fit_after_init(train_texts, y=train_labels)
     spy_fit.assert_called_once_with(
         [
-            (c.test_concept_ref_0_0, " concept-0_0 "),
-            (c.test_concept_ref_100_00, " has concept-100_00 in the middle "),
-            (c.test_concept_ref_10_0, " concept-10_0 and concept-01_00 "),
-            (c.test_concept_ref_01_00, " concept-10_0 and concept-01_00 "),
+            (c.test_concept_ref_0_0, "concept-0_0"),
+            (c.test_concept_ref_100_00, "concept-100_00"),
+            (c.test_concept_ref_10_0, "concept-10_0"),
+            (c.test_concept_ref_01_00, "concept-01_00"),
             ],
         [1, 0, 1, 1]
     )
