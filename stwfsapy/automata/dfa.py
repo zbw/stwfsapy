@@ -66,27 +66,47 @@ class Dfa:
 
     def search(self, text: str) -> Iterable[Tuple[Any, str, int, int]]:
         """ Process a string, yielding acceptances of all substrings."""
-        for start in range(len(text)):
+        # At construction time we add non word char transitions at
+        # the begining and end of a label. Therefore add them for search.
+        search_text = f'.{text}.'
+        last_end_position = 0
+        for start in range(len(search_text)):
+            if start < last_end_position:
+                continue
             stack = [(0, start)]
             while len(stack) > 0:
                 state_idx, position = stack.pop()
                 state = self.states[state_idx]
+                non_empty_accepts = False
                 for accept in state.accepts:
+                    last_end_position = position
                     # subtract one from position,
                     # as the match is without consuming the next symbol
-                    yield (accept, text, start, position-1)
+                    # subtract another one for the '.' introduced at the start
+                    original_end = position - 2
+                    yield (
+                        accept,
+                        text[start:original_end],
+                        start,
+                        original_end)
+                    non_empty_accepts = True
+                if non_empty_accepts:
+                    break
                 try:
-                    symbol = text[position]
+                    symbol = search_text[position]
                 except IndexError:
                     continue
-                try:
-                    transition = state.symbol_transitions[symbol]
-                    stack.append((transition, position+1))
-                except KeyError:
-                    pass
+                # First append non word_char.
+                # As stack is LIFO,
+                # explicit symbol transitions will be prefered.
                 if not symbol.isalnum():
                     try:
                         stack.append(
                             (state.non_word_char_transition, position+1))
                     except AttributeError:
                         pass
+                try:
+                    transition = state.symbol_transitions[symbol]
+                    stack.append((transition, position+1))
+                except KeyError:
+                    pass
