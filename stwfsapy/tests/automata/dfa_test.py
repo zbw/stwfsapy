@@ -76,7 +76,6 @@ def test_search(foo_graph):
     text = "fooo"
     res = list(foo_graph.search(text))
     assert len(res) == 1
-    print(res)
     assert res[0][0] == 'bar'
     assert res[0][1] == text
     assert res[0][2] == 0

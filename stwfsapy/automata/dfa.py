@@ -37,6 +37,22 @@ class State:
 
 
 class Dfa:
+    """Represents a deterministi finite automaton.
+    This class is not intended to be used directly.
+    Instead create a stwfsapy.automata.nfa.Nfa and convert it.
+    Example:
+        from stwfsapy.automata import nfa
+        from stwfsapy.automata import conversion
+
+        nfautomaton = nfa.Nfa()
+
+        # Construct automaton,
+        # e.g., using stwfsapy.automata.construction
+        # ...
+
+        nfa.remove_empty_transitions()
+
+        dfa = conversion.NfaToDfaConverter(nfautomaton).start_conversion()"""
 
     def __init__(self):
         self.states: List[State] = []
@@ -65,7 +81,10 @@ class Dfa:
         self.states[start_idx].set_non_word_char_transition(end_idx)
 
     def search(self, text: str) -> Iterable[Tuple[Any, str, int, int]]:
-        """ Process a string, yielding acceptances of all substrings."""
+        """ Process a string, yielding acceptances of all substrings.
+        The method assumes a DFA which has been constructed by the application
+        of stwfsapy.automata.construction.ConstructionState and
+        stwfsapy.automata.conversion.NfaToDfaConverter."""
         # At construction time we add non word char transitions at
         # the begining and end of a label. Therefore add them for search.
         search_text = f'.{text}.'
@@ -98,7 +117,7 @@ class Dfa:
                     continue
                 # First append non word_char.
                 # As stack is LIFO,
-                # explicit symbol transitions will be prefered.
+                # explicit symbol transitions will be preferred.
                 if not symbol.isalnum():
                     try:
                         stack.append(
