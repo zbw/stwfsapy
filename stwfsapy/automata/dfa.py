@@ -86,7 +86,7 @@ class Dfa:
         of stwfsapy.automata.construction.ConstructionState and
         stwfsapy.automata.conversion.NfaToDfaConverter."""
         # At construction time we add non word char transitions at
-        # the begining and end of a label. Therefore add them for search.
+        # the beginning and end of a label. Therefore add them for search.
         search_text = f'.{text}.'
         last_end_position = 0
         for start in range(len(search_text)):
