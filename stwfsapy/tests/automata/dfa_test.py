@@ -30,13 +30,15 @@ def two_state_graph():
 
 @pytest.fixture
 def foo_graph(two_state_graph):
-    two_state_graph.set_symbol_transition(0, 1, 'f')
+    two_state_graph.set_non_word_char_transition(0, 1)
     two_state_graph.add_state()
-    two_state_graph.set_symbol_transition(1, 2, 'o')
-    two_state_graph.set_symbol_transition(2, 2, 'o')
+    two_state_graph.set_symbol_transition(1, 2, 'f')
     two_state_graph.add_state()
-    two_state_graph.set_non_word_char_transition(2, 3)
-    two_state_graph.add_acceptances(3, ["bar"])
+    two_state_graph.set_symbol_transition(2, 3, 'o')
+    two_state_graph.set_symbol_transition(3, 3, 'o')
+    two_state_graph.add_state()
+    two_state_graph.set_non_word_char_transition(3, 4)
+    two_state_graph.add_acceptances(4, ["bar"])
     return two_state_graph
 
 
@@ -71,7 +73,7 @@ def test_set_non_word_char_transition(two_state_graph):
 
 
 def test_search(foo_graph):
-    text = "fooo "
+    text = "fooo"
     res = list(foo_graph.search(text))
     assert len(res) == 1
     assert res[0][0] == 'bar'
