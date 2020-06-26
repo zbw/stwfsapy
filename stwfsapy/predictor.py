@@ -24,6 +24,7 @@ from stwfsapy import thesaurus as t
 from stwfsapy.automata import nfa, construction, conversion
 from stwfsapy.thesaurus_features import ThesaurusFeatureTransformation
 from stwfsapy.text_features import mk_text_features
+from stwfsapy import case_handlers
 
 
 T = TypeVar('T')
@@ -38,15 +39,49 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             self,
             graph: rdflib.graph.Graph,
             concept_type_uri: rdflib.term.URIRef,
-            thesaurus_type_uri: rdflib.term.URIRef,
+            sub_thesaurus_type_uri: rdflib.term.URIRef,
             remove_deprecated: bool = True,
             langs: FrozenSet[str] = frozenset(),
+            handle_title_case: bool = True,
             ):
+        """Creates the predictor.
+        Args:
+            graph: The SKOS onthology used to extract the labels.
+            concept_type_uri
+                The uri of the concept type.
+                It is assumed that for every concept c,
+                there is a triple (c, RDF.type, concept_type_uri)
+                in the graph.
+            sub_thesaurus_type_uri: The uri of the concept type.
+                It is assumed that for every sub thesaurus t,
+                there is a triple (t, RDF.type, sub_thesaurus_type_uri)
+                in the graph.
+            remove_deprecated: When True will discard deprecated subjects.
+                Deprecation of a subject has to be indicated by
+                a triple (s, OWL.deprecated, Literal(True)) in the graph.
+            langs: For each language present in the set,
+                labels will be extracted from the graph.
+                An empy set or None will extract labels regardless of language.
+            handle_title_case: When True, will also match labels in title case.
+                I.e., in a text the first letter of every word can be upper
+                or lower case and will still be matched.
+                When False only the case of the first word's first letter
+                will be adapted.
+                Example:
+                    * Given a label "garbage can" and the
+                        title "Oscar Lives in a Garbage Can"
+                    * When handle_title_case == True
+                        the label will match the text.
+                    * When handle_title_case == False
+                        the label will not match the text.
+                        It would however still match
+                        "Garbage can is home to grouchy neighbor."."""
         self.graph = graph
         self.concept_type_uri = concept_type_uri
-        self.thesaurus_type_uri = thesaurus_type_uri
+        self.sub_thesaurus_type_uri = sub_thesaurus_type_uri
         self.remove_deprecated = remove_deprecated
         self.langs = langs
+        self.handle_title_case = handle_title_case
 
     def _init(self):
         all_deprecated = set(t.extract_deprecated(self.graph))
@@ -56,7 +91,7 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             remove=all_deprecated))
         thesauri = set(t.extract_by_type_uri(
             self.graph,
-            self.thesaurus_type_uri,
+            self.sub_thesaurus_type_uri,
             remove=all_deprecated
         ))
         self.concept_map_ = dict(zip(concepts, range(len(concepts))))
@@ -70,10 +105,14 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             allowed=concepts,
             langs=self.langs)
         nfautomat = nfa.Nfa()
+        if self.handle_title_case:
+            case_handler = case_handlers.title_case_handler
+        else:
+            case_handler = case_handlers.sentence_case_handler
         for concept, label in labels:
             construction.ConstructionState(
                 nfautomat,
-                label,
+                case_handler(label),
                 concept
             ).construct()
         nfautomat.remove_empty_transitions()
