@@ -21,6 +21,11 @@ from scipy.sparse import csr_matrix
 import numpy as np
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.compose import ColumnTransformer
+from stwfsapy import case_handlers as handlers
+from unittest.mock import call
+from rdflib import Graph
+from rdflib.namespace import SKOS
+from rdflib.term import Literal
 
 _doc_counts = [2, 4, 3]
 _concepts = list(range(9, 18))
@@ -72,6 +77,16 @@ def mocked_predictor(mocker):
     predictor.pipeline_.predict_proba = mocker.Mock(return_value=_predictions)
     predictor.pipeline_.predict = mocker.Mock(return_value=_classifications)
     return predictor
+
+
+@pytest.fixture
+def case_graph():
+    g = Graph()
+    g.add((
+        c.test_concept_ref_0_0,
+        SKOS.prefLabel,
+        Literal("Three word label")))
+    return g
 
 
 def test_result_collection():
@@ -135,8 +150,12 @@ def test_init_and_fit(full_graph, mocker):
         c.test_type_concept,
         c.test_type_thesaurus)
     spy_deprecated = mocker.spy(t, "extract_deprecated")
+    spy_case = mocker.spy(handlers, 'title_case_handler')
     predictor._init()
     spy_deprecated.assert_called_once_with(full_graph)
+    assert len(spy_case.mock_calls) == len(c.test_labels)
+    for _, label in c.test_labels:
+        assert call(label.toPython()) in spy_case.mock_calls
     assert isinstance(
         predictor.pipeline_.named_steps['Classifier'],
         DecisionTreeClassifier)
@@ -151,7 +170,7 @@ def test_init_and_fit(full_graph, mocker):
         "concept-0_0",
         "nothing",
         "concept",
-        "has concept-100_00 in the middle",
+        "has Concept-100_00 in the middle",
         "concept-10_0 and concept-01_00",
         ]
     train_labels = [
@@ -165,7 +184,7 @@ def test_init_and_fit(full_graph, mocker):
     spy_fit.assert_called_once_with(
         [
             (c.test_concept_ref_0_0, "concept-0_0"),
-            (c.test_concept_ref_100_00, "concept-100_00"),
+            (c.test_concept_ref_100_00, "Concept-100_00"),
             (c.test_concept_ref_10_0, "concept-10_0"),
             (c.test_concept_ref_01_00, "concept-01_00"),
             ],
@@ -223,3 +242,25 @@ def test_fit(mocker):
     predictor.fit(X, y)
     predictor._init.assert_called_once()
     predictor._fit_after_init.assert_called_once_with(X, y=y)
+
+
+def test_set_sentence_case(case_graph, mocker):
+    predictor = p.StwfsapyPredictor(
+        case_graph,
+        c.test_type_concept,
+        c.test_type_thesaurus,
+        handle_title_case=False)
+    predictor._init()
+    assert 1 == len(list(predictor.dfa_.search("three word label")))
+    assert 0 == len(list(predictor.dfa_.search("Three Word label")))
+
+
+def test_set_title_case(case_graph, mocker):
+    predictor = p.StwfsapyPredictor(
+        case_graph,
+        c.test_type_concept,
+        c.test_type_thesaurus,
+        handle_title_case=True)
+    predictor._init()
+    assert 1 == len(list(predictor.dfa_.search("three word label")))
+    assert 1 == len(list(predictor.dfa_.search("Three Word label")))
