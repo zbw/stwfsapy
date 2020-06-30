@@ -37,7 +37,7 @@ class State:
 
 
 class Dfa:
-    """Represents a deterministi finite automaton.
+    """Represents a deterministic finite automaton.
     This class is not intended to be used directly.
     Instead create a stwfsapy.automata.nfa.Nfa and convert it.
     Example:
