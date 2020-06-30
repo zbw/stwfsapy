@@ -25,6 +25,7 @@ from stwfsapy.automata import nfa, construction, conversion
 from stwfsapy.thesaurus_features import ThesaurusFeatureTransformation
 from stwfsapy.text_features import mk_text_features
 from stwfsapy import case_handlers
+from stwfsapy import expansion
 
 
 T = TypeVar('T')
@@ -43,6 +44,11 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             remove_deprecated: bool = True,
             langs: FrozenSet[str] = frozenset(),
             handle_title_case: bool = True,
+            extract_upper_case_from_braces: bool = True,
+            extract_any_case_from_braces: bool = False,
+            expand_ampersand_with_spaces: bool = True,
+            expand_abbreviation_with_punctuation: bool = True,
+            simple_english_plural_rules: bool = False,
             ):
         """Creates the predictor.
         Args:
@@ -82,6 +88,12 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
         self.remove_deprecated = remove_deprecated
         self.langs = langs
         self.handle_title_case = handle_title_case
+        self.extract_upper_case_from_braces = extract_upper_case_from_braces
+        self.extract_any_case_from_braces = extract_any_case_from_braces
+        self.expand_ampersand_with_spaces = expand_ampersand_with_spaces
+        self.expand_abbreviation_with_punctuation = \
+            expand_abbreviation_with_punctuation
+        self.simple_english_plural_rules = simple_english_plural_rules
 
     def _init(self):
         all_deprecated = set(t.extract_deprecated(self.graph))
@@ -109,10 +121,21 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             case_handler = case_handlers.title_case_handler
         else:
             case_handler = case_handlers.sentence_case_handler
+        expansion_funs = expansion.collect_expansion_functions(
+            extract_upper_case_from_braces=self.extract_upper_case_from_braces,
+            extract_any_case_from_braces=self.extract_any_case_from_braces,
+            expand_ampersand_with_spaces=self.expand_ampersand_with_spaces,
+            expand_abbreviation_with_punctuation=(
+                self.expand_abbreviation_with_punctuation),
+            simple_english_plural_rules=self.simple_english_plural_rules
+        )
         for concept, label in labels:
+            expanded = label
+            for f in expansion_funs:
+                expanded = f(expanded)
             construction.ConstructionState(
                 nfautomat,
-                case_handler(label),
+                case_handler(expanded),
                 concept
             ).construct()
         nfautomat.remove_empty_transitions()
