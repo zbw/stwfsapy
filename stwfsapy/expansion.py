@@ -56,11 +56,21 @@ def _expand_abbreviation_with_punctuation_fun(label: str) -> str:
     return label
 
 
+def _simple_english_plural_fun(label: str):
+    last = label[-1]
+    if last == 'y':
+        return label[:-1]+'(y|ies)'
+    if last.isalpha() and not (last == 's' or last == 'S'):
+        return label + 's?'
+    return label
+
+
 def collect_expansion_functions(
         extract_upper_case_from_braces: bool = True,
         extract_any_case_from_braces: bool = False,
         expand_ampersand_with_spaces: bool = True,
-        expand_abbreviation_with_punctuation: bool = True
+        expand_abbreviation_with_punctuation: bool = True,
+        simple_english_plural_rules: bool = False,
         ) -> List[Callable[[str], str]]:
     options = (
         (
@@ -79,6 +89,10 @@ def collect_expansion_functions(
         (
             expand_abbreviation_with_punctuation,
             _expand_abbreviation_with_punctuation_fun
+        ),
+        (
+            simple_english_plural_rules,
+            _simple_english_plural_fun
         )
     )
     return [fun for flag, fun in options if flag]

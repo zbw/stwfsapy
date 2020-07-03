@@ -264,3 +264,27 @@ def test_set_title_case(case_graph, mocker):
     predictor._init()
     assert 1 == len(list(predictor.dfa_.search("three word label")))
     assert 1 == len(list(predictor.dfa_.search("Three Word label")))
+
+
+def test_expansion(full_graph, mocker):
+    stub = mocker.stub(name='expansion_stub')
+
+    def mock_expander(**kwargs):
+        return [stub]
+
+    mocker.patch(
+        'stwfsapy.expansion.collect_expansion_functions',
+        mock_expander)
+    predictor = p.StwfsapyPredictor(
+        full_graph,
+        c.test_type_concept,
+        c.test_type_thesaurus,
+        extract_upper_case_from_braces=False,
+        extract_any_case_from_braces=True,
+        expand_ampersand_with_spaces=False,
+        expand_abbreviation_with_punctuation=False,
+        simple_english_plural_rules=True)
+    predictor._init()
+    for _, label in c.test_labels:
+        label_text = label.toPython()
+        assert call(label_text) in stub.mock_calls
