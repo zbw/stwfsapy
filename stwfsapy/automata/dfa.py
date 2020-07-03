@@ -13,17 +13,26 @@
 # limitations under the License.
 
 
-from typing import List, Dict, Iterable, Tuple, Any
+from typing import List, Dict, Iterable, Tuple, Any, Callable, Optional
+
+_KEY_STATE_SYMBOL_TRANSITIONS = 'symbol_transitions'
+_KEY_STATE_NON_WORD_CHAR_TRANSITION = 'non_word_char_transitions'
+_KEY_STATE_ACCEPTS = 'accepts'
+_KEY_DFA_STATES = 'states'
 
 
 class State:
 
-    def __init__(self):
-        self.symbol_transitions: Dict[str, int] = dict()
+    def __init__(
+            self,
+            symbol_transitions=None,
+            non_word_char_transition=None,
+            accepts=None):
+        self.symbol_transitions: Dict[str, int] = symbol_transitions or dict()
         """Transitions consuming a symbol."""
-        self.non_word_char_transition: int
+        self.non_word_char_transition: Optional[int] = non_word_char_transition
         """Transition consuming a non word character symbol."""
-        self.accepts: List[Any] = []
+        self.accepts: List[Any] = accepts or []
         """What is accepted by this state."""
 
     def set_symbol_transition(self, symbol: str, idx: int):
@@ -34,6 +43,36 @@ class State:
 
     def add_acceptances(self, accepts: Iterable):
         self.accepts.extend(accepts)
+
+    def to_dict(
+            self,
+            acceptance_handler: Callable) -> Dict[str, Any]:
+        return {
+            _KEY_STATE_SYMBOL_TRANSITIONS: self.symbol_transitions,
+            _KEY_STATE_NON_WORD_CHAR_TRANSITION: self.non_word_char_transition,
+            _KEY_STATE_ACCEPTS: [acceptance_handler(a) for a in self.accepts],
+        }
+
+    def __eq__(self, other):
+        return isinstance(other, State) and self.accepts == other.accepts and(
+            self.symbol_transitions == other.symbol_transitions) and(
+                self.non_word_char_transition == other.non_word_char_transition
+            )
+
+    @staticmethod
+    def from_dict(
+            conf: Dict[str, Any],
+            acceptance_handler: Callable):
+        return State(
+            symbol_transitions=conf[_KEY_STATE_SYMBOL_TRANSITIONS],
+            non_word_char_transition=conf.get(
+                _KEY_STATE_NON_WORD_CHAR_TRANSITION),
+            accepts=[
+                acceptance_handler(accept)
+                for accept
+                in conf[_KEY_STATE_ACCEPTS]
+            ]
+        )
 
 
 class Dfa:
@@ -54,8 +93,8 @@ class Dfa:
 
         dfa = conversion.NfaToDfaConverter(nfautomaton).start_conversion()"""
 
-    def __init__(self):
-        self.states: List[State] = []
+    def __init__(self, states=None):
+        self.states: List[State] = states or []
         """All the states of this Automaton."""
 
     def add_state(self) -> int:
@@ -118,14 +157,35 @@ class Dfa:
                 # First append non word_char.
                 # As stack is LIFO,
                 # explicit symbol transitions will be preferred.
-                if not symbol.isalnum():
-                    try:
-                        stack.append(
-                            (state.non_word_char_transition, position+1))
-                    except AttributeError:
-                        pass
+                if not symbol.isalnum() and state.non_word_char_transition:
+                    stack.append(
+                        (state.non_word_char_transition, position+1))
                 try:
                     transition = state.symbol_transitions[symbol]
                     stack.append((transition, position+1))
                 except KeyError:
                     pass
+
+    def to_dict(
+            self,
+            acceptance_handler: Callable) -> Dict[str, Any]:
+        return {
+            _KEY_STATE_ACCEPTS: [
+                state.to_dict(acceptance_handler)
+                for state
+                in self.states
+            ]
+        }
+
+    @staticmethod
+    def from_dict(
+            conf: Dict[str, Any],
+            acceptance_handler: Callable):
+        return Dfa([
+            State.from_dict(state_conf, acceptance_handler)
+            for state_conf
+            in conf[_KEY_STATE_ACCEPTS]
+        ])
+
+    def __eq__(self, other):
+        return isinstance(other, Dfa) and self.states == other.states

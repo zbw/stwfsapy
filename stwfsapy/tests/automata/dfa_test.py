@@ -80,3 +80,8 @@ def test_search(foo_graph):
     assert res[0][1] == text
     assert res[0][2] == 0
     assert res[0][3] == 4
+
+
+def test_serialization_inversion(foo_graph):
+    assert foo_graph == dfa.Dfa.from_dict(
+        foo_graph.to_dict(lambda x: x), lambda x: x)
