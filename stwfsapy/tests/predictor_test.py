@@ -39,6 +39,20 @@ _collection_result = [
     ([11, 12, 13, 14], [0.4, 0.5, 0.6, 0.7]),
     ([15, 16, 17], [0.8, 0.9, 1.0])
 ]
+train_texts = [
+    "concept-0_0",
+    "nothing",
+    "concept",
+    "has Concept-100_00 in the middle",
+    "concept-10_0 and concept-01_00",
+    ]
+train_labels = [
+    [c.test_concept_ref_0_0],
+    [c.test_concept_ref_01_0],
+    [],
+    [c.test_concept_ref_01_00],
+    [c.test_concept_ref_10_0, c.test_concept_ref_01_00],
+    ]
 
 
 def make_test_result_matrix(values):
@@ -166,20 +180,6 @@ def test_init_and_fit(full_graph, mocker):
     assert combined.transformers[0][0] == 'Thesaurus Features'
     assert combined.transformers[1][0] == 'Text Features'
     spy_fit = mocker.spy(predictor.pipeline_, "fit")
-    train_texts = [
-        "concept-0_0",
-        "nothing",
-        "concept",
-        "has Concept-100_00 in the middle",
-        "concept-10_0 and concept-01_00",
-        ]
-    train_labels = [
-        [c.test_concept_ref_0_0],
-        [c.test_concept_ref_01_0],
-        [],
-        [c.test_concept_ref_01_00],
-        [c.test_concept_ref_10_0, c.test_concept_ref_01_00],
-        ]
     predictor._fit_after_init(train_texts, y=train_labels)
     spy_fit.assert_called_once_with(
         [
@@ -288,3 +288,40 @@ def test_expansion(full_graph, mocker):
     for _, label in c.test_labels:
         label_text = label.toPython()
         assert call(label_text) in stub.mock_calls
+
+
+def test_uriref_str_inversion():
+    ref = c.test_type_concept
+    assert ref == p._load_uri_ref(p._store_uri_ref(ref))
+
+
+def test_serialization_inversion(tmpdir, full_graph):
+    predictor = p.StwfsapyPredictor(
+        full_graph,
+        c.test_type_concept,
+        c.test_type_thesaurus
+    )
+    predictor.fit(train_texts, train_labels)
+    pth = tmpdir.mkdir("tmp").join("model.zip")
+    predictor.store(pth.strpath)
+    loaded = p.StwfsapyPredictor.load(pth.strpath)
+    assert loaded.extract_any_case_from_braces == (
+        predictor.extract_any_case_from_braces)
+    assert loaded.extract_upper_case_from_braces == (
+        predictor.extract_upper_case_from_braces)
+    assert loaded.expand_ampersand_with_spaces == (
+        predictor.expand_ampersand_with_spaces)
+    assert loaded.expand_abbreviation_with_punctuation == (
+        predictor.expand_abbreviation_with_punctuation)
+    assert loaded.simple_english_plural_rules == (
+        predictor.simple_english_plural_rules)
+    assert loaded.concept_type_uri == predictor.concept_type_uri
+    assert loaded.sub_thesaurus_type_uri == predictor.sub_thesaurus_type_uri
+    assert loaded.concept_map_ == predictor.concept_map_
+    assert loaded.dfa_ == predictor.dfa_
+    assert len(loaded.graph) == len(predictor.graph)
+    assert loaded.concept_map_ == predictor.concept_map_
+    assert loaded.dfa_ == predictor.dfa_
+    assert len(loaded.graph) == len(predictor.graph)
+    for triple in loaded.graph:
+        assert triple in predictor.graph

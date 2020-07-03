@@ -14,18 +14,22 @@
 
 
 from typing import FrozenSet, List, Iterable, Container, Tuple, TypeVar
-import rdflib
+from rdflib.term import URIRef
+from rdflib import Graph
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.tree import DecisionTreeClassifier
 from scipy.sparse import csr_matrix
 from stwfsapy import thesaurus as t
-from stwfsapy.automata import nfa, construction, conversion
+from stwfsapy.automata import nfa, construction, conversion, dfa
 from stwfsapy.thesaurus_features import ThesaurusFeatureTransformation
 from stwfsapy.text_features import mk_text_features
 from stwfsapy import case_handlers
 from stwfsapy import expansion
+import pickle as pkl
+from json import dumps, loads
+from zipfile import ZipFile
 
 
 T = TypeVar('T')
@@ -33,14 +37,35 @@ N = TypeVar('N', int, float)
 Nl = TypeVar('Nl', List[int], List[float])
 
 
+_KEY_DFA = 'dfa'
+_KEY_PIPELINE = 'pipeline'
+_KEY_CONCEPT_MAP = 'concept_map'
+_KEY_GRAPH_ITEMS = 'graph_items'
+_KEY_CONCEPT_TYPE_URI = 'concept_type_uri'
+_KEY_THESAURUS_TYPE_URI = 'thesaurus_type_uri'
+_KEY_REMOVE_DEPRECATED = 'remove_deprecated'
+_KEY_LANGS = 'langs'
+_KEY_HANDLE_TITLE_CASE = 'handle_title_case'
+_KEY_EXTRACT_UPPER_CASE_FROM_BRACES = 'extract_upper_case_from_braces'
+_KEY_EXTRACT_ANY_CASE_FROM_BRACES = 'extract_any_key_from_braces'
+_KEY_EXPAND_AMPERSAND_WITH_SPACES = 'expand_ampersand_with_spaces'
+_KEY_EXPAND_ABBREVIATION_WITH_PUNCTUATION = (
+    'expand_abbreviation_with_punctuation')
+_KEY_SIMPLE_ENGLISH_PLURAL_RULES = 'simple_english_plural_rules'
+
+_NAME_GRAPH_FILE = 'graph.rdf'
+_NAME_PIPELINE_FILE = 'pipeline.pkl'
+_NAME_PREDICTOR_FILE = 'predictor.json'
+
+
 class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
     """Finds labels of thesaurus concepts in texts
     and assigns them a score."""
     def __init__(
             self,
-            graph: rdflib.graph.Graph,
-            concept_type_uri: rdflib.term.URIRef,
-            sub_thesaurus_type_uri: rdflib.term.URIRef,
+            graph: Graph,
+            concept_type_uri: URIRef,
+            sub_thesaurus_type_uri: URIRef,
             remove_deprecated: bool = True,
             langs: FrozenSet[str] = frozenset(),
             handle_title_case: bool = True,
@@ -171,7 +196,7 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
     def suggest_proba(
             self,
             texts
-            ) -> List[List[Tuple[rdflib.term.URIRef, float]]]:
+            ) -> List[List[Tuple[URIRef, float]]]:
         """For a given list of texts,
         this method returns the matched concepts and their scores."""
         match_X, doc_counts = self.match_and_extend(texts)
@@ -244,7 +269,7 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             self,
             texts: Iterable[str],
             truth_refss: Iterable[Container] = None
-            ) -> Tuple[List[Tuple[rdflib.term.URIRef, str]], List[int]]:
+            ) -> Tuple[List[Tuple[URIRef, str]], List[int]]:
         """Retrieves concepts by their labels from text.
         If ground truth values are present,
         it will also return a list of labels for scoring matches.
@@ -271,3 +296,89 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
                     concepts.append((concept, text))
                 doc_counts.append(count)
             return concepts, doc_counts
+
+    def store(self, path):
+        with ZipFile(path, 'w') as zfile:
+            with zfile.open(_NAME_PREDICTOR_FILE, 'w') as fp:
+                fp.write(
+                    dumps({
+                        _KEY_DFA: self.dfa_.to_dict(_store_uri_ref),
+                        _KEY_CONCEPT_MAP: {
+                            _store_uri_ref(k): v
+                            for k, v
+                            in self.concept_map_.items()
+                        },
+                        _KEY_CONCEPT_TYPE_URI: _store_uri_ref(
+                            self.concept_type_uri),
+                        _KEY_THESAURUS_TYPE_URI: _store_uri_ref(
+                            self.sub_thesaurus_type_uri),
+                        _KEY_REMOVE_DEPRECATED: self.remove_deprecated,
+                        _KEY_LANGS: list(self.langs),
+                        _KEY_HANDLE_TITLE_CASE: self.handle_title_case,
+                        _KEY_EXTRACT_UPPER_CASE_FROM_BRACES: (
+                            self.extract_upper_case_from_braces),
+                        _KEY_EXTRACT_ANY_CASE_FROM_BRACES: (
+                            self.extract_any_case_from_braces),
+                        _KEY_EXPAND_AMPERSAND_WITH_SPACES: (
+                            self.expand_ampersand_with_spaces),
+                        _KEY_EXPAND_ABBREVIATION_WITH_PUNCTUATION: (
+                            self.expand_abbreviation_with_punctuation),
+                        _KEY_SIMPLE_ENGLISH_PLURAL_RULES: (
+                            self.simple_english_plural_rules),
+                        },
+                        ensure_ascii=False
+                    ).encode('utf-8')
+                )
+            with zfile.open(_NAME_PIPELINE_FILE, 'w') as fp:
+                # No good way to serialize sk-learn classifier,
+                # apart from insecure pickling
+                pkl.dump(self.pipeline_, fp)
+            with zfile.open(_NAME_GRAPH_FILE, 'w') as fp:
+                fp.write(self.graph.serialize(encoding='utf-8'))
+
+    @staticmethod
+    def load(path):
+        with ZipFile(path, 'r') as zfile:
+            with zfile.open(_NAME_PREDICTOR_FILE, 'r') as fp:
+                conf = loads(fp.read().decode('utf-8'))
+            with zfile.open(_NAME_GRAPH_FILE, 'r') as fp:
+                graph = Graph()
+                graph.parse(data=fp.read().decode('utf-8'))
+            with zfile.open(_NAME_PIPELINE_FILE, 'r') as fp:
+                pipeline = pkl.load(fp)
+        pred = StwfsapyPredictor(
+            graph=graph,
+            concept_type_uri=_load_uri_ref(
+                conf[_KEY_CONCEPT_TYPE_URI]),
+            sub_thesaurus_type_uri=_load_uri_ref(
+                conf[_KEY_THESAURUS_TYPE_URI]),
+            remove_deprecated=conf[_KEY_REMOVE_DEPRECATED],
+            langs=frozenset(conf[_KEY_LANGS]),
+            handle_title_case=conf[_KEY_HANDLE_TITLE_CASE],
+            extract_upper_case_from_braces=conf[
+                _KEY_EXTRACT_UPPER_CASE_FROM_BRACES],
+            extract_any_case_from_braces=conf[
+                _KEY_EXTRACT_ANY_CASE_FROM_BRACES],
+            expand_ampersand_with_spaces=conf[
+                _KEY_EXPAND_AMPERSAND_WITH_SPACES],
+            expand_abbreviation_with_punctuation=conf[
+                _KEY_EXPAND_ABBREVIATION_WITH_PUNCTUATION],
+            simple_english_plural_rules=conf[
+                _KEY_SIMPLE_ENGLISH_PLURAL_RULES]
+        )
+        pred.dfa_ = dfa.Dfa.from_dict(conf[_KEY_DFA], _load_uri_ref)
+        pred.pipeline_ = pipeline
+        pred.concept_map_ = {
+            _load_uri_ref(k): v
+            for k, v
+            in conf[_KEY_CONCEPT_MAP].items()
+        }
+        return pred
+
+
+def _store_uri_ref(ref: URIRef) -> str:
+    return ref.toPython()
+
+
+def _load_uri_ref(uri: str) -> URIRef:
+    return URIRef(uri)
