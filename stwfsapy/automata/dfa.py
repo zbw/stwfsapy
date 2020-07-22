@@ -54,8 +54,8 @@ class State:
         }
 
     def __eq__(self, other):
-        return isinstance(other, State) and self.accepts == other.accepts and(
-            self.symbol_transitions == other.symbol_transitions) and(
+        return isinstance(other, State) and self.accepts == other.accepts and (
+            self.symbol_transitions == other.symbol_transitions) and (
                 self.non_word_char_transition == other.non_word_char_transition
             )
 
@@ -170,7 +170,7 @@ class Dfa:
             self,
             acceptance_handler: Callable) -> Dict[str, Any]:
         return {
-            _KEY_STATE_ACCEPTS: [
+            _KEY_DFA_STATES: [
                 state.to_dict(acceptance_handler)
                 for state
                 in self.states
@@ -184,7 +184,7 @@ class Dfa:
         return Dfa([
             State.from_dict(state_conf, acceptance_handler)
             for state_conf
-            in conf[_KEY_STATE_ACCEPTS]
+            in conf[_KEY_DFA_STATES]
         ])
 
     def __eq__(self, other):
