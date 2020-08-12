@@ -65,12 +65,12 @@ def test_fit(full_graph):
         assert x.shape[1] == 6
     # Can not test positions because retrieval from graph is not deterministic.
     # Therefore, test non zero entries only.
-    assert mapping[c.test_concept_ref_0_0].getnnz() == 1
-    assert mapping[c.test_concept_ref_01_0].getnnz() == 2
-    assert mapping[c.test_concept_ref_01_00].getnnz() == 2
-    assert mapping[c.test_concept_ref_10_0].getnnz() == 2
-    assert mapping[c.test_concept_ref_10_1].getnnz() == 2
-    assert mapping[c.test_concept_ref_100_0].getnnz() == 3
-    assert mapping[c.test_concept_ref_100_00].getnnz() == 3
-    assert mapping[c.test_concept_ref_100_01].getnnz() == 3
-    assert mapping[c.test_concept_ref_100_02].getnnz() == 3
+    assert mapping[c.test_concept_uri_0_0].getnnz() == 1
+    assert mapping[c.test_concept_uri_01_0].getnnz() == 2
+    assert mapping[c.test_concept_uri_01_00].getnnz() == 2
+    assert mapping[c.test_concept_uri_10_0].getnnz() == 2
+    assert mapping[c.test_concept_uri_10_1].getnnz() == 2
+    assert mapping[c.test_concept_uri_100_0].getnnz() == 3
+    assert mapping[c.test_concept_uri_100_00].getnnz() == 3
+    assert mapping[c.test_concept_uri_100_01].getnnz() == 3
+    assert mapping[c.test_concept_uri_100_02].getnnz() == 3

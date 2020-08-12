@@ -35,7 +35,7 @@ class ThesaurusFeatureTransformation(BaseEstimator, TransformerMixin):
         self.thesauri = thesauri
         self.mapping_ = None
 
-    def fit(self, X=None, y=None):
+    def fit(self, X=None, y=None, **kwargs):
         """Creates the mapping from concepts
         to the thesauri that are broader than the concept."""
         broaders = list(t.extract_broader(self.graph))
@@ -60,7 +60,7 @@ class ThesaurusFeatureTransformation(BaseEstimator, TransformerMixin):
             for concept, broaders in concept_po.items()
         }
         self.mapping_ = {
-            concept: csr_matrix(
+            str(concept): csr_matrix(
                 (
                     [1 for _ in thesaurii],
                     (
