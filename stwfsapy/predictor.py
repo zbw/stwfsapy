@@ -13,7 +13,7 @@
 # limitations under the License.
 
 
-from typing import FrozenSet, List, Iterable, Container, Tuple, TypeVar
+from typing import FrozenSet, List, Iterable, Container, Tuple, TypeVar, Union
 from rdflib.term import URIRef
 from rdflib import Graph
 from sklearn.base import BaseEstimator, ClassifierMixin
@@ -64,8 +64,8 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
     def __init__(
             self,
             graph: Graph,
-            concept_type_uri: URIRef,
-            sub_thesaurus_type_uri: URIRef,
+            concept_type_uri: Union[str, URIRef],
+            sub_thesaurus_type_uri: Union[str, URIRef],
             remove_deprecated: bool = True,
             langs: FrozenSet[str] = frozenset(),
             handle_title_case: bool = True,
@@ -108,7 +108,11 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
                         It would however still match
                         "Garbage can is home to grouchy neighbor."."""
         self.graph = graph
+        if isinstance(concept_type_uri, str):
+            concept_type_uri = URIRef(concept_type_uri)
         self.concept_type_uri = concept_type_uri
+        if isinstance(sub_thesaurus_type_uri, str):
+            sub_thesaurus_type_uri = URIRef(sub_thesaurus_type_uri)
         self.sub_thesaurus_type_uri = sub_thesaurus_type_uri
         self.remove_deprecated = remove_deprecated
         self.langs = langs
@@ -131,7 +135,7 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             self.sub_thesaurus_type_uri,
             remove=all_deprecated
         ))
-        self.concept_map_ = dict(zip(concepts, range(len(concepts))))
+        self.concept_map_ = dict(zip(map(str, concepts), range(len(concepts))))
         thesaurus_features = ThesaurusFeatureTransformation(
             self.graph,
             concepts,
@@ -161,7 +165,7 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             construction.ConstructionState(
                 nfautomat,
                 case_handler(expanded),
-                concept
+                str(concept)
             ).construct()
         nfautomat.remove_empty_transitions()
         converter = conversion.NfaToDfaConverter(nfautomat)
@@ -175,7 +179,7 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
                 max_leaf_nodes=100))
         ])
 
-    def fit(self, X, y=None):
+    def fit(self, X, y=None, **kwargs):
         self._init()
         return self._fit_after_init(X, y=y)
 
@@ -196,7 +200,7 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
     def suggest_proba(
             self,
             texts
-            ) -> List[List[Tuple[URIRef, float]]]:
+            ) -> List[List[Tuple[str, float]]]:
         """For a given list of texts,
         this method returns the matched concepts and their scores."""
         match_X, doc_counts = self.match_and_extend(texts)
@@ -269,7 +273,7 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             self,
             texts: Iterable[str],
             truth_refss: Iterable[Container] = None
-            ) -> Tuple[List[Tuple[URIRef, str]], List[int]]:
+            ) -> Tuple[List[Tuple[str, str]], List[int]]:
         """Retrieves concepts by their labels from text.
         If ground truth values are present,
         it will also return a list of labels for scoring matches.
@@ -278,7 +282,7 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
         concepts = []
         if truth_refss is not None:
             ret_y = []
-            for text, truth_refs in zip(texts, truth_refss):
+            for text, truth_refs in zip(texts, map(str, truth_refss)):
                 for match in self.dfa_.search(text):
                     concept = match[0]
                     text = match[1]
@@ -302,12 +306,8 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             with zfile.open(_NAME_PREDICTOR_FILE, 'w') as fp:
                 fp.write(
                     dumps({
-                        _KEY_DFA: self.dfa_.to_dict(_store_uri_ref),
-                        _KEY_CONCEPT_MAP: {
-                            _store_uri_ref(k): v
-                            for k, v
-                            in self.concept_map_.items()
-                        },
+                        _KEY_DFA: self.dfa_.to_dict(str),
+                        _KEY_CONCEPT_MAP: self.concept_map_,
                         _KEY_CONCEPT_TYPE_URI: _store_uri_ref(
                             self.concept_type_uri),
                         _KEY_THESAURUS_TYPE_URI: _store_uri_ref(
@@ -366,13 +366,9 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             simple_english_plural_rules=conf[
                 _KEY_SIMPLE_ENGLISH_PLURAL_RULES]
         )
-        pred.dfa_ = dfa.Dfa.from_dict(conf[_KEY_DFA], _load_uri_ref)
+        pred.dfa_ = dfa.Dfa.from_dict(conf[_KEY_DFA], str)
         pred.pipeline_ = pipeline
-        pred.concept_map_ = {
-            _load_uri_ref(k): v
-            for k, v
-            in conf[_KEY_CONCEPT_MAP].items()
-        }
+        pred.concept_map_ = conf[_KEY_CONCEPT_MAP]
         return pred
 
 

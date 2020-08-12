@@ -44,15 +44,25 @@ thsrs_broader = [
     (test_thesaurus_ref_100, test_thesaurus_ref_10),
     ]
 
-test_concept_ref_0_0 = URIRef("http://test.org/concept/0_0")
-test_concept_ref_01_0 = URIRef("http://test.org/concept/01_0")
-test_concept_ref_01_00 = URIRef("http://test.org/concept/01_00")
-test_concept_ref_10_0 = URIRef("http://test.org/concept/10_0")
-test_concept_ref_10_1 = URIRef("http://test.org/concept/10_1")
-test_concept_ref_100_0 = URIRef("http://test.org/concept/100_0")
-test_concept_ref_100_00 = URIRef("http://test.org/concept/100_00")
-test_concept_ref_100_01 = URIRef("http://test.org/concept/100_01")
-test_concept_ref_100_02 = URIRef("http://test.org/concept/100_02")
+test_concept_uri_0_0 = "http://test.org/concept/0_0"
+test_concept_uri_01_0 = "http://test.org/concept/01_0"
+test_concept_uri_01_00 = "http://test.org/concept/01_00"
+test_concept_uri_10_0 = "http://test.org/concept/10_0"
+test_concept_uri_10_1 = "http://test.org/concept/10_1"
+test_concept_uri_100_0 = "http://test.org/concept/100_0"
+test_concept_uri_100_00 = "http://test.org/concept/100_00"
+test_concept_uri_100_01 = "http://test.org/concept/100_01"
+test_concept_uri_100_02 = "http://test.org/concept/100_02"
+
+test_concept_ref_0_0 = URIRef(test_concept_uri_0_0)
+test_concept_ref_01_0 = URIRef(test_concept_uri_01_0)
+test_concept_ref_01_00 = URIRef(test_concept_uri_01_00)
+test_concept_ref_10_0 = URIRef(test_concept_uri_10_0)
+test_concept_ref_10_1 = URIRef(test_concept_uri_10_1)
+test_concept_ref_100_0 = URIRef(test_concept_uri_100_0)
+test_concept_ref_100_00 = URIRef(test_concept_uri_100_00)
+test_concept_ref_100_01 = URIRef(test_concept_uri_100_01)
+test_concept_ref_100_02 = URIRef(test_concept_uri_100_02)
 
 test_labels = [
     (test_concept_ref_0_0, Literal("concept-0_0", lang="en")),
