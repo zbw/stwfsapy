@@ -28,17 +28,24 @@ class ThesaurusFeatureTransformation(BaseEstimator, TransformerMixin):
             self,
             graph: rdflib.Graph,
             concepts: Set[rdflib.term.URIRef],
-            thesauri: Set[rdflib.term.URIRef]
+            thesauri: Set[rdflib.term.URIRef],
+            thesaurus_relation: rdflib.term.URIRef,
+            inverse_relation: bool = False
             ):
         self.graph = graph
         self.concepts = concepts
         self.thesauri = thesauri
         self.mapping_ = None
+        self.thesaurus_relation = thesaurus_relation
+        self.inverse_relation = inverse_relation
 
     def fit(self, X=None, y=None, **kwargs):
         """Creates the mapping from concepts
         to the thesauri that are broader than the concept."""
-        broaders = list(t.extract_broader(self.graph))
+        broaders = list(t.extract_relation_by_uri(
+            self.graph,
+            self.thesaurus_relation,
+            self.inverse_relation))
         concept_po = _collect_po_from_tuples(
             t.filter_subject_tuples_from_set(broaders, self.concepts))
         thesauri_po = _collect_po_from_tuples(

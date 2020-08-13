@@ -14,6 +14,7 @@
 
 
 from numpy import array
+from rdflib.namespace import SKOS
 from stwfsapy import thesaurus as t
 from stwfsapy import thesaurus_features as tf
 from stwfsapy.tests.thesaurus import common as tc
@@ -37,13 +38,13 @@ def test_collect_po_from_tuples():
 
 
 def test_unfitted_raises():
-    feat = tf.ThesaurusFeatureTransformation(None, None, None)
+    feat = tf.ThesaurusFeatureTransformation(None, None, None, None)
     with pytest.raises(NotFittedError):
         feat.transform([])
 
 
 def test_transform():
-    trans = tf.ThesaurusFeatureTransformation(None, None, None)
+    trans = tf.ThesaurusFeatureTransformation(None, None, None, None)
     trans.mapping_ = {
         'a': coo_matrix([[1]]), 'b': coo_matrix([[2]]), 'c': coo_matrix([[3]])}
     res = trans.transform(['c', 'c', 'a'])
@@ -57,7 +58,11 @@ def test_fit(full_graph):
     thesauri = set(t.extract_by_type_uri(
         full_graph,
         c.test_type_thesaurus))
-    trans = tf.ThesaurusFeatureTransformation(full_graph, concepts, thesauri)
+    trans = tf.ThesaurusFeatureTransformation(
+        full_graph,
+        concepts,
+        thesauri,
+        SKOS.broader)
     trans.fit()
     mapping = trans.mapping_
     assert len(mapping) == len(c.test_concepts)

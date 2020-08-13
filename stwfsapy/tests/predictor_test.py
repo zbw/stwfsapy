@@ -83,7 +83,7 @@ def patched_dfa(mocker):
 
 @pytest.fixture
 def mocked_predictor(mocker):
-    predictor = p.StwfsapyPredictor(None, None, None)
+    predictor = p.StwfsapyPredictor(None, None, None, None)
     predictor.concept_map_ = _concept_map
     predictor.match_and_extend = mocker.Mock(
         return_value=(_concepts_with_text, _doc_counts))
@@ -113,7 +113,7 @@ def test_result_collection():
 
 
 def test_sparse_matrix_creation():
-    predictor = p.StwfsapyPredictor(None, None, None)
+    predictor = p.StwfsapyPredictor(None, None, None, None)
     predictor.concept_map_ = _concept_map
     res = predictor._create_sparse_matrix(
         _predictions[:, 1],
@@ -134,7 +134,7 @@ def test_sparse_matrix_creation():
 
 
 def test_match_and_extend_with_truth(patched_dfa):
-    predictor = p.StwfsapyPredictor(None, None, None)
+    predictor = p.StwfsapyPredictor(None, None, None, None)
     predictor.dfa_ = patched_dfa
     concepts, ys = predictor.match_and_extend(
         ["a", "bbb", "xx"],
@@ -148,7 +148,7 @@ def test_match_and_extend_with_truth(patched_dfa):
 
 
 def test_match_and_extend_without_truth(patched_dfa):
-    predictor = p.StwfsapyPredictor(None, None, None)
+    predictor = p.StwfsapyPredictor(None, None, None, None)
     predictor.dfa_ = patched_dfa
     concepts, counts = predictor.match_and_extend(["a", "bbb", "xx"])
     assert concepts == [
@@ -162,7 +162,8 @@ def test_init_and_fit(full_graph, mocker):
     predictor = p.StwfsapyPredictor(
         full_graph,
         c.test_type_concept,
-        c.test_type_thesaurus)
+        c.test_type_thesaurus,
+        SKOS.broader)
     spy_deprecated = mocker.spy(t, "extract_deprecated")
     spy_case = mocker.spy(handlers, 'title_case_handler')
     predictor._init()
@@ -179,6 +180,7 @@ def test_init_and_fit(full_graph, mocker):
         ColumnTransformer)
     assert combined.transformers[0][0] == 'Thesaurus Features'
     assert combined.transformers[1][0] == 'Text Features'
+    assert combined.transformers[0][1].thesaurus_relation == SKOS.broader
     spy_fit = mocker.spy(predictor.pipeline_, "fit")
     predictor._fit_after_init(train_texts, y=train_labels)
     spy_fit.assert_called_once_with(
@@ -234,7 +236,7 @@ def test_suggest(mocked_predictor):
 
 
 def test_fit(mocker):
-    predictor = p.StwfsapyPredictor(None, None, None)
+    predictor = p.StwfsapyPredictor(None, None, None, None)
     predictor._init = mocker.Mock()
     predictor._fit_after_init = mocker.Mock()
     X = [list(range(i)) for i in range(13)]
@@ -249,6 +251,7 @@ def test_set_sentence_case(case_graph, mocker):
         case_graph,
         c.test_type_concept,
         c.test_type_thesaurus,
+        SKOS.broader,
         handle_title_case=False)
     predictor._init()
     assert 1 == len(list(predictor.dfa_.search("three word label")))
@@ -260,6 +263,7 @@ def test_set_title_case(case_graph, mocker):
         case_graph,
         c.test_type_concept,
         c.test_type_thesaurus,
+        SKOS.broader,
         handle_title_case=True)
     predictor._init()
     assert 1 == len(list(predictor.dfa_.search("three word label")))
@@ -279,6 +283,8 @@ def test_expansion(full_graph, mocker):
         full_graph,
         c.test_type_concept,
         c.test_type_thesaurus,
+        SKOS.broader,
+        True,
         extract_upper_case_from_braces=False,
         extract_any_case_from_braces=True,
         expand_ampersand_with_spaces=False,
@@ -299,7 +305,8 @@ def test_serialization_inversion(tmpdir, full_graph):
     predictor = p.StwfsapyPredictor(
         full_graph,
         c.test_type_concept,
-        c.test_type_thesaurus
+        c.test_type_thesaurus,
+        SKOS.broader
     )
     predictor.fit(train_texts, train_labels)
     pth = tmpdir.mkdir("tmp").join("model.zip")
@@ -317,6 +324,10 @@ def test_serialization_inversion(tmpdir, full_graph):
         predictor.simple_english_plural_rules)
     assert loaded.concept_type_uri == predictor.concept_type_uri
     assert loaded.sub_thesaurus_type_uri == predictor.sub_thesaurus_type_uri
+    assert loaded.thesaurus_relation_type_uri == (
+        predictor.thesaurus_relation_type_uri)
+    assert loaded.thesaurus_relation_is_specialisation == (
+        predictor.thesaurus_relation_is_specialisation)
     assert loaded.concept_map_ == predictor.concept_map_
     assert loaded.dfa_ == predictor.dfa_
     assert len(loaded.graph) == len(predictor.graph)
