@@ -21,5 +21,15 @@ from stwfsapy import thesaurus as t
 def test_extract_broader(mocker):
     g = graph.Graph()
     spy = mocker.spy(g, "subject_objects")
-    t.extract_broader(g)
+    t.extract_relation_by_uri(g, SKOS.broader, False)
     spy.assert_called_once_with(SKOS.broader)
+
+
+def test_can_reverse(mocker):
+    def mock_iter(a):
+        yield (1, 3)
+        yield (2, 4)
+    g = graph.Graph()
+    mocker.patch.object(g, 'subject_objects', mock_iter)
+    res = t.extract_relation_by_uri(g, SKOS.broader, True)
+    assert list(res) == [(3, 1), (4, 2)]

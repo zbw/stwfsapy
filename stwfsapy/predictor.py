@@ -43,6 +43,9 @@ _KEY_CONCEPT_MAP = 'concept_map'
 _KEY_GRAPH_ITEMS = 'graph_items'
 _KEY_CONCEPT_TYPE_URI = 'concept_type_uri'
 _KEY_THESAURUS_TYPE_URI = 'thesaurus_type_uri'
+_KEY_THESAURUS_RELATION_TYPE_URI = 'thesaurus_relation_type_uri'
+_KEY_THESAURUS_RELATION_IS_SPECIALISATION = (
+    'thesaurus_relation_is_specialisation')
 _KEY_REMOVE_DEPRECATED = 'remove_deprecated'
 _KEY_LANGS = 'langs'
 _KEY_HANDLE_TITLE_CASE = 'handle_title_case'
@@ -66,6 +69,8 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             graph: Graph,
             concept_type_uri: Union[str, URIRef],
             sub_thesaurus_type_uri: Union[str, URIRef],
+            thesaurus_relation_type_uri: Union[str, URIRef],
+            thesaurus_relation_is_specialisation: bool = False,
             remove_deprecated: bool = True,
             langs: FrozenSet[str] = frozenset(),
             handle_title_case: bool = True,
@@ -87,6 +92,13 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
                 It is assumed that for every sub thesaurus t,
                 there is a triple (t, RDF.type, sub_thesaurus_type_uri)
                 in the graph.
+            thesaurus_relation_type_uri:
+                Uri of the relation that links concepts to thesauri.
+            thesaurus_relation_is_specialisation:
+                Indicates whether the thesaurus_relation links thesauri to
+                concepts or the other way round.
+                E.g., for the relation skos:broader it should be false.
+                Conversely it should be true for skos:narrower.
             remove_deprecated: When True will discard deprecated subjects.
                 Deprecation of a subject has to be indicated by
                 a triple (s, OWL.deprecated, Literal(True)) in the graph.
@@ -114,6 +126,11 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
         if isinstance(sub_thesaurus_type_uri, str):
             sub_thesaurus_type_uri = URIRef(sub_thesaurus_type_uri)
         self.sub_thesaurus_type_uri = sub_thesaurus_type_uri
+        if isinstance(thesaurus_relation_type_uri, str):
+            thesaurus_relation_type_uri = URIRef(thesaurus_relation_type_uri)
+        self.thesaurus_relation_type_uri = thesaurus_relation_type_uri
+        self.thesaurus_relation_is_specialisation = (
+            thesaurus_relation_is_specialisation)
         self.remove_deprecated = remove_deprecated
         self.langs = langs
         self.handle_title_case = handle_title_case
@@ -139,7 +156,9 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
         thesaurus_features = ThesaurusFeatureTransformation(
             self.graph,
             concepts,
-            thesauri
+            thesauri,
+            self.thesaurus_relation_type_uri,
+            self.thesaurus_relation_is_specialisation
         )
         labels = t.retrieve_concept_labels(
             self.graph,
@@ -312,6 +331,10 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
                             self.concept_type_uri),
                         _KEY_THESAURUS_TYPE_URI: _store_uri_ref(
                             self.sub_thesaurus_type_uri),
+                        _KEY_THESAURUS_RELATION_TYPE_URI: _store_uri_ref(
+                            self.thesaurus_relation_type_uri),
+                        _KEY_THESAURUS_RELATION_IS_SPECIALISATION: (
+                                self.thesaurus_relation_is_specialisation),
                         _KEY_REMOVE_DEPRECATED: self.remove_deprecated,
                         _KEY_LANGS: list(self.langs),
                         _KEY_HANDLE_TITLE_CASE: self.handle_title_case,
@@ -352,6 +375,10 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
                 conf[_KEY_CONCEPT_TYPE_URI]),
             sub_thesaurus_type_uri=_load_uri_ref(
                 conf[_KEY_THESAURUS_TYPE_URI]),
+            thesaurus_relation_type_uri=_load_uri_ref(
+                conf[_KEY_THESAURUS_RELATION_TYPE_URI]),
+            thesaurus_relation_is_specialisation=(
+                conf[_KEY_THESAURUS_RELATION_IS_SPECIALISATION]),
             remove_deprecated=conf[_KEY_REMOVE_DEPRECATED],
             langs=frozenset(conf[_KEY_LANGS]),
             handle_title_case=conf[_KEY_HANDLE_TITLE_CASE],

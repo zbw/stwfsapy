@@ -24,10 +24,15 @@ g = Graph()
 g.load('/path/to/your/thesaurus')
 ```
 Define the type URIs for descriptors and sub-thesauri.
+You also need to define the relationship that relates sub-thesauri to concepts.
+It is also beneficial if this relation structures the sub-thesauri.
+Furthermore you can indicate whether the thesaurus relation is a specialisation
 For the [STW](https://http://zbw.eu/stw/) this would be
 ```python
 descriptor_type_uri = 'http://zbw.eu/namespaces/zbw-extensions/Descriptor'
 thsys_type_uri = 'http://zbw.eu/namespaces/zbw-extensions/Thsys'
+thesaurus_relation_type_uri = 'http://www.w3.org/2004/02/skos/core#broader'
+is_specialisation = False
 
 ```
 Create the predictor
@@ -37,6 +42,8 @@ p = StwfsapyPredictor(
     g,
     descriptor_type_uri,
     thsys_type_uri,
+    thesaurus_relation_type_uri,
+    is_specialisation,
     langs={'en'},
     simple_english_plural_rules=True)
 ```

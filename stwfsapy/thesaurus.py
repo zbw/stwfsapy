@@ -43,8 +43,12 @@ def extract_deprecated(g: Graph):
     return g[:OWL.deprecated: Literal(True)]
 
 
-def extract_broader(g: Graph) -> Iterable[Tuple[URIRef, URIRef]]:
-    return g[:SKOS.broader:]
+def extract_relation_by_uri(g: Graph, uri: URIRef, reverse: bool):
+    subj_objs = g[:uri:]
+    if reverse:
+        return map(lambda x: (x[1], x[0]), subj_objs)
+    else:
+        return subj_objs
 
 
 def _predicate_uri_from_set(uri: URIRef, uri_set: FrozenSet[URIRef]):
