@@ -209,7 +209,10 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
 
     def predict_proba(self, X) -> csr_matrix:
         match_X, doc_counts = self.match_and_extend(X)
-        predictions = self.pipeline_.predict_proba(match_X)[:, 1]
+        if match_X:
+            predictions = self.pipeline_.predict_proba(match_X)[:, 1]
+        else:
+            predictions = []
         return self._create_sparse_matrix(
             predictions,
             match_X,
@@ -223,7 +226,10 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
         """For a given list of texts,
         this method returns the matched concepts and their scores."""
         match_X, doc_counts = self.match_and_extend(texts)
-        predictions = self.pipeline_.predict_proba(match_X)[:, 1]
+        if match_X:
+            predictions = self.pipeline_.predict_proba(match_X)[:, 1]
+        else:
+            predictions = []
         combined = StwfsapyPredictor._collect_prediction_results(
             predictions,
             match_X,
@@ -241,7 +247,10 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
 
     def predict(self, X) -> csr_matrix:
         match_X, doc_counts = self.match_and_extend(X)
-        predictions = self.pipeline_.predict(match_X)
+        if match_X:
+            predictions = self.pipeline_.predict(match_X)
+        else:
+            predictions = []
         return self._create_sparse_matrix(
             predictions,
             match_X,
