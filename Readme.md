@@ -1,4 +1,6 @@
 # stwfsapy
+[![Build Status](https://travis-ci.org/zbw/stwfsapy.svg?branch=master)](https://travis-ci.com/zbw/stwfsapy)
+[![codecov](https://codecov.io/gh/zbw/stwfsapy/branch/master/graph/badge.svg)](https://codecov.io/gh/zbw/stwfsapy)
 ## About
 This library provides functionality to find the labels of SKOS thesaurus concepts in text.
 It is a reimplementation in Python of [stwfsa](https://github.com/zbw/stwfsa) combined with the concept scoring from [1].
