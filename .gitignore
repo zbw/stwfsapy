@@ -4,4 +4,6 @@ __pycache__
 .coverage
 cov.xml
 .env
+.mypy_cache
 dist
+build

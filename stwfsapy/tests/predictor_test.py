@@ -94,6 +94,15 @@ def mocked_predictor(mocker):
 
 
 @pytest.fixture
+def no_match_predictor(mocker):
+    predictor = p.StwfsapyPredictor(None, None, None, None)
+    predictor.concept_map_ = _concept_map
+    predictor.match_and_extend = mocker.Mock(
+        return_value=([], [0, 0, 0]))
+    return predictor
+
+
+@pytest.fixture
 def case_graph():
     g = Graph()
     g.add((
@@ -233,6 +242,23 @@ def test_suggest(mocked_predictor):
     mocked_predictor.pipeline_.predict_proba.assert_called_once_with(
         _concepts_with_text
     )
+
+
+def test_predict_no_match(no_match_predictor):
+    res = no_match_predictor.predict([])
+    assert res.getnnz() == 0
+    assert res.shape == (3, len(_concept_map))
+
+
+def test_predict_proba_no_match(no_match_predictor):
+    res = no_match_predictor.predict_proba([])
+    assert res.getnnz() == 0
+    assert res.shape == (3, len(_concept_map))
+
+
+def test_suggest_no_match(no_match_predictor):
+    res = no_match_predictor.suggest_proba([])
+    assert res == [[], [], []]
 
 
 def test_fit(mocker):
