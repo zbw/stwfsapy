@@ -79,3 +79,8 @@ def test_fit(full_graph):
     assert mapping[c.test_concept_uri_100_00].getnnz() == 3
     assert mapping[c.test_concept_uri_100_01].getnnz() == 3
     assert mapping[c.test_concept_uri_100_02].getnnz() == 3
+
+    random_result = trans.transform(['some random stuff edsfysdfhjsedf'])[0]
+    assert random_result.shape == (1, 6)
+    assert random_result.getnnz() == 0
+

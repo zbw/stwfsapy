@@ -21,6 +21,7 @@ from sklearn.exceptions import NotFittedError
 from stwfsapy import thesaurus as t
 from stwfsapy.util.set_closure import set_closure
 from collections import defaultdict
+from itertools import repeat
 
 
 class ThesaurusFeatureTransformation(BaseEstimator, TransformerMixin):
@@ -66,6 +67,7 @@ class ThesaurusFeatureTransformation(BaseEstimator, TransformerMixin):
                 ))
             for concept, broaders in concept_po.items()
         }
+        self.feature_dim_ = len(thesaurus_indices)
         self.mapping_ = {
             str(concept): csr_matrix(
                 (
@@ -85,10 +87,21 @@ class ThesaurusFeatureTransformation(BaseEstimator, TransformerMixin):
         }
         return self
 
+    def _transform_single(self, x):
+        # No default dict, so the transform can be pickled
+        try:
+            res = self.mapping_[x]
+        except KeyError:
+            res = csr_matrix(
+                ([], ([], [])),
+                shape=(1, self.feature_dim_)
+            )
+        return res
+
     def transform(self, X) -> csr_matrix:
         if not self.mapping_:
             raise NotFittedError
-        return vstack([self.mapping_[x] for x in X])
+        return vstack([self._transform_single(x) for x in X])
 
 
 def _collect_po_from_tuples(
