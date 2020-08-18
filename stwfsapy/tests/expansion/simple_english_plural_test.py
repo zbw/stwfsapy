@@ -13,28 +13,28 @@
 # limitations under the License.
 
 
-from stwfsapy.expansion import _simple_english_plural_fun
+from stwfsapy.expansion import simple_english_plural_fun
 
 
 def test_trailing_non_alpha():
     label = 'fo0'
-    assert _simple_english_plural_fun(label) == label
+    assert simple_english_plural_fun(label) == label
 
 
 def test_trailing_s():
     label = 'bas'
-    assert _simple_english_plural_fun(label) == label
+    assert simple_english_plural_fun(label) == label
 
 
 def test_default_endingn():
     label = 'bar'
-    assert _simple_english_plural_fun(label) == 'bars?'
+    assert simple_english_plural_fun(label) == 'bars?'
 
 
 def test_trailing_y():
     label = 'daily'
     prefix_idx = len(label)-1
-    res = _simple_english_plural_fun(label)
+    res = simple_english_plural_fun(label)
     assert len(res) == len(label) + 6
     assert label[:prefix_idx] == res[:prefix_idx]
     assert res[prefix_idx:] == '(y|ies)'

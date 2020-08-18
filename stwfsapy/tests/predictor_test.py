@@ -272,7 +272,7 @@ def test_fit(mocker):
     predictor._fit_after_init.assert_called_once_with(X, y=y)
 
 
-def test_set_sentence_case(case_graph, mocker):
+def test_set_sentence_case(case_graph):
     predictor = p.StwfsapyPredictor(
         case_graph,
         c.test_type_concept,
@@ -284,7 +284,7 @@ def test_set_sentence_case(case_graph, mocker):
     assert 0 == len(list(predictor.dfa_.search("Three Word label")))
 
 
-def test_set_title_case(case_graph, mocker):
+def test_set_title_case(case_graph):
     predictor = p.StwfsapyPredictor(
         case_graph,
         c.test_type_concept,
@@ -294,6 +294,47 @@ def test_set_title_case(case_graph, mocker):
     predictor._init()
     assert 1 == len(list(predictor.dfa_.search("three word label")))
     assert 1 == len(list(predictor.dfa_.search("Three Word label")))
+
+
+def test_no_english_plural(case_graph):
+    predictor = p.StwfsapyPredictor(
+        case_graph,
+        c.test_type_concept,
+        c.test_type_thesaurus,
+        SKOS.broader,
+        simple_english_plural_rules=False,
+    )
+    predictor._init()
+    assert 0 == len(list(predictor.dfa_.search('three word labels')))
+    assert 1 == len(list(predictor.dfa_.search('three word label')))
+
+
+def test_english_plural(case_graph):
+    predictor = p.StwfsapyPredictor(
+        case_graph,
+        c.test_type_concept,
+        c.test_type_thesaurus,
+        SKOS.broader,
+        simple_english_plural_rules=True,
+    )
+    predictor._init()
+    assert 1 == len(list(predictor.dfa_.search('three word labels')))
+    assert 1 == len(list(predictor.dfa_.search('three word labels')))
+
+
+def test_english_plural_with_case(case_graph):
+    predictor = p.StwfsapyPredictor(
+        case_graph,
+        c.test_type_concept,
+        c.test_type_thesaurus,
+        SKOS.broader,
+        simple_english_plural_rules=True,
+        handle_title_case=True
+    )
+    predictor._init()
+    assert 1 == len(list(predictor.dfa_.search('three word labels')))
+    assert 1 == len(list(predictor.dfa_.search('three word labels')))
+    assert 1 == len(list(predictor.dfa_.search('Three Word Labels')))
 
 
 def test_expansion(full_graph, mocker):
