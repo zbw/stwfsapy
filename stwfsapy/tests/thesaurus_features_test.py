@@ -19,7 +19,7 @@ from stwfsapy import thesaurus as t
 from stwfsapy import thesaurus_features as tf
 from stwfsapy.tests.thesaurus import common as tc
 from stwfsapy.tests import common as c
-from scipy.sparse import coo_matrix
+from scipy.sparse import coo_matrix, csr_matrix
 from sklearn.exceptions import NotFittedError
 import pytest
 
@@ -80,7 +80,21 @@ def test_fit(full_graph):
     assert mapping[c.test_concept_uri_100_01].getnnz() == 3
     assert mapping[c.test_concept_uri_100_02].getnnz() == 3
 
-    random_result = trans.transform(['some random stuff edsfysdfhjsedf'])[0]
-    assert random_result.shape == (1, 6)
-    assert random_result.getnnz() == 0
 
+def test_transform_unknown():
+    trans = tf.ThesaurusFeatureTransformation(
+        None,
+        None,
+        None,
+        None,)
+
+    feature_dim = 12
+    trans.feature_dim_ = feature_dim
+    known = csr_matrix(([1], ([0], [4])), shape=(1, feature_dim))
+    trans.mapping_ = {'key': known}
+    random_results = trans.transform([
+        'some random stuff edsfysdfhjsedf',
+        'key'])
+    assert random_results.shape == (2, feature_dim)
+    assert random_results.getrow(0).getnnz() == 0
+    assert random_results.getrow(1).getnnz() == 1
