@@ -35,8 +35,8 @@ descriptor_type_uri = 'http://zbw.eu/namespaces/zbw-extensions/Descriptor'
 thsys_type_uri = 'http://zbw.eu/namespaces/zbw-extensions/Thsys'
 thesaurus_relation_type_uri = 'http://www.w3.org/2004/02/skos/core#broader'
 is_specialisation = False
-
 ```
+
 Create the predictor
 ```python
 from stwfsapy.predictor import StwfsapyPredictor
