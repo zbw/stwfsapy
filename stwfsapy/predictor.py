@@ -175,15 +175,19 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             expand_ampersand_with_spaces=self.expand_ampersand_with_spaces,
             expand_abbreviation_with_punctuation=(
                 self.expand_abbreviation_with_punctuation),
-            simple_english_plural_rules=self.simple_english_plural_rules
         )
+        if self.simple_english_plural_rules:
+            plural_fun = expansion.simple_english_plural_fun
+        else:
+            def plural_fun(x):
+                return x
         for concept, label in labels:
             expanded = label
             for f in expansion_funs:
                 expanded = f(expanded)
             construction.ConstructionState(
                 nfautomat,
-                case_handler(expanded),
+                plural_fun(case_handler(expanded)),
                 str(concept)
             ).construct()
         nfautomat.remove_empty_transitions()
