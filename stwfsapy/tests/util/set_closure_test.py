@@ -103,7 +103,7 @@ def check_tree_closure(closures, additional_relations={}):
             ancestor = (end-1) // _branching_k
             assert ancestor == start or (
                 ancestor in closures[start]) or (
-                (start, end) in additional_relations) or(
+                (start, end) in additional_relations) or (
                     end == start)
 
 
