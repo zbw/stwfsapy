@@ -21,7 +21,6 @@ from sklearn.exceptions import NotFittedError
 from stwfsapy import thesaurus as t
 from stwfsapy.util.set_closure import set_closure
 from collections import defaultdict
-from itertools import repeat
 
 
 class ThesaurusFeatureTransformation(BaseEstimator, TransformerMixin):

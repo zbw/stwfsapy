@@ -401,5 +401,7 @@ def test_serialization_inversion(tmpdir, full_graph):
     assert loaded.concept_map_ == predictor.concept_map_
     assert loaded.dfa_ == predictor.dfa_
     assert len(loaded.graph) == len(predictor.graph)
+    assert loaded.pipeline_[0].transformers[0][1].mapping_ == (
+        predictor.pipeline_[0].transformers[0][1].mapping_)
     for triple in loaded.graph:
         assert triple in predictor.graph
