@@ -1,2 +1,2 @@
 [run]
-omit = stwfsapy/tests/*
+omit = stwfsapy/tests/*, setup.py

@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 def uncase_first_char(text: str) -> str:
     return "({}|{}){}".format(
         text[0].upper(),

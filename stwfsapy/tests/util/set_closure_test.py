@@ -49,7 +49,10 @@ def single_diamond(tree_relation):
     diamond_left = diamond_top*_branching_k+(_branching_k-1)
     diamond_right = diamond_top*_branching_k+_branching_k
     diamond_bottom = diamond_left*_branching_k+_branching_k
-    return _add_edge_to_tree_relation(tree_relation, diamond_right, diamond_bottom)
+    return _add_edge_to_tree_relation(
+        tree_relation,
+        diamond_right,
+        diamond_bottom)
 
 
 @fixture
@@ -100,7 +103,7 @@ def check_tree_closure(closures, additional_relations={}):
             ancestor = (end-1) // _branching_k
             assert ancestor == start or (
                 ancestor in closures[start]) or (
-                (start, end) in additional_relations) or(
+                (start, end) in additional_relations) or (
                     end == start)
 
 
@@ -136,6 +139,9 @@ def test_exception_on_cycle(tree_relation):
 
 
 def test_no_exception_on_non_cycle_backedge(tree_relation):
-    tree_relation, additionals = _add_edge_to_tree_relation(tree_relation, _internal_nodes-2, 1)
+    tree_relation, additionals = _add_edge_to_tree_relation(
+        tree_relation,
+        _internal_nodes-2,
+        1)
     closures = set_closure(tree_relation)
     check_tree_closure(closures, additionals)
