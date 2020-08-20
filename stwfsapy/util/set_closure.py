@@ -20,7 +20,8 @@ def set_closure(
         sets: Dict[Hashable, Set[Hashable]]
         ) -> Dict[Hashable, Set[Hashable]]:
     """Computes the closure for each element of a antisymmetric relation.
-    The relation is given by a mapping from elements to a set of related elements.
+    The relation is given by a mapping from elements
+    to a set of related elements.
     Raises a RelationLoopException if the relation has circles."""
     closure: Dict[Hashable, Set[Hashable]] = dict()
     for key in sets:
