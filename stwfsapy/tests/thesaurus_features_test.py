@@ -15,6 +15,7 @@
 
 from numpy import array
 from rdflib.namespace import SKOS
+from rdflib.graph import Graph
 from stwfsapy import thesaurus as t
 from stwfsapy import thesaurus_features as tf
 from stwfsapy.tests.thesaurus import common as tc
@@ -98,3 +99,16 @@ def test_transform_unknown():
     assert random_results.shape == (2, feature_dim)
     assert random_results.getrow(0).getnnz() == 0
     assert random_results.getrow(1).getnnz() == 1
+
+
+def test_empty():
+    trans = tf.ThesaurusFeatureTransformation(
+        Graph(),
+        set(),
+        set(),
+        None,
+    )
+    trans.fit([], [])
+    features = trans.transform(['empty'])
+    assert features.shape == (1, 1)
+    assert features.getnnz() == 0
