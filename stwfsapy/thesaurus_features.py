@@ -66,7 +66,7 @@ class ThesaurusFeatureTransformation(BaseEstimator, TransformerMixin):
                 ))
             for concept, broaders in concept_po.items()
         }
-        self.feature_dim_ = len(thesaurus_indices)
+        self.feature_dim_ = max(len(thesaurus_indices), 1)
         self.mapping_ = {
             str(concept): csr_matrix(
                 (
@@ -98,7 +98,7 @@ class ThesaurusFeatureTransformation(BaseEstimator, TransformerMixin):
         return res
 
     def transform(self, X) -> csr_matrix:
-        if not self.mapping_:
+        if self.mapping_ is None:
             raise NotFittedError
         return vstack([self._transform_single(x) for x in X])
 
