@@ -101,12 +101,12 @@ def test_transform_unknown():
     assert random_results.getrow(1).getnnz() == 1
 
 
-def test_empty():
+def test_empty_relation(full_graph):
     trans = tf.ThesaurusFeatureTransformation(
-        Graph(),
+        full_graph,
+        set(t.extract_by_type_uri(full_graph, c.test_type_concept)),
         set(),
-        set(),
-        None,
+        "",
     )
     trans.fit([], [])
     features = trans.transform(['empty'])
