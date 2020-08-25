@@ -4,7 +4,7 @@
 ## About
 This library provides functionality to find the labels of SKOS thesaurus concepts in text.
 It is a reimplementation in Python of [stwfsa](https://github.com/zbw/stwfsa) combined with the concept scoring from [1].
-A deterministic finite automata is constructed from the labels of the thesaurus concepts to perform the matching.
+A deterministic finite automaton is constructed from the labels of the thesaurus concepts to perform the matching.
 In addition, a classifier is trained to score the matched occurrences of the concepts.
 
 
@@ -28,7 +28,7 @@ g.load('/path/to/your/thesaurus')
 Define the type URIs for descriptors and sub-thesauri.
 You also need to define the relationship that relates sub-thesauri to concepts.
 It is also beneficial if this relation structures the sub-thesauri.
-Furthermore you can indicate whether the thesaurus relation is a specialisation
+Furthermore you can indicate whether the thesaurus relation is a specialisation.
 For the [STW](https://http://zbw.eu/stw/) this would be
 ```python
 descriptor_type_uri = 'http://zbw.eu/namespaces/zbw-extensions/Descriptor'
@@ -50,7 +50,7 @@ p = StwfsapyPredictor(
     simple_english_plural_rules=True)
 ```
 The next step assumes you have loaded your texts into a list `X` and your labels in a list of lists `y`,
-such that for all indices `0 <= i < len(X)` The list at `y[i]` contains the URIs to the correct concepts for `X[i]`.
+such that for all indices `0 <= i < len(X)`. The list at `y[i]` contains the URIs to the correct concepts for `X[i]`.
 The concepts should be given by their URI.
 Then you can train the classifier:
 ```python
