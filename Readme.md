@@ -10,10 +10,11 @@ In addition, a classifier is trained to score the matched occurrences of the con
 ## Data Requirements
 The construction for the automaton requires a SKOS thesaurus represented as a `rdflib` `Graph`.
 Concepts should be related to labels by `skos:prefLabel` or `skos:altLabel`.
-In addition it is assumed that concepts are organized in a hierarchy that includes sub-thesauri.
-Concepts and sub-thesauri have to be distinguishable by `rdf:type`.
-The training of the predictor requires labeled text.
+Concepts have to be identifiable by `rdf:type`.
+The training of the predictor requires labeled short text.
 Each training sample should be annotated with one or more concepts from the thesaurus.
+Currently the algorithm does not yield satisfactory results for longer texts,
+i.e., you should work with titles and keywords only, or possibly with abstracts but not with fulltexts."
 
 ## Usage
 ### Create predictor
@@ -24,9 +25,10 @@ from rdflib import Graph
 g = Graph()
 g.load('/path/to/your/thesaurus')
 ```
-Define the type URIs for descriptors and sub-thesauri.
-You also need to define the relationship that relates sub-thesauri to concepts.
-It is beneficial if this relation structures the sub-thesauri.
+First, define the type URI for descriptors.
+If your thesaurus has a hierarchical structure that includes groups, 
+you can optionally specify the type URI for sub-thesauri.
+In this case you should also specify the relationship that relates sub-thesauri to concepts.
 Furthermore you can indicate whether the thesaurus relation is a specialisation.
 For the [STW](https://http://zbw.eu/stw/) this would be
 ```python
