@@ -14,7 +14,7 @@ Concepts have to be identifiable by `rdf:type`.
 The training of the predictor requires labeled short text.
 Each training sample should be annotated with one or more concepts from the thesaurus.
 Currently the algorithm does not yield satisfactory results for longer texts,
-i.e., you should work with titles and keywords only, or possibly with abstracts but not with fulltexts."
+i.e., you should work with titles and keywords only, or possibly with abstracts but not with fulltexts.
 
 ## Usage
 ### Create predictor
