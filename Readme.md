@@ -2,11 +2,10 @@
 [![Build Status](https://travis-ci.org/zbw/stwfsapy.svg?branch=master)](https://travis-ci.org/zbw/stwfsapy)
 [![codecov](https://codecov.io/gh/zbw/stwfsapy/branch/master/graph/badge.svg)](https://codecov.io/gh/zbw/stwfsapy)
 ## About
-This library provides functionality to find the labels of SKOS thesaurus concepts in text.
+This library provides functionality to find the labels of SKOS thesaurus concepts in (short) text.
 It is a reimplementation in Python of [stwfsa](https://github.com/zbw/stwfsa) combined with the concept scoring from [1].
 A deterministic finite automaton is constructed from the labels of the thesaurus concepts to perform the matching.
 In addition, a classifier is trained to score the matched occurrences of the concepts.
-
 
 ## Data Requirements
 The construction for the automaton requires a SKOS thesaurus represented as a `rdflib` `Graph`.
@@ -18,7 +17,7 @@ Each training sample should be annotated with one or more concepts from the thes
 
 ## Usage
 ### Create predictor
-First load your graph.
+First load your thesaurus.
 ```python
 from rdflib import Graph
 
@@ -27,7 +26,7 @@ g.load('/path/to/your/thesaurus')
 ```
 Define the type URIs for descriptors and sub-thesauri.
 You also need to define the relationship that relates sub-thesauri to concepts.
-It is also beneficial if this relation structures the sub-thesauri.
+It is beneficial if this relation structures the sub-thesauri.
 Furthermore you can indicate whether the thesaurus relation is a specialisation.
 For the [STW](https://http://zbw.eu/stw/) this would be
 ```python
