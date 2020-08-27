@@ -59,11 +59,11 @@ p.fit(X, y)
 ```
 Afterwards you can get the predicted concepts and scores:
 ```python
-p.suggest_proba(['one input text', 'A completely different input text.']
+p.suggest_proba(['one input text', 'A completely different input text.'])
 ```
 Alternatively you can get a sparse matrix of scores by calling
 ```python
-p.predict_proba(['one input text', 'Another input text.']
+p.predict_proba(['one input text', 'Another input text.'])
 ```
 The indices of the concepts are stored in `p.concept_map_`.
 
