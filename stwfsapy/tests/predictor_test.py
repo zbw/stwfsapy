@@ -16,6 +16,7 @@ from stwfsapy import predictor as p
 import stwfsapy.thesaurus as t
 from stwfsapy.automata.dfa import Dfa
 import stwfsapy.tests.common as c
+from stwfsapy.automata.construction import ConstructionState
 import pytest
 from scipy.sparse import csr_matrix
 import numpy as np
@@ -405,3 +406,16 @@ def test_serialization_inversion(tmpdir, full_graph):
         predictor.pipeline_[0].transformers[0][1].mapping_)
     for triple in loaded.graph:
         assert triple in predictor.graph
+
+
+def test_warning(mocker):
+    logging_spy = mocker.spy(p, '_logger')
+    con_state = ConstructionState(None, '', '')
+    con_state.construct = mocker.Mock(side_effect=Exception())
+    p._handle_construction(
+        con_state,
+        'test_concept',
+        'invalid_label')
+    logging_spy.warning.assert_called_once_with(
+        'Could not process label "invalid_label" of concept "test_concept".'
+    )

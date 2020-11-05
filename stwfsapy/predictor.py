@@ -14,6 +14,7 @@
 
 
 from typing import FrozenSet, List, Iterable, Container, Tuple, TypeVar, Union
+from logging import getLogger
 from rdflib.term import URIRef
 from rdflib import Graph
 from sklearn.base import BaseEstimator, ClassifierMixin
@@ -59,6 +60,8 @@ _KEY_SIMPLE_ENGLISH_PLURAL_RULES = 'simple_english_plural_rules'
 _NAME_GRAPH_FILE = 'graph.rdf'
 _NAME_PIPELINE_FILE = 'pipeline.pkl'
 _NAME_PREDICTOR_FILE = 'predictor.json'
+
+_logger = getLogger('stwfsa')
 
 
 class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
@@ -185,11 +188,14 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             expanded = label
             for f in expansion_funs:
                 expanded = f(expanded)
-            construction.ConstructionState(
-                nfautomat,
-                plural_fun(case_handler(expanded)),
-                str(concept)
-            ).construct()
+            _handle_construction(
+                construction.ConstructionState(
+                    nfautomat,
+                    plural_fun(case_handler(expanded)),
+                    str(concept)
+                ),
+                concept,
+                label)
         nfautomat.remove_empty_transitions()
         converter = conversion.NfaToDfaConverter(nfautomat)
         self.dfa_ = converter.start_conversion()
@@ -418,3 +424,17 @@ def _store_uri_ref(ref: URIRef) -> str:
 
 def _load_uri_ref(uri: str) -> URIRef:
     return URIRef(uri)
+
+
+def _handle_construction(
+        con_state: construction.ConstructionState,
+        concept: str,
+        label: str):
+    """Wrapper for construction that logs a warning
+    in case of an exception.
+    Uses concept and label as arguments for a more detailed message."""
+    try:
+        con_state.construct()
+    except Exception:
+        _logger.warning(
+            f'Could not process label "{label}" of concept "{concept}".')
