@@ -28,12 +28,11 @@ class ConstructionState:
         """Object returned when the expression matches an input."""
 
     def _set_up(self):
-        start_idx = self.graph.add_state()
+        self.start_idx = self.graph.add_state()
         self.expression_start_idx: int = self.graph.add_state()
         """Start node of the expression."""
-        self.graph.add_start(start_idx)
         self.graph.add_non_word_char_transition(
-            start_idx,
+            self.start_idx,
             self.expression_start_idx)
         alternation_start_idx = self.graph.add_state()
         self.graph.add_empty_transition(
@@ -67,6 +66,7 @@ class ConstructionState:
             acceptance_idx = self.graph.add_state()
             self.graph.add_acceptance(acceptance_idx, self.accept)
             self.graph.add_non_word_char_transition(end_idx, acceptance_idx)
+        self.graph.add_start(self.start_idx)
 
     def _perform_step(self, idx: int):
         """Consumes a single input character of the input expression."""
