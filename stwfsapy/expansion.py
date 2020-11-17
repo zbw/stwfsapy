@@ -17,12 +17,14 @@ from typing import Callable, Pattern, List
 import re
 
 
+_brace_base_expression = re.compile(r'([\[\]()\{\}])')
+
 _upper_case_abbreviation_from_braces_expression = re.compile(
-   r"^([A-Z-]{2,})\s*\(.{3,}?\)"
+   r"^([A-Z-]{2,})\s*\\\(.{3,}?\\\)"
 )
 
 _any_case_from_braces_expression = re.compile(
-    r"\((.{3,}?)\)"
+    r"\\\((.{3,}?)\\\)"
 )
 
 _ampersand_abbreviation_matcher = re.compile(r"^([A-Z])&([A-Z])$")
@@ -34,6 +36,10 @@ capital letters at each side."""
 _upper_case_matcher = re.compile(r"([A-Z])")
 """Matches capital letters.
 This is used for inserting optional dots between the letters."""
+
+
+def base_expansion(input: str):
+    return _brace_base_expression.sub(r'\\\g<1>', input)
 
 
 def _replace_by_pattern_fun(pattern: Pattern[str]) -> Callable[[str], str]:
@@ -90,4 +96,6 @@ def collect_expansion_functions(
             _expand_abbreviation_with_punctuation_fun
         ),
     )
-    return [fun for flag, fun in options if flag]
+    ret = [fun for flag, fun in options if flag]
+    ret.insert(0, base_expansion)
+    return ret

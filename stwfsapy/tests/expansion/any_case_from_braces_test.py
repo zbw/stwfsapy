@@ -24,7 +24,7 @@ def test_pattern_match():
     match = e._any_case_from_braces_expression.search(
         c.test_string_any
         )
-    assert match.group(0) == "({})".format(c.test_abbreviation_any)
+    assert match.group(0) == "\\({}\\)".format(c.test_abbreviation_any)
     assert match.group(1) == c.test_abbreviation_any
 
 
@@ -34,5 +34,5 @@ def test_replacement():
 
 
 def test_no_replacement():
-    some_string = "some string)"
+    some_string = "some string\\)"
     assert replacement_fun_any(some_string) == some_string
