@@ -15,7 +15,6 @@
 
 from numpy import array
 from rdflib.namespace import SKOS
-from rdflib.graph import Graph
 from stwfsapy import thesaurus as t
 from stwfsapy import thesaurus_features as tf
 from stwfsapy.tests.thesaurus import common as tc
