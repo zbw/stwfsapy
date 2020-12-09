@@ -80,7 +80,6 @@ class CountFeature(BaseEstimator, TransformerMixin):
             return _count_digit
 
 
-_re_upper = re.compile(r"[A-ZÄÖÜ]")
 _re_special = re.compile(r"""["'?!()]""")
 _re_digit = re.compile(r"\d")
 
@@ -98,7 +97,7 @@ def _count_special(txt: str):
 
 
 def _count_upper(txt: str):
-    return len(_re_upper.findall(txt))
+    return sum((c.isupper() for c in txt))
 
 
 def _count_digit(txt: str):
