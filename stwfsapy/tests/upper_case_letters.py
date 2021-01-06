@@ -95,56 +95,100 @@ upper_case_letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + (
     "".join([chr(c) for c in range(ord("\u2C6D"), ord("\u2C70") + 1)])) + (
     "\u2C72\u2C75") + (
     "".join([chr(c) for c in range(ord("\u2C7E"), ord("\u2C80") + 1)])) + (
-    "\u2C82\u2C84\u2C86\u2C88\u2C8A\u2C8C\u2C8E\u2C90\u2C92\u2C94\u2C96\u2C98") + (
-    "\u2C9A\u2C9C\u2C9E\u2CA0\u2CA2\u2CA4\u2CA6\u2CA8\u2CAA\u2CAC\u2CAE\u2CB0") + (
-    "\u2CB2\u2CB4\u2CB6\u2CB8\u2CBA\u2CBC\u2CBE\u2CC0\u2CC2\u2CC4\u2CC6\u2CC8") + (
-    "\u2CCA\u2CCC\u2CCE\u2CD0\u2CD2\u2CD4\u2CD6\u2CD8\u2CDA\u2CDC\u2CDE\u2CE0") + (
-    "\u2CE2\u2CEB\u2CED\u2CF2\uA640\uA642\uA644\uA646\uA648\uA64A\uA64C\uA64E") + (
-    "\uA650\uA652\uA654\uA656\uA658\uA65A\uA65C\uA65E\uA660\uA662\uA664\uA666") + (
-    "\uA668\uA66A\uA66C\uA680\uA682\uA684\uA686\uA688\uA68A\uA68C\uA68E\uA690") + (
-    "\uA692\uA694\uA696\uA698\uA69A\uA722\uA724\uA726\uA728\uA72A\uA72C\uA72E") + (
-    "\uA732\uA734\uA736\uA738\uA73A\uA73C\uA73E\uA740\uA742\uA744\uA746\uA748") + (
-    "\uA74A\uA74C\uA74E\uA750\uA752\uA754\uA756\uA758\uA75A\uA75C\uA75E\uA760") + (
-    "\uA762\uA764\uA766\uA768\uA76A\uA76C\uA76E\uA779\uA77B\uA77D\uA77E\uA780") + (
-    "\uA782\uA784\uA786\uA78B\uA78D\uA790\uA792\uA796\uA798\uA79A\uA79C\uA79E") + (
+    "\u2C82\u2C84\u2C86\u2C88\u2C8A\u2C8C"
+        "\u2C8E\u2C90\u2C92\u2C94\u2C96\u2C98") + (
+    "\u2C9A\u2C9C\u2C9E\u2CA0\u2CA2\u2CA4"
+        "\u2CA6\u2CA8\u2CAA\u2CAC\u2CAE\u2CB0") + (
+    "\u2CB2\u2CB4\u2CB6\u2CB8\u2CBA\u2CBC"
+        "\u2CBE\u2CC0\u2CC2\u2CC4\u2CC6\u2CC8") + (
+    "\u2CCA\u2CCC\u2CCE\u2CD0\u2CD2\u2CD4"
+        "\u2CD6\u2CD8\u2CDA\u2CDC\u2CDE\u2CE0") + (
+    "\u2CE2\u2CEB\u2CED\u2CF2\uA640\uA642"
+        "\uA644\uA646\uA648\uA64A\uA64C\uA64E") + (
+    "\uA650\uA652\uA654\uA656\uA658\uA65A"
+        "\uA65C\uA65E\uA660\uA662\uA664\uA666") + (
+    "\uA668\uA66A\uA66C\uA680\uA682\uA684"
+        "\uA686\uA688\uA68A\uA68C\uA68E\uA690") + (
+    "\uA692\uA694\uA696\uA698\uA69A\uA722"
+        "\uA724\uA726\uA728\uA72A\uA72C\uA72E") + (
+    "\uA732\uA734\uA736\uA738\uA73A\uA73C"
+        "\uA73E\uA740\uA742\uA744\uA746\uA748") + (
+    "\uA74A\uA74C\uA74E\uA750\uA752\uA754"
+        "\uA756\uA758\uA75A\uA75C\uA75E\uA760") + (
+    "\uA762\uA764\uA766\uA768\uA76A\uA76C"
+        "\uA76E\uA779\uA77B\uA77D\uA77E\uA780") + (
+    "\uA782\uA784\uA786\uA78B\uA78D\uA790"
+        "\uA792\uA796\uA798\uA79A\uA79C\uA79E") + (
     "\uA7A0\uA7A2\uA7A4\uA7A6\uA7A8") + (
     "".join([chr(c) for c in range(ord("\uA7AA"), ord("\uA7AE") + 1)])) + (
     "".join([chr(c) for c in range(ord("\uA7B0"), ord("\uA7B4") + 1)])) + (
     "\uA7B6") + (
-    "".join([chr(c) for c in range(ord("\uFF21"), ord("\uFF3A") + 1)])) + (
-    "".join([chr(c) for c in range(ord("\U00010400"), ord("\U00010427") + 1)])) + (
-    "".join([chr(c) for c in range(ord("\U000104B0"), ord("\U000104D3") + 1)])) + (
-    "".join([chr(c) for c in range(ord("\U00010C80"), ord("\U00010CB2") + 1)])) + (
-    "".join([chr(c) for c in range(ord("\U000118A0"), ord("\U000118BF") + 1)])) + (
-    "".join([chr(c) for c in range(ord("\U0001D400"), ord("\U0001D419") + 1)])) + (
-    "".join([chr(c) for c in range(ord("\U0001D434"), ord("\U0001D44D") + 1)])) + (
-    "".join([chr(c) for c in range(ord("\U0001D468"), ord("\U0001D481") + 1)])) + (
+    "".join(
+        [chr(c) for c in range(ord("\uFF21"), ord("\uFF3A") + 1)])) + (
+    "".join(
+        [chr(c) for c in range(ord("\U00010400"), ord("\U00010427") + 1)])) + (
+    "".join(
+        [chr(c) for c in range(ord("\U000104B0"), ord("\U000104D3") + 1)])) + (
+    "".join(
+        [chr(c) for c in range(ord("\U00010C80"), ord("\U00010CB2") + 1)])) + (
+    "".join(
+        [chr(c) for c in range(ord("\U000118A0"), ord("\U000118BF") + 1)])) + (
+    "".join(
+        [chr(c) for c in range(ord("\U0001D400"), ord("\U0001D419") + 1)])) + (
+    "".join(
+        [chr(c) for c in range(ord("\U0001D434"), ord("\U0001D44D") + 1)])) + (
+    "".join(
+        [chr(c) for c in range(ord("\U0001D468"), ord("\U0001D481") + 1)])) + (
     "\U0001D49C\U0001D49E\U0001D49F\U0001D4A2\U0001D4A5\U0001D4A6") + (
-    "".join([chr(c) for c in range(ord("\U0001D4A9"), ord("\U0001D4AC") + 1)])) + (
-    "".join([chr(c) for c in range(ord("\U0001D4AE"), ord("\U0001D4B5") + 1)])) + (
-    "".join([chr(c) for c in range(ord("\U0001D4D0"), ord("\U0001D4E9") + 1)])) + (
+    "".join(
+        [chr(c) for c in range(ord("\U0001D4A9"), ord("\U0001D4AC") + 1)])) + (
+    "".join(
+        [chr(c) for c in range(ord("\U0001D4AE"), ord("\U0001D4B5") + 1)])) + (
+    "".join(
+        [chr(c) for c in range(ord("\U0001D4D0"), ord("\U0001D4E9") + 1)])) + (
     "\U0001D504\U0001D505") + (
-    "".join([chr(c) for c in range(ord("\U0001D507"), ord("\U0001D50A") + 1)])) + (
-    "".join([chr(c) for c in range(ord("\U0001D50D"), ord("\U0001D514") + 1)])) + (
-    "".join([chr(c) for c in range(ord("\U0001D516"), ord("\U0001D51C") + 1)])) + (
+    "".join(
+        [chr(c) for c in range(ord("\U0001D507"), ord("\U0001D50A") + 1)])) + (
+    "".join(
+        [chr(c) for c in range(ord("\U0001D50D"), ord("\U0001D514") + 1)])) + (
+    "".join(
+        [chr(c) for c in range(ord("\U0001D516"), ord("\U0001D51C") + 1)])) + (
     "\U0001D538\U0001D539") + (
-    "".join([chr(c) for c in range(ord("\U0001D53B"), ord("\U0001D53E") + 1)])) + (
-    "".join([chr(c) for c in range(ord("\U0001D540"), ord("\U0001D544") + 1)])) + (
+    "".join(
+        [chr(c) for c in range(ord("\U0001D53B"), ord("\U0001D53E") + 1)])) + (
+    "".join(
+        [chr(c) for c in range(ord("\U0001D540"), ord("\U0001D544") + 1)])) + (
     "\U0001D546") + (
-    "".join([chr(c) for c in range(ord("\U0001D54A"), ord("\U0001D550") + 1)])) + (
-    "".join([chr(c) for c in range(ord("\U0001D56C"), ord("\U0001D585") + 1)])) + (
-    "".join([chr(c) for c in range(ord("\U0001D5A0"), ord("\U0001D5B9") + 1)])) + (
-    "".join([chr(c) for c in range(ord("\U0001D5D4"), ord("\U0001D5ED") + 1)])) + (
-    "".join([chr(c) for c in range(ord("\U0001D608"), ord("\U0001D621") + 1)])) + (
-    "".join([chr(c) for c in range(ord("\U0001D63C"), ord("\U0001D655") + 1)])) + (
-    "".join([chr(c) for c in range(ord("\U0001D670"), ord("\U0001D689") + 1)])) + (
-    "".join([chr(c) for c in range(ord("\U0001D6A8"), ord("\U0001D6C0") + 1)])) + (
-    "".join([chr(c) for c in range(ord("\U0001D6E2"), ord("\U0001D6FA") + 1)])) + (
-    "".join([chr(c) for c in range(ord("\U0001D71C"), ord("\U0001D734") + 1)])) + (
-    "".join([chr(c) for c in range(ord("\U0001D756"), ord("\U0001D76E") + 1)])) + (
-    "".join([chr(c) for c in range(ord("\U0001D790"), ord("\U0001D7A8") + 1)])) + (
+    "".join(
+        [chr(c) for c in range(ord("\U0001D54A"), ord("\U0001D550") + 1)])) + (
+    "".join(
+        [chr(c) for c in range(ord("\U0001D56C"), ord("\U0001D585") + 1)])) + (
+    "".join(
+        [chr(c) for c in range(ord("\U0001D5A0"), ord("\U0001D5B9") + 1)])) + (
+    "".join(
+        [chr(c) for c in range(ord("\U0001D5D4"), ord("\U0001D5ED") + 1)])) + (
+    "".join(
+        [chr(c) for c in range(ord("\U0001D608"), ord("\U0001D621") + 1)])) + (
+    "".join(
+        [chr(c) for c in range(ord("\U0001D63C"), ord("\U0001D655") + 1)])) + (
+    "".join(
+        [chr(c) for c in range(ord("\U0001D670"), ord("\U0001D689") + 1)])) + (
+    "".join(
+        [chr(c) for c in range(ord("\U0001D6A8"), ord("\U0001D6C0") + 1)])) + (
+    "".join(
+        [chr(c) for c in range(ord("\U0001D6E2"), ord("\U0001D6FA") + 1)])) + (
+    "".join(
+        [chr(c) for c in range(ord("\U0001D71C"), ord("\U0001D734") + 1)])) + (
+    "".join(
+        [chr(c) for c in range(ord("\U0001D756"), ord("\U0001D76E") + 1)])) + (
+    "".join(
+        [chr(c) for c in range(ord("\U0001D790"), ord("\U0001D7A8") + 1)])) + (
     "\U0001D7CA") + (
-    "".join([chr(c) for c in range(ord("\U0001E900"), ord("\U0001E921") + 1)])) + (
-    "".join([chr(c) for c in range(ord("\U0001F130"), ord("\U0001F149") + 1)])) + (
-    "".join([chr(c) for c in range(ord("\U0001F150"), ord("\U0001F169") + 1)])) + (
-    "".join([chr(c) for c in range(ord("\U0001F170"), ord("\U0001F189") + 1)]))
+    "".join(
+        [chr(c) for c in range(ord("\U0001E900"), ord("\U0001E921") + 1)])) + (
+    "".join(
+        [chr(c) for c in range(ord("\U0001F130"), ord("\U0001F149") + 1)])) + (
+    "".join(
+        [chr(c) for c in range(ord("\U0001F150"), ord("\U0001F169") + 1)])) + (
+    "".join(
+        [chr(c) for c in range(ord("\U0001F170"), ord("\U0001F189") + 1)]))

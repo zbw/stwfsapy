@@ -111,4 +111,4 @@ def test_international_upper_case_recall():
 
 def test_international_upper_case_precision():
     for c in upper_case_letters:
-        assert  1 == tf._count_upper(f'xy{c}z')
+        assert 1 == tf._count_upper(f'xy{c}z')
