@@ -15,6 +15,7 @@
 
 from stwfsapy import text_features as tf
 from sklearn.exceptions import NotFittedError
+from stwfsapy.tests.upper_case_letters import upper_case_letters
 import pytest
 
 _text = "abcdefghijklmnopqrstuvwxyzäöü" + \
@@ -101,3 +102,13 @@ def test_feature_creation():
         tf._NAME_UPPER_FEATURE,
         tf._NAME_DIGIT_FEATURE,
     ]
+
+
+def test_international_upper_case_recall():
+    count = tf._count_upper(upper_case_letters)
+    assert count == len(upper_case_letters)
+
+
+def test_international_upper_case_precision():
+    for c in upper_case_letters:
+        assert 1 == tf._count_upper(f'xy{c}z')
