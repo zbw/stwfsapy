@@ -9,7 +9,7 @@ readme_txt = (file_dir / "Readme.md").read_text()
 
 setup(
     name="stwfsapy",
-    version="0.01.4",
+    version="0.01.5",
     description="A library for match labels of thesaurus concepts to text" + (
         " and assigning scores to found occurrences."),
     long_description=readme_txt,
@@ -25,7 +25,7 @@ setup(
     ],
     packages=find_packages(exclude=("tests",)),
     include_package_data=True,
-    install_requires=["rdflib>=4.2,<6.0", "scikit-learn==0.22.*"],
+    install_requires=["rdflib>=4.2,<6.0", "scikit-learn>=0.22.*"],
     tests_require=['py', 'pytest', 'pytest-mock'],
     extras_require={
         'dev': [
