@@ -369,6 +369,22 @@ def test_expansion(full_graph, mocker):
         assert call(label_text) in stub.mock_calls
 
 
+def test_mark_doc_end_empty():
+    predictor = p.StwfsapyPredictor(None, None, None, None)
+    matches = [('a', 'aa', [0], 0), ('b', 'bbb', [2, 5], 0)]
+    res = predictor._mark_last_concept_in_doc(matches)
+    assert matches == [
+        ('a', 'aa', [0], 0),
+        ('b', 'bbb', [2, 5], 1)]
+
+
+def test_mark_doc():
+    predictor = p.StwfsapyPredictor(None, None, None, None)
+    lst = []
+    predictor._mark_last_concept_in_doc(lst)
+    assert lst == []
+
+
 def test_uriref_str_inversion():
     ref = c.test_type_concept
     assert ref == p._load_uri_ref(p._store_uri_ref(ref))

@@ -347,8 +347,9 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             return concepts, doc_counts
 
     def _mark_last_concept_in_doc(self, concepts):
-        last = concepts.pop()
-        concepts.append((last[0], last[1], last[2], 1))
+        if concepts:
+            last = concepts.pop()
+            concepts.append((last[0], last[1], last[2], 1))
 
     def store(self, path):
         with ZipFile(path, 'w') as zfile:
