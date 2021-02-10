@@ -13,7 +13,8 @@
 # limitations under the License.
 
 
-from typing import DefaultDict, Dict, FrozenSet, List, Iterable, \
+from collections import defaultdict
+from typing import Dict, FrozenSet, List, Iterable, \
     Container, Tuple, TypeVar, Union
 from logging import getLogger
 from rdflib.term import URIRef
@@ -322,7 +323,7 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
         if truth_refss is not None:
             ret_y = []
             for text, truth_refs in zip(texts, map(str, truth_refss)):
-                matched_concepts: Dict[str, List[int]] = DefaultDict(list)
+                matched_concepts: Dict[str, List[int]] = defaultdict(list)
                 for match in self.dfa_.search(text):
                     concept = match[0]
                     position = match[2]
@@ -335,7 +336,7 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
         else:
             doc_counts: List[int] = []
             for text in texts:
-                matched_concepts = DefaultDict(list)
+                matched_concepts = defaultdict(list)
                 for match in self.dfa_.search(text):
                     concept = match[0]
                     position = match[2]
