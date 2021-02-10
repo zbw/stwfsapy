@@ -45,7 +45,7 @@ train_texts = [
     "nothing",
     "concept",
     "has Concept-100_00 in the middle",
-    "concept-10_0 and concept-01_00",
+    "concept-10_0 and concept-01_00 and concept-10_0",
     ]
 train_labels = [
     [c.test_concept_ref_0_0],
@@ -76,7 +76,8 @@ def patched_dfa(mocker):
 
     def mock_search(text):
         for i in range(len(text)):
-            yield (str(i*2+9), text)
+            for j in range(i+1):
+                yield (str(i*2+9), text, j)
 
     mocker.patch.object(dfa, "search", mock_search)
     return dfa
@@ -116,7 +117,7 @@ def case_graph():
 def test_result_collection():
     res = p.StwfsapyPredictor._collect_prediction_results(
         _predictions[:, 1],
-        _concepts_with_text,
+        [c[0] for c in _concepts_with_text],
         _doc_counts
     )
     assert [(r[0], list(r[1])) for r in res] == _collection_result
@@ -127,7 +128,7 @@ def test_sparse_matrix_creation():
     predictor.concept_map_ = _concept_map
     res = predictor._create_sparse_matrix(
         _predictions[:, 1],
-        _concepts_with_text,
+        [c[0] for c in _concepts_with_text],
         _doc_counts
     )
     assert res.shape[0] == len(_doc_counts)
@@ -151,9 +152,9 @@ def test_match_and_extend_with_truth(patched_dfa):
         [[], [11, 14], [9]]
     )
     assert concepts == [
-        ("9", "a"), ("9", "bbb"),
-        ("11", "bbb"), ("13", "bbb"),
-        ("9", "xx"), ("11", "xx")]
+        ("9", "a", [0], 1), ("9", "bbb", [0], 0),
+        ("11", "bbb", [0, 1], 0), ("13", "bbb", [0, 1, 2], 1),
+        ("9", "xx", [0], 0), ("11", "xx", [0, 1], 1)]
     assert ys == [0, 0, 1, 0, 1, 0]
 
 
@@ -162,9 +163,9 @@ def test_match_and_extend_without_truth(patched_dfa):
     predictor.dfa_ = patched_dfa
     concepts, counts = predictor.match_and_extend(["a", "bbb", "xx"])
     assert concepts == [
-        ("9", "a"), ("9", "bbb"),
-        ("11", "bbb"), ("13", "bbb"),
-        ("9", "xx"), ("11", "xx")]
+        ("9", "a", [0], 1), ("9", "bbb", [0], 0),
+        ("11", "bbb", [0, 1], 0), ("13", "bbb", [0, 1, 2], 1),
+        ("9", "xx", [0], 0), ("11", "xx", [0, 1], 1)]
     assert counts == [1, 3, 2]
 
 
@@ -195,10 +196,14 @@ def test_init_and_fit(full_graph, mocker):
     predictor._fit_after_init(train_texts, y=train_labels)
     spy_fit.assert_called_once_with(
         [
-            (c.test_concept_uri_0_0, "concept-0_0"),
-            (c.test_concept_uri_100_00, "Concept-100_00"),
-            (c.test_concept_uri_10_0, "concept-10_0"),
-            (c.test_concept_uri_01_00, "concept-01_00"),
+            (c.test_concept_uri_0_0, "concept-0_0", [0], 1),
+            (
+                c.test_concept_uri_100_00,
+                "has Concept-100_00 in the middle",
+                [4],
+                1),
+            (c.test_concept_uri_10_0, train_texts[-1], [0, 35], 0),
+            (c.test_concept_uri_01_00, train_texts[-1], [17], 1),
             ],
         [1, 0, 1, 1]
     )
@@ -362,6 +367,22 @@ def test_expansion(full_graph, mocker):
     for _, label in c.test_labels:
         label_text = label.toPython()
         assert call(label_text) in stub.mock_calls
+
+
+def test_mark_doc_end():
+    predictor = p.StwfsapyPredictor(None, None, None, None)
+    matches = [('a', 'aa', [0], 0), ('b', 'bbb', [2, 5], 0)]
+    res = predictor._mark_last_concept_in_doc(matches)
+    assert matches == [
+        ('a', 'aa', [0], 0),
+        ('b', 'bbb', [2, 5], 1)]
+
+
+def test_mark_doc_end_empty():
+    predictor = p.StwfsapyPredictor(None, None, None, None)
+    lst = []
+    predictor._mark_last_concept_in_doc(lst)
+    assert lst == []
 
 
 def test_uriref_str_inversion():

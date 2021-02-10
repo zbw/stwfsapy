@@ -13,7 +13,9 @@
 # limitations under the License.
 
 
-from typing import FrozenSet, List, Iterable, Container, Tuple, TypeVar, Union
+from collections import defaultdict
+from typing import Dict, FrozenSet, List, Iterable, \
+    Container, Tuple, TypeVar, Union
 from logging import getLogger
 from rdflib.term import URIRef
 from rdflib import Graph
@@ -225,7 +227,7 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             predictions = []
         return self._create_sparse_matrix(
             predictions,
-            match_X,
+            [tpl[0] for tpl in match_X],
             doc_counts
         )
 
@@ -242,7 +244,7 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             predictions = []
         combined = StwfsapyPredictor._collect_prediction_results(
             predictions,
-            match_X,
+            [tpl[0] for tpl in match_X],
             doc_counts
         )
         return [
@@ -263,14 +265,14 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             predictions = []
         return self._create_sparse_matrix(
             predictions,
-            match_X,
+            [tpl[0] for tpl in match_X],
             doc_counts
         )
 
     def _create_sparse_matrix(
             self,
             values: Nl,
-            tuples: List[Tuple[T, str]],
+            concept_names: List[str],
             doc_counts: List[int]
             ) -> csr_matrix:
         return csr_matrix(
@@ -285,9 +287,9 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
                         in range(doc_counts[doc_idx])
                         ],
                     [
-                        self.concept_map_.get(tpl[0])
-                        for tpl
-                        in tuples
+                        self.concept_map_.get(name)
+                        for name
+                        in concept_names
                     ]
                 )),
             shape=(len(doc_counts), len(self.concept_map_))
@@ -296,14 +298,14 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
     @staticmethod
     def _collect_prediction_results(
             values: Nl,
-            tuples: List[Tuple[T, str]],
+            concept_names: List[T],
             doc_counts: List[int]
             ) -> List[Tuple[List[T], Nl]]:
         ret = []
         start = 0
         for count in doc_counts:
             end = start+count
-            ret.append(([t[0] for t in tuples[start:end]], values[start:end]))
+            ret.append((concept_names[start:end], values[start:end]))
             start = end
         return ret
 
@@ -311,7 +313,7 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             self,
             texts: Iterable[str],
             truth_refss: Iterable[Container] = None
-            ) -> Tuple[List[Tuple[str, str]], List[int]]:
+            ) -> Tuple[List[Tuple[str, str, List[int], int]], List[int]]:
         """Retrieves concepts by their labels from text.
         If ground truth values are present,
         it will also return a list of labels for scoring matches.
@@ -321,23 +323,34 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
         if truth_refss is not None:
             ret_y = []
             for text, truth_refs in zip(texts, map(str, truth_refss)):
+                matched_concepts: Dict[str, List[int]] = defaultdict(list)
                 for match in self.dfa_.search(text):
                     concept = match[0]
-                    text = match[1]
-                    concepts.append((concept, text))
+                    position = match[2]
+                    matched_concepts[concept].append(position)
+                for concept, positions in matched_concepts.items():
+                    concepts.append((concept, text, positions, 0))
                     ret_y.append(int(concept in truth_refs))
+                self._mark_last_concept_in_doc(concepts)
             return concepts, ret_y
         else:
             doc_counts: List[int] = []
             for text in texts:
-                count = 0
+                matched_concepts = defaultdict(list)
                 for match in self.dfa_.search(text):
-                    count += 1
                     concept = match[0]
-                    text = match[1]
-                    concepts.append((concept, text))
-                doc_counts.append(count)
+                    position = match[2]
+                    matched_concepts[concept].append(position)
+                for concept, positions in matched_concepts.items():
+                    concepts.append((concept, text, positions, 0))
+                self._mark_last_concept_in_doc(concepts)
+                doc_counts.append(len(matched_concepts))
             return concepts, doc_counts
+
+    def _mark_last_concept_in_doc(self, concepts):
+        if concepts:
+            last = concepts.pop()
+            concepts.append((last[0], last[1], last[2], 1))
 
     def store(self, path):
         with ZipFile(path, 'w') as zfile:
