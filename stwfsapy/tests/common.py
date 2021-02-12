@@ -103,3 +103,12 @@ cncpt_broaders = [
     (test_concept_ref_100_01, test_concept_ref_100_0),
     (test_concept_ref_100_02, test_concept_ref_100_0),
     ]
+
+
+doc_feature_data = [
+    ('cncpt_1', 'f'*3, [3, 4, 0, 2], 0),
+    ('cncpt_2', 'f'*6, [1, 8, 23, 12], 1),
+    ('cncpt_1', 'f'*15, [12, 36, 25, 7], 0),
+    ('cncpt_2', 'f'*12, [8, 102, 17, 9, 20], 0),
+    ('cncpt_3', 'f'*70, [13], 1)
+]

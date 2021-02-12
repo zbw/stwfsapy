@@ -189,8 +189,11 @@ def test_init_and_fit(full_graph, mocker):
     assert isinstance(
         combined,
         ColumnTransformer)
+    assert len(combined.transformers) == 4
     assert combined.transformers[0][0] == 'Thesaurus Features'
     assert combined.transformers[1][0] == 'Text Features'
+    assert combined.transformers[2][0] == 'Position Features'
+    assert combined.transformers[3][0] == 'Frequency Features'
     assert combined.transformers[0][1].thesaurus_relation == SKOS.broader
     spy_fit = mocker.spy(predictor.pipeline_, "fit")
     predictor._fit_after_init(train_texts, y=train_labels)

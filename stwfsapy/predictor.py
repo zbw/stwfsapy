@@ -13,6 +13,8 @@
 # limitations under the License.
 
 
+from stwfsapy.frequency_features import FrequencyFeatures
+from stwfsapy.position_features import PositionFeatures
 from collections import defaultdict
 from typing import Dict, FrozenSet, List, Iterable, \
     Container, Tuple, TypeVar, Union
@@ -204,7 +206,13 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
         self.pipeline_ = Pipeline([
             ("Combined Features", ColumnTransformer([
                 ("Thesaurus Features", thesaurus_features, 0),
-                ("Text Features", mk_text_features(), 1)])),
+                ("Text Features", mk_text_features(), 1),
+                ('Position Features', PositionFeatures(), [0, 1, 2, 3]),
+                (
+                    'Frequency Features',
+                    PositionFeatures(),
+                    [0, 1, 2, 3])
+                    ])),
             ("Classifier", DecisionTreeClassifier(
                 min_samples_leaf=25,
                 max_leaf_nodes=100))
