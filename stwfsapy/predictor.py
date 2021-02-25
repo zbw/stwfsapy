@@ -210,7 +210,7 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
                 ('Position Features', PositionFeatures(), [0, 1, 2, 3]),
                 (
                     'Frequency Features',
-                    PositionFeatures(),
+                    FrequencyFeatures(),
                     [0, 1, 2, 3])
                     ])),
             ("Classifier", DecisionTreeClassifier(
