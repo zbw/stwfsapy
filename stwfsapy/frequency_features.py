@@ -24,6 +24,7 @@ class FrequencyFeatures(BaseEstimator, TransformerMixin):
 
     def __init__(self):
         self.idfs_ = None
+        self.log_doc_count_ = None
 
     def fit(self, X, y=None):
         concept_counts = defaultdict(int)
@@ -37,7 +38,8 @@ class FrequencyFeatures(BaseEstimator, TransformerMixin):
                     concept_counts[concept] += 1
                 doc_count += 1
                 concepts = []
-        idfs = defaultdict(lambda: log(doc_count))
+        self.log_doc_count_ = log(doc_count)
+        idfs = dict()
         for concept, count in concept_counts.items():
             idfs[concept] = log(doc_count/(count+1))
         self.idfs_ = idfs
@@ -58,7 +60,7 @@ class FrequencyFeatures(BaseEstimator, TransformerMixin):
             if x[-1] == 1:
                 for concept, count in concept_counts.items():
                     tf = count/doc_concept_sum
-                    idf = self.idfs_[concept]
+                    idf = self.idfs_.get(concept, self.log_doc_count_)
                     ret[ret_ptr, 0] = tf
                     ret[ret_ptr, 1] = idf
                     ret[ret_ptr, 2] = tf*idf

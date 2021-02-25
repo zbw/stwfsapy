@@ -36,7 +36,6 @@ def test_fit():
     assert features.idfs_['cncpt_1'] == 0
     assert features.idfs_['cncpt_2'] == 0
     assert features.idfs_['cncpt_3'] == log(3/2)
-    assert features.idfs_['unknown_concept'] == log(3)
 
 
 def test_not_fitted():
