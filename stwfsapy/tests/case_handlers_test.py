@@ -28,6 +28,18 @@ def test_uncase_first_char_upper():
     assert res == '(U|u)pper'
 
 
+def test_uncase_first_char_symbol():
+    input = '\\?something'
+    res = handlers.uncase_first_char(input)
+    assert res == '\\?something'
+
+
+def test_uncase_diacritic():
+    input = 'ӟ'
+    res = handlers.uncase_first_char(input)
+    assert res == '(Ӟ|ӟ)'
+
+
 def test_sentence_case_handles_upper():
     assert _inp_upper == handlers.sentence_case_handler(_inp_upper)
 

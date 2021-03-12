@@ -68,3 +68,15 @@ def test_square_both():
     input = 'some [thing]'
     out = base_expansion(input)
     assert out == 'some \\[thing\\]'
+
+
+def test_asterisk():
+    input = 'Something text with * inside'
+    out = base_expansion(input)
+    assert out == 'Something text with \\* inside'
+
+
+def test_question_mark():
+    input = 'Something text with ? inside'
+    out = base_expansion(input)
+    assert out == 'Something text with \\? inside'
