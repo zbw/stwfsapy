@@ -17,7 +17,7 @@ from typing import Callable, Pattern, List
 import re
 
 
-_brace_base_expression = re.compile(r'([\[\]()\{\}])')
+_symbol_base_expression = re.compile(r'([\[\]()\{\}*?])')
 
 _upper_case_abbreviation_from_braces_expression = re.compile(
    r"^([A-Z-]{2,})\s*\\\(.{3,}?\\\)"
@@ -39,7 +39,7 @@ This is used for inserting optional dots between the letters."""
 
 
 def base_expansion(input: str):
-    return _brace_base_expression.sub(r'\\\g<1>', input)
+    return _symbol_base_expression.sub(r'\\\g<1>', input)
 
 
 def _replace_by_pattern_fun(pattern: Pattern[str]) -> Callable[[str], str]:

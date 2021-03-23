@@ -14,11 +14,14 @@
 
 
 def uncase_first_char(text: str) -> str:
-    return "({}|{}){}".format(
-        text[0].upper(),
-        text[0].lower(),
-        text[1:]
-        )
+    if text[0].isalpha():
+        return "({}|{}){}".format(
+            text[0].upper(),
+            text[0].lower(),
+            text[1:]
+            )
+    else:
+        return text
 
 
 def sentence_case_handler(text: str) -> str:
