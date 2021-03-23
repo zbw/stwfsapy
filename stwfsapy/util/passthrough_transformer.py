@@ -12,25 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-from sklearn.base import BaseEstimator, TransformerMixin
+import scipy.sparse as sp
 import numpy as np
+from sklearn.base import BaseEstimator, TransformerMixin
 
 
-class PositionFeatures(BaseEstimator, TransformerMixin):
+class PassthroughTransformer(BaseEstimator, TransformerMixin):
+    ''' Helper Class to better ahndle array input for ColumnTransfromer.'''
 
     def fit(self, X, y=None):
         return self
 
     def transform(self, X, y=None):
-        out = np.zeros((len(X), 3))
-        for idx, x in enumerate(X):
-            positions = x[1]
-            min_pos = min(positions)
-            max_pos = max(positions)
-            spread = max_pos - min_pos
-            txt_len = x[0]
-            out[idx][0] = min_pos / txt_len
-            out[idx][1] = max_pos / txt_len
-            out[idx][2] = spread / txt_len
-        return out
+        if sp.issparse(X[0]):
+            ret = sp.vstack(X, format='csr')
+        else:
+            ret = np.vstack(X)
+        return ret

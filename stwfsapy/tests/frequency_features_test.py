@@ -14,12 +14,19 @@
 
 
 from stwfsapy.frequency_features import FrequencyFeatures
-from stwfsapy.tests.common import doc_feature_data
 from sklearn.exceptions import NotFittedError
 import numpy as np
 from math import log
 
 import pytest
+
+frequency_input = [
+    ('cncpt_1',  [3, 4, 0, 2], 0),
+    ('cncpt_2', [1, 8, 23, 12], 1),
+    ('cncpt_1',  [12, 36, 25, 7], 0),
+    ('cncpt_2', [8, 102, 17, 9, 20], 0),
+    ('cncpt_3', [13], 1)
+]
 
 
 def test_handle_empty():
@@ -30,7 +37,7 @@ def test_handle_empty():
 
 def test_fit():
     features = FrequencyFeatures()
-    features.fit(doc_feature_data)
+    features.fit(frequency_input)
     keyset = {'cncpt_1', 'cncpt_2', 'cncpt_3'}
     assert set(features.idfs_.keys()) == keyset
     assert features.idfs_['cncpt_1'] == 0
@@ -46,13 +53,13 @@ def test_not_fitted():
 
 def test_transform():
     features = FrequencyFeatures()
-    features.fit(doc_feature_data)
+    features.fit(frequency_input)
     data = [
-        ('cncpt_2', 'b'*3, [2, 5], 0),
-        ('cncpt_3', 'b'*8, [17, 11, 22], 1),
-        ('cncpt_1', 'b'*17, [13, 2, 1, 9, 8], 0),
-        ('cncpt_3', 'b'*2, [6], 0),
-        ('unknown', 'b'*9, [4, 3, 26, 39, 7], 1)
+        ('cncpt_2', [2, 5], 0),
+        ('cncpt_3', [17, 11, 22], 1),
+        ('cncpt_1', [13, 2, 1, 9, 8], 0),
+        ('cncpt_3', [6], 0),
+        ('unknown', [4, 3, 26, 39, 7], 1)
     ]
     transformed = features.transform(
         data

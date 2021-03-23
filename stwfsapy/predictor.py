@@ -13,11 +13,14 @@
 # limitations under the License.
 
 
+from stwfsapy.util.passthrough_transformer import PassthroughTransformer
 from stwfsapy.frequency_features import FrequencyFeatures
 from stwfsapy.position_features import PositionFeatures
 from collections import defaultdict
 from typing import Dict, FrozenSet, List, Iterable, \
     Container, Tuple, TypeVar, Union
+from scipy.sparse import spmatrix
+from numpy import array
 from logging import getLogger
 from rdflib.term import URIRef
 from rdflib import Graph
@@ -25,11 +28,13 @@ from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.feature_extraction.text import TfidfVectorizer
 from scipy.sparse import csr_matrix
 from stwfsapy import thesaurus as t
 from stwfsapy.automata import nfa, construction, conversion, dfa
 from stwfsapy.thesaurus_features import ThesaurusFeatureTransformation
 from stwfsapy.text_features import mk_text_features
+from stwfsapy.util.input_handler import get_input_handler
 from stwfsapy import case_handlers
 from stwfsapy import expansion
 import pickle as pkl
@@ -43,9 +48,7 @@ Nl = TypeVar('Nl', List[int], List[float])
 
 
 _KEY_DFA = 'dfa'
-_KEY_PIPELINE = 'pipeline'
 _KEY_CONCEPT_MAP = 'concept_map'
-_KEY_GRAPH_ITEMS = 'graph_items'
 _KEY_CONCEPT_TYPE_URI = 'concept_type_uri'
 _KEY_THESAURUS_TYPE_URI = 'thesaurus_type_uri'
 _KEY_THESAURUS_RELATION_TYPE_URI = 'thesaurus_relation_type_uri'
@@ -53,6 +56,8 @@ _KEY_THESAURUS_RELATION_IS_SPECIALISATION = (
     'thesaurus_relation_is_specialisation')
 _KEY_REMOVE_DEPRECATED = 'remove_deprecated'
 _KEY_LANGS = 'langs'
+_KEY_INPUT = 'input'
+_KEY_USE_TXT_VEC = 'use_txt_vec'
 _KEY_HANDLE_TITLE_CASE = 'handle_title_case'
 _KEY_EXTRACT_UPPER_CASE_FROM_BRACES = 'extract_upper_case_from_braces'
 _KEY_EXTRACT_ANY_CASE_FROM_BRACES = 'extract_any_key_from_braces'
@@ -64,6 +69,8 @@ _KEY_SIMPLE_ENGLISH_PLURAL_RULES = 'simple_english_plural_rules'
 _NAME_GRAPH_FILE = 'graph.rdf'
 _NAME_PIPELINE_FILE = 'pipeline.pkl'
 _NAME_PREDICTOR_FILE = 'predictor.json'
+_NAME_TEXT_FEATURES_FILE = 'text_features.pkl'
+_NAME_TEXT_VECTORIZER_FILE = 'text_vectorizer.pkl'
 
 _logger = getLogger('stwfsa')
 
@@ -80,6 +87,8 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             thesaurus_relation_is_specialisation: bool = False,
             remove_deprecated: bool = True,
             langs: FrozenSet[str] = frozenset(),
+            input: str = 'content',
+            use_txt_vec: bool = False,
             handle_title_case: bool = True,
             extract_upper_case_from_braces: bool = True,
             extract_any_case_from_braces: bool = False,
@@ -112,6 +121,12 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             langs: For each language present in the set,
                 labels will be extracted from the graph.
                 An empy set or None will extract labels regardless of language.
+            input: What type of input is presented to the fit method:
+                * 'content': Input is expected to be an arraylike of string.
+                * 'filename': Input is expected to be a list of filenames.
+                * 'file': input is expected to be a list of file objects.
+            use_txt_vec: Whether to use vectorized representations of inputs.
+                This can lead to high memory consumption.
             handle_title_case: When True, will also match labels in title case.
                 I.e., in a text the first letter of every word can be upper
                 or lower case and will still be matched.
@@ -140,6 +155,8 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             thesaurus_relation_is_specialisation)
         self.remove_deprecated = remove_deprecated
         self.langs = langs
+        self.input = input
+        self.use_txt_vec = use_txt_vec
         self.handle_title_case = handle_title_case
         self.extract_upper_case_from_braces = extract_upper_case_from_braces
         self.extract_any_case_from_braces = extract_any_case_from_braces
@@ -203,16 +220,26 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
         nfautomat.remove_empty_transitions()
         converter = conversion.NfaToDfaConverter(nfautomat)
         self.dfa_ = converter.start_conversion()
+        self.text_features_ = mk_text_features().fit([])
+        transformations = [
+                    ("Thesaurus Features", thesaurus_features, 0),
+                    ('Text Features', PassthroughTransformer(), 1),
+                    ('Position Features', PositionFeatures(), [3, 4]),
+                    (
+                        'Frequency Features',
+                        FrequencyFeatures(),
+                        [0, 4, 5])
+                ]
+        if self.use_txt_vec:
+            self.text_vectorizer_ = TfidfVectorizer(input=self.input)
+            transformations.append(
+                ('Text Vector', PassthroughTransformer(), 2),
+            )
+        else:
+            self.text_vectorizer_ = None
         self.pipeline_ = Pipeline([
-            ("Combined Features", ColumnTransformer([
-                ("Thesaurus Features", thesaurus_features, 0),
-                ("Text Features", mk_text_features(), 1),
-                ('Position Features', PositionFeatures(), [0, 1, 2, 3]),
-                (
-                    'Frequency Features',
-                    FrequencyFeatures(),
-                    [0, 1, 2, 3])
-                    ])),
+            ("Combined Features", ColumnTransformer(
+                transformations)),
             ("Classifier", DecisionTreeClassifier(
                 min_samples_leaf=25,
                 max_leaf_nodes=100))
@@ -223,6 +250,8 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
         return self._fit_after_init(X, y=y)
 
     def _fit_after_init(self, X, y=None):
+        if self.use_txt_vec:
+            self.text_vectorizer_.fit(X)
         matches, train_y = self.match_and_extend(X, y)
         self.pipeline_.fit(matches, y=train_y)
         return self
@@ -319,38 +348,69 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
 
     def match_and_extend(
             self,
-            texts: Iterable[str],
+            inputs: Iterable[str],
             truth_refss: Iterable[Container] = None
-            ) -> Tuple[List[Tuple[str, str, List[int], int]], List[int]]:
+            ) -> Tuple[List[Tuple[
+                str,
+                spmatrix,
+                array,
+                int,
+                List[int], int]],
+                List[int]]:
         """Retrieves concepts by their labels from text.
         If ground truth values are present,
         it will also return a list of labels for scoring matches.
         If no ground truth values are present, a list
         with the number of matched concepts for each document is returned."""
         concepts = []
+        input_handler = get_input_handler(self.input)
         if truth_refss is not None:
             ret_y = []
-            for text, truth_refs in zip(texts, map(str, truth_refss)):
+            for inp, truth_refs in zip(inputs, map(str, truth_refss)):
+                text = input_handler(inp)
+                if self.use_txt_vec:
+                    txt_vec = self.text_vectorizer_.transform([inp])[0]
+                else:
+                    txt_vec = 0
+                txt_feat = self.text_features_.transform([text])[0]
                 matched_concepts: Dict[str, List[int]] = defaultdict(list)
                 for match in self.dfa_.search(text):
                     concept = match[0]
                     position = match[2]
                     matched_concepts[concept].append(position)
                 for concept, positions in matched_concepts.items():
-                    concepts.append((concept, text, positions, 0))
+                    concepts.append((
+                        concept,
+                        txt_feat,
+                        txt_vec,
+                        len(text),
+                        positions,
+                        0))
                     ret_y.append(int(concept in truth_refs))
                 self._mark_last_concept_in_doc(concepts)
             return concepts, ret_y
         else:
             doc_counts: List[int] = []
-            for text in texts:
+            for inp in inputs:
+                text = input_handler(inp)
+                if self.use_txt_vec:
+                    txt_vec = self.text_vectorizer_.transform([inp])[0]
+                else:
+                    txt_vec = 0
+                txt_feat = self.text_features_.transform([text])[0]
                 matched_concepts = defaultdict(list)
                 for match in self.dfa_.search(text):
                     concept = match[0]
                     position = match[2]
                     matched_concepts[concept].append(position)
                 for concept, positions in matched_concepts.items():
-                    concepts.append((concept, text, positions, 0))
+                    concepts.append((
+                        concept,
+                        txt_feat,
+                        txt_vec,
+                        len(text),
+                        positions,
+                        0))
                 self._mark_last_concept_in_doc(concepts)
                 doc_counts.append(len(matched_concepts))
             return concepts, doc_counts
@@ -358,7 +418,7 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
     def _mark_last_concept_in_doc(self, concepts):
         if concepts:
             last = concepts.pop()
-            concepts.append((last[0], last[1], last[2], 1))
+            concepts.append((last[0], last[1], last[2], last[3], last[4], 1))
 
     def store(self, path):
         with ZipFile(path, 'w') as zfile:
@@ -377,6 +437,8 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
                                 self.thesaurus_relation_is_specialisation),
                         _KEY_REMOVE_DEPRECATED: self.remove_deprecated,
                         _KEY_LANGS: list(self.langs),
+                        _KEY_INPUT: self.input,
+                        _KEY_USE_TXT_VEC: self.use_txt_vec,
                         _KEY_HANDLE_TITLE_CASE: self.handle_title_case,
                         _KEY_EXTRACT_UPPER_CASE_FROM_BRACES: (
                             self.extract_upper_case_from_braces),
@@ -396,6 +458,11 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
                 # No good way to serialize sk-learn classifier,
                 # apart from insecure pickling
                 pkl.dump(self.pipeline_, fp)
+            if self.use_txt_vec:
+                with zfile.open(_NAME_TEXT_VECTORIZER_FILE, 'w') as fp:
+                    pkl.dump(self.text_vectorizer_, fp)
+            with zfile.open(_NAME_TEXT_FEATURES_FILE, 'w') as fp:
+                pkl.dump(self.text_features_, fp)
             with zfile.open(_NAME_GRAPH_FILE, 'w') as fp:
                 fp.write(self.graph.serialize(encoding='utf-8'))
 
@@ -404,11 +471,17 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
         with ZipFile(path, 'r') as zfile:
             with zfile.open(_NAME_PREDICTOR_FILE, 'r') as fp:
                 conf = loads(fp.read().decode('utf-8'))
+            use_txt_vec = conf[_KEY_USE_TXT_VEC]
+            if use_txt_vec:
+                with zfile.open(_NAME_TEXT_VECTORIZER_FILE, 'r') as fp:
+                    text_vectorizer = pkl.load(fp)
             with zfile.open(_NAME_GRAPH_FILE, 'r') as fp:
                 graph = Graph()
                 graph.parse(data=fp.read().decode('utf-8'))
             with zfile.open(_NAME_PIPELINE_FILE, 'r') as fp:
                 pipeline = pkl.load(fp)
+            with zfile.open(_NAME_TEXT_FEATURES_FILE, 'r') as fp:
+                text_features = pkl.load(fp)
         pred = StwfsapyPredictor(
             graph=graph,
             concept_type_uri=_load_uri_ref(
@@ -421,6 +494,8 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
                 conf[_KEY_THESAURUS_RELATION_IS_SPECIALISATION]),
             remove_deprecated=conf[_KEY_REMOVE_DEPRECATED],
             langs=frozenset(conf[_KEY_LANGS]),
+            input=conf[_KEY_INPUT],
+            use_txt_vec=use_txt_vec,
             handle_title_case=conf[_KEY_HANDLE_TITLE_CASE],
             extract_upper_case_from_braces=conf[
                 _KEY_EXTRACT_UPPER_CASE_FROM_BRACES],
@@ -433,6 +508,11 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             simple_english_plural_rules=conf[
                 _KEY_SIMPLE_ENGLISH_PLURAL_RULES]
         )
+        pred.text_features_ = text_features
+        if use_txt_vec:
+            pred.text_vectorizer_ = text_vectorizer
+        else:
+            pred.text_vectorizer_ = None
         pred.dfa_ = dfa.Dfa.from_dict(conf[_KEY_DFA], str)
         pred.pipeline_ = pipeline
         pred.concept_map_ = conf[_KEY_CONCEPT_MAP]

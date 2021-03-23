@@ -14,10 +14,18 @@
 
 
 from stwfsapy.position_features import PositionFeatures
-from stwfsapy.tests.common import doc_feature_data
 import numpy as np
 
 import pytest
+
+
+position_feature_data = [
+    (3, [3, 4, 0, 2]),
+    (6, [1, 8, 23, 12]),
+    (15, [12, 36, 25, 7]),
+    (12, [8, 102, 17, 9, 20]),
+    (70, [13]),
+]
 
 
 def test_handle_empty():
@@ -27,7 +35,7 @@ def test_handle_empty():
 
 def test_convert_docs():
     features = PositionFeatures()
-    res = features.transform(doc_feature_data)
+    res = features.transform(position_feature_data)
     assert res.tolist() == [
         [0/3, 4/3, 4/3],
         [1/6, 23/6, 22/6],
