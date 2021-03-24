@@ -260,7 +260,7 @@ def test_init_and_fit_with_vec(full_graph, mocker):
     pipe_fit_arg_list = spy_fit_pipeline.call_args_list[0]
     assert len(pipe_fit_arg_list) == 2
     pipe_fit_args = pipe_fit_arg_list[0]
-    assert pipe_fit_arg_list.kwargs['y'] == [1, 0, 1, 1]
+    assert pipe_fit_arg_list[1].get('y') == [1, 0, 1, 1]
     expected_features = [
             (c.test_concept_uri_0_0, [0], 1),
             (
@@ -378,7 +378,7 @@ def test_init_and_fit_without_vec(full_graph, mocker):
     pipe_fit_arg_list = spy_fit_pipeline.call_args_list[0]
     assert len(pipe_fit_arg_list) == 2
     pipe_fit_args = pipe_fit_arg_list[0]
-    assert pipe_fit_arg_list.kwargs['y'] == [1, 0, 1, 1]
+    assert pipe_fit_arg_list[1].get('y') == [1, 0, 1, 1]
     expected_features = [
             (c.test_concept_uri_0_0, [0], 1),
             (
