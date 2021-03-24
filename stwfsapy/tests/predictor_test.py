@@ -688,6 +688,7 @@ def test_serialization_inversion_with_vec(tmpdir, full_graph):
     assert len(loaded.graph) == len(predictor.graph)
     assert loaded.pipeline_[0].transformers[0][1].mapping_ == (
         predictor.pipeline_[0].transformers[0][1].mapping_)
+    assert loaded.text_vectorizer_ is not None
     assert loaded.text_vectorizer_.vocabulary_ == (
         predictor.text_vectorizer_.vocabulary_)
     loaded_txt_feat_names = [

@@ -18,7 +18,7 @@ from sklearn.base import BaseEstimator, TransformerMixin
 
 
 class PassthroughTransformer(BaseEstimator, TransformerMixin):
-    ''' Helper Class to better ahndle array input for ColumnTransfromer.'''
+    ''' Helper Class to better handle array input for ColumnTransformer.'''
 
     def fit(self, X, y=None):
         return self
