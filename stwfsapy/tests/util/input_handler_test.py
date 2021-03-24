@@ -17,6 +17,7 @@ import pytest
 
 file_content = "Some text inside a file"
 
+
 @pytest.fixture
 def handler_file(tmp_path):
     p = tmp_path / "hello.txt"

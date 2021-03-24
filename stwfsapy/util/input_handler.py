@@ -18,7 +18,7 @@ class UnknownInputTypeException(Exception):
         self.message = 'Unknown Input Format. Please specify' + (
             ' "content", "file" or "filename".')
         super().__init__(self.message)
-        
+
 
 def handle_content(txt):
     return txt
