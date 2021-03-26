@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from stwfsapy.text_features import mk_text_features
+from scipy.sparse.lil import lil_matrix
 from stwfsapy import predictor as p
 import stwfsapy.thesaurus as t
 from stwfsapy.automata.dfa import Dfa
@@ -23,7 +25,7 @@ import numpy as np
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.compose import ColumnTransformer
 from stwfsapy import case_handlers as handlers
-from unittest.mock import call
+from unittest.mock import ANY, call
 from rdflib import Graph
 from rdflib.namespace import SKOS
 from rdflib.term import Literal
@@ -54,6 +56,10 @@ train_labels = [
     [c.test_concept_ref_01_00],
     [c.test_concept_ref_10_0, c.test_concept_ref_01_00],
     ]
+expected_matches = [
+    ("9", [0], 1), ("9", [0], 0),
+    ("11", [0, 1], 0), ("13", [0, 1, 2], 1),
+    ("9", [0], 0), ("11", [0, 1], 1)]
 
 
 def make_test_result_matrix(values):
@@ -84,11 +90,13 @@ def patched_dfa(mocker):
 
 
 @pytest.fixture
-def mocked_predictor(mocker):
+def mocked_predictor(mocker, mock_vectorizer):
     predictor = p.StwfsapyPredictor(None, None, None, None)
     predictor.concept_map_ = _concept_map
     predictor.match_and_extend = mocker.Mock(
         return_value=(_concepts_with_text, _doc_counts))
+    predictor.text_vectorizer_ = mock_vectorizer
+    predictor.text_features_ = mk_text_features()
     predictor.pipeline_ = mocker.MagicMock()
     predictor.pipeline_.predict_proba = mocker.Mock(return_value=_predictions)
     predictor.pipeline_.predict = mocker.Mock(return_value=_classifications)
@@ -102,6 +110,20 @@ def no_match_predictor(mocker):
     predictor.match_and_extend = mocker.Mock(
         return_value=([], [0, 0, 0]))
     return predictor
+
+
+def mock_vec_transform(X):
+    ret = lil_matrix((len(X), 5000))
+    for idx, x in enumerate(X):
+        ret[idx] = len(x)
+    return ret
+
+
+@pytest.fixture
+def mock_vectorizer(mocker):
+    mock_vec = mocker.MagicMock()
+    mock_vec.transform = mock_vec_transform
+    return mock_vec
 
 
 @pytest.fixture
@@ -144,40 +166,194 @@ def test_sparse_matrix_creation():
             _predictions[slice_start:slice_start+count, 1]))
 
 
-def test_match_and_extend_with_truth(patched_dfa):
-    predictor = p.StwfsapyPredictor(None, None, None, None)
+def test_match_and_extend_with_truth_with_vec(patched_dfa, mock_vectorizer):
+    predictor = p.StwfsapyPredictor(None, None, None, None, use_txt_vec=True)
     predictor.dfa_ = patched_dfa
-    concepts, ys = predictor.match_and_extend(
-        ["a", "bbb", "xx"],
+    predictor.text_features_ = mk_text_features().fit([])
+    predictor.text_vectorizer_ = mock_vectorizer
+    in_txts = ["a", "bbb", "xx"]
+    matches, ys = predictor.match_and_extend(
+        in_txts,
         [[], [11, 14], [9]]
     )
-    assert concepts == [
-        ("9", "a", [0], 1), ("9", "bbb", [0], 0),
-        ("11", "bbb", [0, 1], 0), ("13", "bbb", [0, 1, 2], 1),
-        ("9", "xx", [0], 0), ("11", "xx", [0, 1], 1)]
+    txt_indices = [
+        idx
+        for idx, txt
+        in enumerate(in_txts)
+        for _ in range(len(txt))
+    ]
+    for txt_idx, match, expected in zip(
+            txt_indices,
+            matches,
+            expected_matches):
+        check_fit_arg(
+            predictor.text_vectorizer_,
+            predictor.text_features_,
+            in_txts[txt_idx],
+            match,
+            expected
+        )
     assert ys == [0, 0, 1, 0, 1, 0]
 
 
-def test_match_and_extend_without_truth(patched_dfa):
-    predictor = p.StwfsapyPredictor(None, None, None, None)
+def test_match_and_extend_without_truth_with_vec(patched_dfa, mock_vectorizer):
+    predictor = p.StwfsapyPredictor(None, None, None, None, use_txt_vec=True)
     predictor.dfa_ = patched_dfa
-    concepts, counts = predictor.match_and_extend(["a", "bbb", "xx"])
-    assert concepts == [
-        ("9", "a", [0], 1), ("9", "bbb", [0], 0),
-        ("11", "bbb", [0, 1], 0), ("13", "bbb", [0, 1, 2], 1),
-        ("9", "xx", [0], 0), ("11", "xx", [0, 1], 1)]
+    predictor.text_features_ = mk_text_features().fit([])
+    predictor.text_vectorizer_ = mock_vectorizer
+    in_txts = ["a", "bbb", "xx"]
+    matches, counts = predictor.match_and_extend(in_txts)
+    txt_indices = [
+        idx
+        for idx, txt
+        in enumerate(in_txts)
+        for _ in range(len(txt))
+    ]
+    for txt_idx, match, expected in zip(
+            txt_indices,
+            matches,
+            expected_matches):
+        check_fit_arg(
+            predictor.text_vectorizer_,
+            predictor.text_features_,
+            in_txts[txt_idx],
+            match,
+            expected
+        )
     assert counts == [1, 3, 2]
 
 
-def test_init_and_fit(full_graph, mocker):
+def test_init_and_fit_with_vec(full_graph, mocker):
     predictor = p.StwfsapyPredictor(
         full_graph,
         c.test_type_concept,
         c.test_type_thesaurus,
-        SKOS.broader)
+        SKOS.broader,
+        use_txt_vec=True)
     spy_deprecated = mocker.spy(t, "extract_deprecated")
     spy_case = mocker.spy(handlers, 'title_case_handler')
     predictor._init()
+    assert predictor.text_vectorizer_ is not None
+    spy_deprecated.assert_called_once_with(full_graph)
+    assert len(spy_case.mock_calls) == len(c.test_labels)
+    for _, label in c.test_labels:
+        assert call(label.toPython()) in spy_case.mock_calls
+    assert isinstance(
+        predictor.pipeline_.named_steps['Classifier'],
+        DecisionTreeClassifier)
+    combined = predictor.pipeline_.named_steps['Combined Features']
+    assert isinstance(
+        combined,
+        ColumnTransformer)
+    assert len(combined.transformers) == 5
+    assert combined.transformers[0][0] == 'Thesaurus Features'
+    assert combined.transformers[1][0] == 'Text Features'
+    assert combined.transformers[2][0] == 'Position Features'
+    assert combined.transformers[3][0] == 'Frequency Features'
+    assert combined.transformers[4][0] == 'Text Vector'
+    assert combined.transformers[0][1].thesaurus_relation == SKOS.broader
+    spy_fit_pipeline = mocker.spy(predictor.pipeline_, "fit")
+    spy_fit_vec = mocker.spy(predictor.text_vectorizer_, "fit")
+    predictor._fit_after_init(train_texts, y=train_labels)
+    spy_fit_pipeline.assert_called_once()
+
+    pipe_fit_arg_list = spy_fit_pipeline.call_args_list[0]
+    assert len(pipe_fit_arg_list) == 2
+    pipe_fit_args = pipe_fit_arg_list[0]
+    assert pipe_fit_arg_list[1].get('y') == [1, 0, 1, 1]
+    expected_features = [
+            (c.test_concept_uri_0_0, [0], 1),
+            (
+                c.test_concept_uri_100_00,
+                [4],
+                1),
+            (c.test_concept_uri_10_0, [0, 35], 0),
+            (c.test_concept_uri_01_00, [17], 1),
+            ]
+    assert len(expected_features) == len(pipe_fit_args[0])
+    txt_indices = [0, 3, 4, 4]
+    for txt_idx, actual, expected in zip(
+            txt_indices,
+            pipe_fit_args[0],
+            expected_features):
+        check_fit_arg(
+            predictor.text_vectorizer_,
+            predictor.text_features_,
+            train_texts[txt_idx],
+            actual,
+            expected)
+
+    spy_fit_vec.assert_called_once_with(
+        train_texts
+    )
+
+
+def test_match_and_extend_with_truth_without_vec(patched_dfa):
+    predictor = p.StwfsapyPredictor(None, None, None, None, use_txt_vec=False)
+    predictor.dfa_ = patched_dfa
+    predictor.text_features_ = mk_text_features().fit([])
+    in_txts = ["a", "bbb", "xx"]
+    matches, ys = predictor.match_and_extend(
+        in_txts,
+        [[], [11, 14], [9]]
+    )
+    txt_indices = [
+        idx
+        for idx, txt
+        in enumerate(in_txts)
+        for _ in range(len(txt))
+    ]
+    for txt_idx, match, expected in zip(
+            txt_indices,
+            matches,
+            expected_matches):
+        check_fit_arg(
+            None,
+            predictor.text_features_,
+            in_txts[txt_idx],
+            match,
+            expected
+        )
+    assert ys == [0, 0, 1, 0, 1, 0]
+
+
+def test_match_and_extend_without_truth_without_vec(patched_dfa):
+    predictor = p.StwfsapyPredictor(None, None, None, None, use_txt_vec=False)
+    predictor.dfa_ = patched_dfa
+    predictor.text_features_ = mk_text_features().fit([])
+    in_txts = ["a", "bbb", "xx"]
+    matches, counts = predictor.match_and_extend(in_txts)
+    txt_indices = [
+        idx
+        for idx, txt
+        in enumerate(in_txts)
+        for _ in range(len(txt))
+    ]
+    for txt_idx, match, expected in zip(
+            txt_indices,
+            matches,
+            expected_matches):
+        check_fit_arg(
+            None,
+            predictor.text_features_,
+            in_txts[txt_idx],
+            match,
+            expected
+        )
+    assert counts == [1, 3, 2]
+
+
+def test_init_and_fit_without_vec(full_graph, mocker):
+    predictor = p.StwfsapyPredictor(
+        full_graph,
+        c.test_type_concept,
+        c.test_type_thesaurus,
+        SKOS.broader,
+        use_txt_vec=False)
+    spy_deprecated = mocker.spy(t, "extract_deprecated")
+    spy_case = mocker.spy(handlers, 'title_case_handler')
+    predictor._init()
+    assert predictor.text_vectorizer_ is None
     spy_deprecated.assert_called_once_with(full_graph)
     assert len(spy_case.mock_calls) == len(c.test_labels)
     for _, label in c.test_labels:
@@ -195,21 +371,48 @@ def test_init_and_fit(full_graph, mocker):
     assert combined.transformers[2][0] == 'Position Features'
     assert combined.transformers[3][0] == 'Frequency Features'
     assert combined.transformers[0][1].thesaurus_relation == SKOS.broader
-    spy_fit = mocker.spy(predictor.pipeline_, "fit")
+    spy_fit_pipeline = mocker.spy(predictor.pipeline_, "fit")
     predictor._fit_after_init(train_texts, y=train_labels)
-    spy_fit.assert_called_once_with(
-        [
-            (c.test_concept_uri_0_0, "concept-0_0", [0], 1),
+    spy_fit_pipeline.assert_called_once()
+
+    pipe_fit_arg_list = spy_fit_pipeline.call_args_list[0]
+    assert len(pipe_fit_arg_list) == 2
+    pipe_fit_args = pipe_fit_arg_list[0]
+    assert pipe_fit_arg_list[1].get('y') == [1, 0, 1, 1]
+    expected_features = [
+            (c.test_concept_uri_0_0, [0], 1),
             (
                 c.test_concept_uri_100_00,
-                "has Concept-100_00 in the middle",
                 [4],
                 1),
-            (c.test_concept_uri_10_0, train_texts[-1], [0, 35], 0),
-            (c.test_concept_uri_01_00, train_texts[-1], [17], 1),
-            ],
-        [1, 0, 1, 1]
-    )
+            (c.test_concept_uri_10_0, [0, 35], 0),
+            (c.test_concept_uri_01_00, [17], 1),
+            ]
+    assert len(expected_features) == len(pipe_fit_args[0])
+    txt_indices = [0, 3, 4, 4]
+    for txt_idx, actual, expected in zip(
+            txt_indices,
+            pipe_fit_args[0],
+            expected_features):
+        check_fit_arg(
+            None,
+            predictor.text_features_,
+            train_texts[txt_idx],
+            actual,
+            expected)
+
+
+def check_fit_arg(vec_fun, text_feature_fun, txt, actual, expected):
+    assert actual[0] == expected[0]
+    assert (actual[1] == text_feature_fun.transform([txt])[0]).all()
+    if vec_fun:
+        assert (actual[2].toarray() ==
+                vec_fun.transform([txt]).toarray()).all()
+    else:
+        assert actual[2] == 0
+    assert actual[3] == len(txt)
+    assert actual[4] == expected[1]
+    assert actual[5] == expected[-1]
 
 
 def test_predict(mocked_predictor):
@@ -374,11 +577,11 @@ def test_expansion(full_graph, mocker):
 
 def test_mark_doc_end():
     predictor = p.StwfsapyPredictor(None, None, None, None)
-    matches = [('a', 'aa', [0], 0), ('b', 'bbb', [2, 5], 0)]
-    res = predictor._mark_last_concept_in_doc(matches)
+    matches = [('a', None, None, [0], 5, 0), ('b', None, None, [2, 5], 7, 0)]
+    predictor._mark_last_concept_in_doc(matches)
     assert matches == [
-        ('a', 'aa', [0], 0),
-        ('b', 'bbb', [2, 5], 1)]
+        ('a', None, None, [0], 5, 0),
+        ('b', None, None, [2, 5], 7, 1)]
 
 
 def test_mark_doc_end_empty():
@@ -393,17 +596,20 @@ def test_uriref_str_inversion():
     assert ref == p._load_uri_ref(p._store_uri_ref(ref))
 
 
-def test_serialization_inversion(tmpdir, full_graph):
+def test_serialization_inversion_without_vec(tmpdir, full_graph):
     predictor = p.StwfsapyPredictor(
         full_graph,
         c.test_type_concept,
         c.test_type_thesaurus,
-        SKOS.broader
+        SKOS.broader,
+        use_txt_vec=False
     )
     predictor.fit(train_texts, train_labels)
     pth = tmpdir.mkdir("tmp").join("model.zip")
     predictor.store(pth.strpath)
     loaded = p.StwfsapyPredictor.load(pth.strpath)
+    assert loaded.input == predictor.input
+    assert not loaded.use_txt_vec
     assert loaded.extract_any_case_from_braces == (
         predictor.extract_any_case_from_braces)
     assert loaded.extract_upper_case_from_braces == (
@@ -428,6 +634,74 @@ def test_serialization_inversion(tmpdir, full_graph):
     assert len(loaded.graph) == len(predictor.graph)
     assert loaded.pipeline_[0].transformers[0][1].mapping_ == (
         predictor.pipeline_[0].transformers[0][1].mapping_)
+    assert loaded.text_vectorizer_ is None
+    loaded_txt_feat_names = [
+        name
+        for name, _
+        in loaded.text_features_.transformer_list
+    ]
+    pred_txt_feat_names = [
+        name
+        for name, _
+        in predictor.text_features_.transformer_list
+    ]
+    assert loaded_txt_feat_names == pred_txt_feat_names
+    for triple in loaded.graph:
+        assert triple in predictor.graph
+
+
+def test_serialization_inversion_with_vec(tmpdir, full_graph):
+    predictor = p.StwfsapyPredictor(
+        full_graph,
+        c.test_type_concept,
+        c.test_type_thesaurus,
+        SKOS.broader,
+        use_txt_vec=True
+    )
+    predictor.fit(train_texts, train_labels)
+    pth = tmpdir.mkdir("tmp").join("model.zip")
+    predictor.store(pth.strpath)
+    loaded = p.StwfsapyPredictor.load(pth.strpath)
+    assert loaded.input == predictor.input
+    assert loaded.use_txt_vec
+    assert loaded.extract_any_case_from_braces == (
+        predictor.extract_any_case_from_braces)
+    assert loaded.extract_upper_case_from_braces == (
+        predictor.extract_upper_case_from_braces)
+    assert loaded.expand_ampersand_with_spaces == (
+        predictor.expand_ampersand_with_spaces)
+    assert loaded.expand_abbreviation_with_punctuation == (
+        predictor.expand_abbreviation_with_punctuation)
+    assert loaded.simple_english_plural_rules == (
+        predictor.simple_english_plural_rules)
+    assert loaded.concept_type_uri == predictor.concept_type_uri
+    assert loaded.sub_thesaurus_type_uri == predictor.sub_thesaurus_type_uri
+    assert loaded.thesaurus_relation_type_uri == (
+        predictor.thesaurus_relation_type_uri)
+    assert loaded.thesaurus_relation_is_specialisation == (
+        predictor.thesaurus_relation_is_specialisation)
+    assert loaded.concept_map_ == predictor.concept_map_
+    assert loaded.dfa_ == predictor.dfa_
+    assert len(loaded.graph) == len(predictor.graph)
+    assert loaded.concept_map_ == predictor.concept_map_
+    assert loaded.dfa_ == predictor.dfa_
+    assert len(loaded.graph) == len(predictor.graph)
+    assert loaded.pipeline_[0].transformers[0][1].mapping_ == (
+        predictor.pipeline_[0].transformers[0][1].mapping_)
+    assert loaded.text_vectorizer_ is not None
+    assert loaded.text_vectorizer_.vocabulary_ == (
+        predictor.text_vectorizer_.vocabulary_)
+    loaded_txt_feat_names = [
+        name
+        for name, _
+        in loaded.text_features_.transformer_list
+    ]
+    pred_txt_feat_names = [
+        name
+        for name, _
+        in predictor.text_features_.transformer_list
+    ]
+    assert loaded_txt_feat_names == pred_txt_feat_names
     for triple in loaded.graph:
         assert triple in predictor.graph
 

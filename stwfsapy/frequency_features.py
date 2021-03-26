@@ -54,7 +54,7 @@ class FrequencyFeatures(BaseEstimator, TransformerMixin):
         doc_concept_sum = 0
         for x in X:
             concept = x[0]
-            concept_count = len(x[2])
+            concept_count = len(x[1])
             concept_counts[concept] = concept_count
             doc_concept_sum += concept_count
             if x[-1] == 1:

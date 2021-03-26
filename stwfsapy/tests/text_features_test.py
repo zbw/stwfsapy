@@ -95,7 +95,6 @@ def test_config_digit():
 def test_feature_creation():
     union = tf.mk_text_features()
     assert [t[0] for t in union.transformer_list] == [
-        tf._NAME_VECTOR_FEATURE,
         tf._NAME_CHAR_FEATURE,
         tf._NAME_WORD_FEATURE,
         tf._NAME_SPECIAL_CHARS_FEATURE,

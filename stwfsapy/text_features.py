@@ -15,7 +15,6 @@
 
 from enum import Enum
 from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.pipeline import FeatureUnion
 from sklearn.exceptions import NotFittedError
 import numpy as np
@@ -32,7 +31,6 @@ _NAME_DIGIT_FEATURE = "n_digits"
 
 def mk_text_features():
     return FeatureUnion([
-        (_NAME_VECTOR_FEATURE, CountVectorizer(lowercase=False)),
         (_NAME_CHAR_FEATURE, CountFeature(CountType.N_CHAR)),
         (_NAME_WORD_FEATURE, CountFeature(CountType.N_WORD)),
         (_NAME_SPECIAL_CHARS_FEATURE, CountFeature(CountType.N_SPECIAL)),
