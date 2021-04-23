@@ -39,7 +39,7 @@ from stwfsapy import case_handlers
 from stwfsapy import expansion
 import pickle as pkl
 from json import dumps, loads
-from zipfile import ZipFile
+from zipfile import ZIP_DEFLATED, ZipFile
 
 
 T = TypeVar('T')
@@ -421,7 +421,7 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             concepts.append((last[0], last[1], last[2], last[3], last[4], 1))
 
     def store(self, path):
-        with ZipFile(path, 'w') as zfile:
+        with ZipFile(path, 'w', compression=ZIP_DEFLATED) as zfile:
             with zfile.open(_NAME_PREDICTOR_FILE, 'w') as fp:
                 fp.write(
                     dumps({
