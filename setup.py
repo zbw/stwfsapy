@@ -9,7 +9,7 @@ readme_txt = (file_dir / "Readme.md").read_text()
 
 setup(
     name="stwfsapy",
-    version="0.02.0",
+    version="0.02.1",
     description="A library for match labels of thesaurus concepts to text" + (
         " and assigning scores to found occurrences."),
     long_description=readme_txt,
