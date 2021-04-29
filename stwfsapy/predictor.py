@@ -422,7 +422,7 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
 
     def store(self, path):
         with ZipFile(path, 'w') as zfile:
-            with zfile.open(_NAME_PREDICTOR_FILE, 'w') as fp:
+            with zfile.open(_NAME_PREDICTOR_FILE, 'w', force_zip64=True) as fp:
                 fp.write(
                     dumps({
                         _KEY_DFA: self.dfa_.to_dict(str),
@@ -454,16 +454,22 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
                         ensure_ascii=False
                     ).encode('utf-8')
                 )
-            with zfile.open(_NAME_PIPELINE_FILE, 'w') as fp:
+            with zfile.open(_NAME_PIPELINE_FILE, 'w', force_zip64=True) as fp:
                 # No good way to serialize sk-learn classifier,
                 # apart from insecure pickling
                 pkl.dump(self.pipeline_, fp)
             if self.use_txt_vec:
-                with zfile.open(_NAME_TEXT_VECTORIZER_FILE, 'w') as fp:
+                with zfile.open(
+                        _NAME_TEXT_VECTORIZER_FILE,
+                        'w',
+                        force_zip64=True) as fp:
                     pkl.dump(self.text_vectorizer_, fp)
-            with zfile.open(_NAME_TEXT_FEATURES_FILE, 'w') as fp:
+            with zfile.open(
+                    _NAME_TEXT_FEATURES_FILE,
+                    'w',
+                    force_zip64=True) as fp:
                 pkl.dump(self.text_features_, fp)
-            with zfile.open(_NAME_GRAPH_FILE, 'w') as fp:
+            with zfile.open(_NAME_GRAPH_FILE, 'w', force_zip64=True) as fp:
                 fp.write(self.graph.serialize(encoding='utf-8'))
 
     @staticmethod
