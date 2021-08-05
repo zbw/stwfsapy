@@ -28,7 +28,7 @@ g.load('/path/to/your/thesaurus')
 First, define the type URI for descriptors.
 If your thesaurus has a hierarchical structure that includes groups, 
 you can optionally specify the type URI for sub-thesauri.
-In this case you should also specify the relationship that relates sub-thesauri to concepts.
+In this case you should also specify the relation that relates sub-thesauri to concepts.
 Furthermore you can indicate whether the thesaurus relation is a specialisation.
 For the [STW](https://http://zbw.eu/stw/) this would be
 ```python
@@ -50,7 +50,7 @@ p = StwfsapyPredictor(
     langs={'en'},
     simple_english_plural_rules=True)
 ```
-The next step assumes you have loaded your texts into a list `X` and your labels in a list of lists `y`,
+The next step assumes you have loaded your texts into a list `X` and your labels into a list of lists `y`,
 such that for all indices `0 <= i < len(X)`. The list at `y[i]` contains the URIs to the correct concepts for `X[i]`.
 The concepts should be given by their URI.
 Then you can train the classifier:
