@@ -29,7 +29,7 @@ First, define the type URI for descriptors.
 If your thesaurus has a hierarchical structure that includes groups, 
 you can optionally specify the type URI for sub-thesauri.
 In this case you should also specify the relation that relates sub-thesauri to concepts.
-Furthermore you can indicate whether the thesaurus relation is a specialisation.
+Furthermore you can indicate whether this relation is a specialisation.
 For the [STW](https://http://zbw.eu/stw/) this would be
 ```python
 descriptor_type_uri = 'http://zbw.eu/namespaces/zbw-extensions/Descriptor'
