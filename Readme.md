@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/zbw/stwfsapy.svg?branch=master)](https://travis-ci.org/zbw/stwfsapy)
 [![codecov](https://codecov.io/gh/zbw/stwfsapy/branch/master/graph/badge.svg)](https://codecov.io/gh/zbw/stwfsapy)
 ## About
-This library provides functionality to find the labels of SKOS thesaurus concepts in (short) text.
+This library provides functionality to find the labels of SKOS thesaurus concepts in text.
 It is a reimplementation in Python of [stwfsa](https://github.com/zbw/stwfsa) combined with the concept scoring from [1].
 A deterministic finite automaton is constructed from the labels of the thesaurus concepts to perform the matching.
 In addition, a classifier is trained to score the matched occurrences of the concepts.
@@ -11,10 +11,8 @@ In addition, a classifier is trained to score the matched occurrences of the con
 The construction for the automaton requires a SKOS thesaurus represented as a `rdflib` `Graph`.
 Concepts should be related to labels by `skos:prefLabel` or `skos:altLabel`.
 Concepts have to be identifiable by `rdf:type`.
-The training of the predictor requires labeled short text.
+The training of the predictor requires labeled text.
 Each training sample should be annotated with one or more concepts from the thesaurus.
-Currently the algorithm does not yield satisfactory results for longer texts,
-i.e., you should work with titles and keywords only, or possibly with abstracts but not with fulltexts.
 
 ## Usage
 ### Create predictor
@@ -27,9 +25,10 @@ g.load('/path/to/your/thesaurus')
 ```
 First, define the type URI for descriptors.
 If your thesaurus has a hierarchical structure that includes groups, 
+e.g., `skos:Collection`,
 you can optionally specify the type URI for sub-thesauri.
 In this case you should also specify the relation that relates sub-thesauri to concepts.
-Furthermore you can indicate whether this relation is a specialisation.
+Furthermore you can indicate whether this relation is a specialisation, in contrast to being a generalisation.
 For the [STW](https://http://zbw.eu/stw/) this would be
 ```python
 descriptor_type_uri = 'http://zbw.eu/namespaces/zbw-extensions/Descriptor'
