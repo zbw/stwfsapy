@@ -8,7 +8,7 @@ A deterministic finite automaton is constructed from the labels of the thesaurus
 In addition, a classifier is trained to score the matched occurrences of the concepts.
 
 ## Data Requirements
-The construction for the automaton requires a SKOS thesaurus represented as a `rdflib` `Graph`.
+The construction of the automaton requires a SKOS thesaurus represented as a `rdflib` `Graph`.
 Concepts should be related to labels by `skos:prefLabel` or `skos:altLabel`.
 Concepts have to be identifiable by `rdf:type`.
 The training of the predictor requires labeled text.
@@ -24,11 +24,10 @@ g = Graph()
 g.load('/path/to/your/thesaurus')
 ```
 First, define the type URI for descriptors.
-If your thesaurus has a hierarchical structure that includes groups, 
-e.g., `skos:Collection`,
-you can optionally specify the type URI for sub-thesauri.
+If your thesaurus is structured into sub-thesauri by providing categories for the concepts of the thesaurus using,
+e.g., `skos:Collection`, you can optionally specify the type of these categories via a URI.
 In this case you should also specify the relation that relates sub-thesauri to concepts.
-Furthermore you can indicate whether this relation is a specialisation, in contrast to being a generalisation.
+Furthermore you can indicate whether this relation is a specialisation relation (as opposed to a generalisation relation, which is the default).
 For the [STW](https://http://zbw.eu/stw/) this would be
 ```python
 descriptor_type_uri = 'http://zbw.eu/namespaces/zbw-extensions/Descriptor'
