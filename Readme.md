@@ -26,7 +26,7 @@ g.load('/path/to/your/thesaurus')
 First, define the type URI for descriptors.
 If your thesaurus is structured into sub-thesauri by providing categories for the concepts of the thesaurus using,
 e.g., `skos:Collection`, you can optionally specify the type of these categories via a URI.
-In this case you should also specify the relation that relates sub-thesauri to concepts.
+In this case you should also specify the relation that relates concepts to categories.
 Furthermore you can indicate whether this relation is a specialisation relation (as opposed to a generalisation relation, which is the default).
 For the [STW](https://http://zbw.eu/stw/) this would be
 ```python
