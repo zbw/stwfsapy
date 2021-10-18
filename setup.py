@@ -25,7 +25,7 @@ setup(
     ],
     packages=find_packages(exclude=("tests",)),
     include_package_data=True,
-    install_requires=["rdflib>=4.2,<6.0", "scikit-learn>=0.22.*"],
+    install_requires=["rdflib>=4.2,<6.0", "scikit-learn>=0.24.*"],
     tests_require=['py', 'pytest', 'pytest-mock'],
     extras_require={
         'dev': [
