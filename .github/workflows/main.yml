@@ -40,10 +40,10 @@ jobs:
           pipenv install --dev --skip-lock
 
       - name: Lint Code
-        run: pytest --pycodestyle
+        run: pipenv run pytest --pycodestyle
         
       - name: Test Code
-        run: pytest --cov=./ --cov-config=.coveragerc
+        run: pipenv run pytest --cov=./ --cov-config=.coveragerc
 
       - name: Upload coverage
         uses: codecov/codecov-action@v1
