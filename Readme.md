@@ -5,7 +5,7 @@
 This library provides functionality to find the labels of SKOS thesaurus concepts in text.
 It is a reimplementation in Python of [stwfsa](https://github.com/zbw/stwfsa) combined with the concept scoring from [1].
 A deterministic finite automaton is constructed from the labels of the thesaurus concepts to perform the matching.
-In addition, a classifier is trained to score the matched occurrences of the concepts.
+In addition, a classifier is trained to score the matched concept occurrences.
 
 ## Data Requirements
 The construction of the automaton requires a SKOS thesaurus represented as a `rdflib` `Graph`.
