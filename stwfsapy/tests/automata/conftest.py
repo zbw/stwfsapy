@@ -13,4 +13,4 @@
 # limitations under the License.
 
 
-from stwfsapy.tests.automata.data import input_graph
+from stwfsapy.tests.automata.data import input_graph # noqa

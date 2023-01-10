@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from numpy.core.defchararray import asarray
-from numpy.core.records import array
 from stwfsapy.util.passthrough_transformer import PassthroughTransformer
 import numpy as np
 import scipy.sparse as sp

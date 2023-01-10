@@ -13,7 +13,6 @@
 # limitations under the License.
 
 
-import pytest
 from rdflib.term import URIRef, Literal
 
 

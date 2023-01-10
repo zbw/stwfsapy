@@ -16,8 +16,6 @@
 from stwfsapy.position_features import PositionFeatures
 import numpy as np
 
-import pytest
-
 
 position_feature_data = [
     (3, [3, 4, 0, 2]),
