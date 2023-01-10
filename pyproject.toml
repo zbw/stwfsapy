@@ -26,8 +26,14 @@ pytest-mock = "~3.10"
 pytest-cov = "~4.0"
 pytest-pycodestyle = "~2.3"
 codecov = "~2.1"
+safety = "~2.3"
+bandit = "~1.7"
 
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.bandit]
+skips = ["B403", "B301"]
+exclude_dirs = ["stwfsapy/tests"]

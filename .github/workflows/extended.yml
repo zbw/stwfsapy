@@ -36,3 +36,12 @@ jobs:
 
       - name: Upload coverage
         uses: codecov/codecov-action@v3
+        if: matrix.python-version == '3.8'
+
+      - name: Look for security vulnerabilities in dependencies
+        run: poetry run safety check --full-report
+        continue-on-error: true
+
+      - name: Look for security issues in code
+        run: poetry run bandit -c pyproject.toml -r stwfsapy
+        continue-on-error: true
