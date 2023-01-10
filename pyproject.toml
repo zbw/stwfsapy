@@ -24,8 +24,7 @@ pytest-mock = "~3.10"
 
 [tool.poetry.group.ci.dependencies]
 pytest-cov = "~4.0"
-pytest-pycodestyle = "~2.3"
-codecov = "~2.1"
+flake8 = "~5"
 safety = "~2.3"
 bandit = "~1.7"
 
