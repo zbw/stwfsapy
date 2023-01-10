@@ -18,13 +18,13 @@ rdflib = ">=4.2,<7.0"
 
 
 [tool.poetry.group.dev.dependencies]
-pytest = "~5.4"
-pytest-mock = "~1.7"
+pytest = "~7.2"
+pytest-mock = "~3.10"
 
 
 [tool.poetry.group.ci.dependencies]
-pytest-cov = "~2.8"
-pytest-pycodestyle = "~2.2"
+pytest-cov = "~4.0"
+pytest-pycodestyle = "~2.3"
 codecov = "~2.1"
 
 
