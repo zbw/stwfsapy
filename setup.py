@@ -15,8 +15,8 @@ setup(
     long_description=readme_txt,
     long_description_content_type="text/markdown",
     url="https://github.com/zbw/stwfsapy",
-    author="Moritz Fuerneisen",
-    author_email="m.fuerneisen@zbw.eu",
+    author="AutoSE",
+    author_email="autose@zbw.eu",
     license="Apache",
     classifiers=[
         "License :: OSI Approved :: Apache Software License",
@@ -36,5 +36,5 @@ setup(
             "codecov==2.1.*",
             ]
         },
-    python_requires='>=3.6',
+    python_requires='>=3.8',
 )
