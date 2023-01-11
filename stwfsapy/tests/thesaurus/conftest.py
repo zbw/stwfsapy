@@ -21,7 +21,7 @@ from rdflib.namespace import SKOS, RDF
 
 @pytest.fixture
 def tuples():
-    return[
+    return [
         (c.concept_ref_printed, c.concept_prefLabel_printed_en),
         (c.concept_ref_media, c.concept_prefLabel_media_en),
         (c.concept_ref_printed, c.concept_prefLabel_printed_missing)

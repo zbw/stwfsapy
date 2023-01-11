@@ -25,7 +25,7 @@ import numpy as np
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.compose import ColumnTransformer
 from stwfsapy import case_handlers as handlers
-from unittest.mock import ANY, call
+from unittest.mock import call
 from rdflib import Graph
 from rdflib.namespace import SKOS
 from rdflib.term import Literal
