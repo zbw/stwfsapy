@@ -1,5 +1,5 @@
 # stwfsapy
-[![Extended Tests](https://github.com/zbw/stwfsapy/actions/workflows/extended.yml/badge.svg)](https://github.com/zbw/stwfsapy/actions/workflows/extended.yml)
+[![CI](https://github.com/zbw/stwfsapy/actions/workflows/ci.yml/badge.svg)](https://github.com/zbw/stwfsapy/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/zbw/stwfsapy/branch/master/graph/badge.svg)](https://codecov.io/gh/zbw/stwfsapy)
 ## About
 This library provides functionality to find the labels of SKOS thesaurus concepts in text.

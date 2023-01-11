@@ -1,4 +1,4 @@
-name: Extended Tests
+name: CI
 on:
   push:
     branches: [ master ]
