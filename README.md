@@ -14,6 +14,31 @@ Concepts have to be identifiable by `rdf:type`.
 The training of the predictor requires labeled text.
 Each training sample should be annotated with one or more concepts from the thesaurus.
 
+## Installation 
+
+### Requirements
+
+Python ``>= 3.8`` is required.
+
+### With pip
+stwfsapy is available on [PyPI](pypi.org) . You can install stwfsapy using pip:
+
+``pip install stwfsapy``
+
+This will install a python package called `stwfsapy`.
+
+Note that it is generally recommended to use a [virtual environment](https://docs.python.org/3/tutorial/venv.html) to avoid 
+ conflicting behaviour with the system package manager.
+
+### From source
+You also have the option to checkout the repository and install the packages from source. You need
+[poetry](https://python-poetry.org) to perform the task:
+
+```shell
+# call inside the project directory
+poetry install --without ci 
+```
+
 ## Usage
 ### Create predictor
 First load your thesaurus.
@@ -66,17 +91,17 @@ p.predict_proba(['one input text', 'Another input text.'])
 The indices of the concepts are stored in `p.concept_map_`.
 
 ### Options
-## Input Type
+#### Input Type
 The `StwfsapyPredictor` class has an option input that allows it to handle different types of inputs in the feature argument `X` of transform and fit methods.
 * `"content"` expects string input. This is the default.
 * `"file"` expects python file handles.
 * `"filename"` expects paths to files.
 
-## Text Vectorizer
+#### Text Vectorizer
 `StwfsapyPredictor` can optionally use TFIDF features of the input texts to score the matches found by the finite state automaton.
 However this uses a lot of memory. Therefore it is disabled by default.
 
-## Save Model
+### Save Model
 A trained predictor `p` can be stored by calling `p.store('/path/to/storage/location')`.
 Afterwards it can be loaded as follows:
 ```python
@@ -84,6 +109,11 @@ from stwfsapy.predictor import StwfsapyPredictor
 
 StwfsapyPredictor.load('/path/to/storage/location')
 ``` 
+
+## Contribute
+
+Contributions via pull requests are welcome. Please create an issue beforehand
+to explain and discuss the reasons for the respective contribution.
 
 ## References
 [1] [Toepfer, Martin, and Christin Seifert. "Content-based quality estimation for automatic subject indexing of short texts under precision and recall constraints." International Conference on Theory and Practice of Digital Libraries. Springer, Cham, 2018.](https://arxiv.org/abs/1806.02743)
