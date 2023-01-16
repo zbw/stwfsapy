@@ -91,15 +91,7 @@ p.predict_proba(['one input text', 'Another input text.'])
 The indices of the concepts are stored in `p.concept_map_`.
 
 ### Options
-#### Input Type
-The `StwfsapyPredictor` class has an option input that allows it to handle different types of inputs in the feature argument `X` of transform and fit methods.
-* `"content"` expects string input. This is the default.
-* `"file"` expects python file handles.
-* `"filename"` expects paths to files.
-
-#### Text Vectorizer
-`StwfsapyPredictor` can optionally use TFIDF features of the input texts to score the matches found by the finite state automaton.
-However this uses a lot of memory. Therefore it is disabled by default.
+All options for the predictor are documented at https://stwfsapy.readthedocs.io/ .
 
 ### Save Model
 A trained predictor `p` can be stored by calling `p.store('/path/to/storage/location')`.
