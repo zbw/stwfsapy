@@ -110,25 +110,25 @@ def retrieve_concept_labels(
 
     Only the labels that are in one of the specified language will be reported.
     In addition the concept URIs can be limited by a set.
-    Args:
-        g: The SKOS graph whose labels are extracted.
 
-        allowed: Only concepts present in the set are retained.
+    :param g: The SKOS graph whose labels are extracted.
+
+    :param allowed: Only concepts present in the set are retained.
             If None or the set is empty
             all concepts will be present in the result.
 
 
-        langs: Only retain labels that are in the given language.
+    :param  langs: Only retain labels that are in the given language.
             Add None to the set if you want to keep labels
             without a language annotation.
 
 
-    Returns:
+    :return:
         An iterator of pairs. The first element is a URIRef,
         representing a concept.
         The second element is a label for the concept.
 
-        """
+    """
     refs_with_labels = extract_labels(g)
     if langs is not None and len(langs) > 0:
         filtered_by_language = _filter_by_langs(refs_with_labels, langs)

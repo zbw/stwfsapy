@@ -97,50 +97,76 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             simple_english_plural_rules: bool = False,
             ):
         """Creates the predictor.
-        Args:
-            graph: The SKOS onthology used to extract the labels.
-            concept_type_uri
-                The uri of the concept type.
-                It is assumed that for every concept c,
-                there is a triple (c, RDF.type, concept_type_uri)
-                in the graph.
-            sub_thesaurus_type_uri: The uri of the concept type.
-                It is assumed that for every sub thesaurus t,
-                there is a triple (t, RDF.type, sub_thesaurus_type_uri)
-                in the graph.
-            thesaurus_relation_type_uri:
-                Uri of the relation that links concepts to thesauri.
-            thesaurus_relation_is_specialisation:
-                Indicates whether the thesaurus_relation links thesauri to
-                concepts or the other way round.
-                E.g., for the relation skos:broader it should be false.
-                Conversely it should be true for skos:narrower.
-            remove_deprecated: When True will discard deprecated subjects.
-                Deprecation of a subject has to be indicated by
-                a triple (s, OWL.deprecated, Literal(True)) in the graph.
-            langs: For each language present in the set,
-                labels will be extracted from the graph.
-                An empy set or None will extract labels regardless of language.
-            input: What type of input is presented to the fit method:
+
+        :param graph: The SKOS onthology used to extract the labels.
+        :param concept_type_uri:
+            The uri of the concept type.
+            It is assumed that for every concept c,
+            there is a triple (c, RDF.type, concept_type_uri)
+            in the graph.
+        :param  sub_thesaurus_type_uri: The uri of the concept type.
+            It is assumed that for every sub thesaurus t,
+            there is a triple (t, RDF.type, sub_thesaurus_type_uri)
+            in the graph.
+        :param  thesaurus_relation_type_uri:
+            Uri of the relation that links concepts to thesauri.
+        :param  thesaurus_relation_is_specialisation:
+            Indicates whether the thesaurus_relation links thesauri to
+            concepts or the other way round.
+            E.g., for the relation skos:broader it should be false.
+            Conversely it should be true for skos:narrower.
+        :param  remove_deprecated:
+            When True will discard deprecated subjects.
+            Deprecation of a subject has to be indicated by
+            a triple (s, OWL.deprecated, Literal(True)) in the graph.
+        :param  langs:
+            For each language present in the set,
+            labels will be extracted from the graph.
+            An empy set or None will extract labels regardless of language.
+        :param  input:
+            What type of input is presented to the fit method:
+
                 * 'content': Input is expected to be an arraylike of string.
                 * 'filename': Input is expected to be a list of filenames.
                 * 'file': input is expected to be a list of file objects.
-            use_txt_vec: Whether to use vectorized representations of inputs.
-                This can lead to high memory consumption.
-            handle_title_case: When True, will also match labels in title case.
-                I.e., in a text the first letter of every word can be upper
-                or lower case and will still be matched.
-                When False only the case of the first word's first letter
-                will be adapted.
-                Example:
-                    * Given a label "garbage can" and the
-                        title "Oscar Lives in a Garbage Can"
-                    * When handle_title_case == True
-                        the label will match the text.
-                    * When handle_title_case == False
-                        the label will not match the text.
-                        It would however still match
-                        "Garbage can is home to grouchy neighbor."."""
+        :param  use_txt_vec:
+            Whether to use vectorized representations of inputs.
+            This can lead to high memory consumption.
+        :param  handle_title_case:
+            When True, will also match labels in title case.
+            I.e., in a text the first letter of every word can be upper
+            or lower case and will still be matched.
+            When False only the case of the first word's first letter
+            will be adapted.
+            Example:
+
+                  * Given a label "garbage can" and the
+                    title "Oscar Lives in a Garbage Can"
+                  * When handle_title_case == True
+                    the label will match the text.
+                  * When handle_title_case == False
+                    the label will not match the text.
+                    It would however still match
+                    "Garbage can is home to grouchy neighbor.".
+        :param extract_upper_case_from_braces:
+            Removes the explanation in braces from labels.
+            I.e., GDP (Gross Domestic Product) will be transformed to GDP.
+        :param extract_any_case_from_braces:
+            Can extract content of braces in labels.
+            I.e., R&D (research and discovery) will be transformed to
+            research and discovery.
+            In contrast to extract_upper_case_from_braces it will extract
+            the part inside the parenthesis and not the part before.
+        :param expand_ampersand_with_spaces:
+              For labels that contain an ampersand it will also match text
+              containing spaces around that symbol.
+              I.e., R & D will be matched for label R&D.
+        :param expand_abbreviation_with_punctuation:
+          For labels containing only uppercase letters it will also
+          match text with punctuation added. I.e., G.D.P. for label GDP.
+        :param simple_english_plural_rules:
+          Can detect simple English plural forms of labels.
+        """
         self.graph = graph
         if isinstance(concept_type_uri, str):
             concept_type_uri = URIRef(concept_type_uri)
