@@ -2,7 +2,7 @@
 [![CI](https://github.com/zbw/stwfsapy/actions/workflows/ci.yml/badge.svg)](https://github.com/zbw/stwfsapy/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/zbw/stwfsapy/branch/master/graph/badge.svg)](https://codecov.io/gh/zbw/stwfsapy)
 ## About
-This library provides functionality to find the labels of SKOS thesaurus concepts in text.
+This library provides the functionality to find SKOS thesaurus concepts in a text.
 It is a reimplementation in Python of [stwfsa](https://github.com/zbw/stwfsa) combined with the concept scoring from [1].
 A deterministic finite automaton is constructed from the labels of the thesaurus concepts to perform the matching.
 In addition, a classifier is trained to score the matched concept occurrences.
