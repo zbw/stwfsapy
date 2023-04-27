@@ -108,7 +108,7 @@ Contributions via pull requests are welcome. Please create an issue beforehand
 to explain and discuss the reasons for the respective contribution.
 
 ## References
-[1] [Toepfer, Martin, and Christin Seifert. "Content-based quality estimation for automatic subject indexing of short texts under precision and recall constraints." International Conference on Theory and Practice of Digital Libraries. Springer, Cham, 2018.](https://arxiv.org/abs/1806.02743)
+[1] [Toepfer, Martin, and Christin Seifert. "Fusion architectures for automatic subject indexing under concept drift" International Journal on Digital Libraries (IJDL), 2018.](https://ris.utwente.nl/ws/portalfiles/portal/248044709/Toepfer2018fusion.pdf)
 
 ## Context information
 This code was created as part of the subject indexing automation effort at [ZBW – Leibniz Information Centre for Economics](https://www.zbw.eu/en/). See [our homepage](https://www.zbw.eu/en/about-us/key-activities/automated-subject-indexing) for more information, publications, and contact details.
