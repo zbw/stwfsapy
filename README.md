@@ -46,7 +46,7 @@ First load your thesaurus.
 from rdflib import Graph
 
 g = Graph()
-g.load('/path/to/your/thesaurus')
+g.parse('/path/to/your/thesaurus')
 ```
 First, define the type URI for descriptors.
 If your thesaurus is structured into sub-thesauri by providing categories for the concepts of the thesaurus using,
