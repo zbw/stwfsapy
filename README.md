@@ -111,4 +111,4 @@ to explain and discuss the reasons for the respective contribution.
 [1] [Toepfer, Martin, and Christin Seifert. "Fusion architectures for automatic subject indexing under concept drift" International Journal on Digital Libraries (IJDL), 2018.](https://ris.utwente.nl/ws/portalfiles/portal/248044709/Toepfer2018fusion.pdf)
 
 ## Context information
-This code was created as part of the subject indexing automation effort at [ZBW – Leibniz Information Centre for Economics](https://www.zbw.eu/en/). See [our homepage](https://www.zbw.eu/en/about-us/key-activities/automated-subject-indexing) for more information, publications, and contact details.
+This code was created as part of the subject indexing automation effort at [ZBW – Leibniz Information Centre for Economics](https://www.zbw.eu/en/). See [our homepage](https://www.zbw.eu/en/about-us/knowledge-organisation/automation-of-subject-indexing-using-methods-from-artificial-intelligence) for more information, publications, and contact details.
