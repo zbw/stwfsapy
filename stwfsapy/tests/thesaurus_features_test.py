@@ -26,14 +26,14 @@ import pytest
 
 def test_collect_po_from_tuples():
     tuples = [
-        (tc.concept_ref_printed, tc.concept_ref_media),
-        (tc.concept_ref_media, tc.thsys_ref_media),
-        (tc.concept_ref_printed, tc.thsys_ref_print)
+        (tc.concept_ref_insurance, tc.concept_ref_it),
+        (tc.concept_ref_it, tc.thsys_ref_it),
+        (tc.concept_ref_insurance, tc.thsys_ref_insurance)
     ]
     po = tf._collect_po_from_tuples(tuples)
     assert po == {
-        tc.concept_ref_printed: {tc.concept_ref_media, tc.thsys_ref_print},
-        tc.concept_ref_media: {tc.thsys_ref_media}
+        tc.concept_ref_insurance: {tc.concept_ref_it, tc.thsys_ref_insurance},
+        tc.concept_ref_it: {tc.thsys_ref_it}
     }
 
 

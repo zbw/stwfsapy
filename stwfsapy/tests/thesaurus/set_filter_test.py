@@ -18,17 +18,17 @@ from stwfsapy.tests.thesaurus import common as c
 
 def test_filter_subject_tuples_from_set(tuples):
     res = list(
-        t.filter_subject_tuples_from_set(tuples, {c.concept_ref_printed}))
+        t.filter_subject_tuples_from_set(tuples, {c.concept_ref_insurance}))
     assert len(res) == 2
-    assert res[0][0] == c.concept_ref_printed
-    assert res[1][0] == c.concept_ref_printed
+    assert res[0][0] == c.concept_ref_insurance
+    assert res[1][0] == c.concept_ref_insurance
 
 
 def test_filter_refs_from_set_complement():
     res = list(
         t._filter_refs_from_set_complement(
-            [c.concept_ref_printed, c.concept_ref_media],
-            {c.concept_ref_media}
+            [c.concept_ref_insurance, c.concept_ref_it],
+            {c.concept_ref_it}
         )
     )
-    assert res == [c.concept_ref_printed]
+    assert res == [c.concept_ref_insurance]

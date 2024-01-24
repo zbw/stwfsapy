@@ -14,29 +14,33 @@
 
 
 from rdflib.term import URIRef, Literal
+from rdflib.namespace import Namespace 
 
 
 test_ref_type = URIRef("http://zbw.eu/stw/descriptor")
+ZBWEXT = Namespace("http://zbw.eu/namespaces/zbw-extensions/")
 
-_thsys_uri_print = "http://zbw.eu/stw/thsys/70265"
-_thsys_uri_media = "https://zbw.eu/stw/thsys/181994"
+_thsys_uri_insurance = "http://zbw.eu/stw/thsys/70892"
+_thsys_uri_it = "https://zbw.eu/stw/thsys/73341"
 
-thsys_ref_print = URIRef(_thsys_uri_print)
-thsys_ref_media = URIRef(_thsys_uri_media)
+thsys_ref_insurance = URIRef(_thsys_uri_insurance)
+thsys_ref_it = URIRef(_thsys_uri_it)
 
-thsys_prefLabel_print_en = Literal("Printed matters", lang="en")
+thsys_prefLabel_insurance_en = Literal("Insurance industry", lang="en")
 
 
-_concept_uri_printed = "http://zbw.eu/stw/descriptor/14812-5"
-_concept_uri_media = "http://zbw.eu/stw/descriptor/18211-4"
+_concept_uri_insurance = "http://zbw.eu/stw/descriptor/13811-5"
+_concept_uri_it = "http://zbw.eu/stw/descriptor/30373-6"
 
-concept_ref_printed = URIRef(_concept_uri_printed)
-concept_ref_media = URIRef(_concept_uri_media)
+concept_ref_insurance = URIRef(_concept_uri_insurance)
+concept_ref_it = URIRef(_concept_uri_it)
 
-concept_prefLabel_printed_en = Literal("Printed Products", lang="en")
-concept_prefLabel_printed_de = Literal("Druckerzeugnis", lang="de")
-concept_prefLabel_printed_missing = Literal("Druckerzeugnis")
+concept_prefLabel_insurance_en = Literal("Private insurance", lang="en")
+concept_prefLabel_insurance_de = Literal("Privatversicherung", lang="de")
+concept_prefLabel_insurance_missing = Literal("Privatversicherung")
 
-concept_altLabel_printed_en = Literal("Print Media", lang="en")
+concept_altLabel_insurance_en = Literal("Mutual insurance", lang="en")
+concept_altLabelRelated_insurance_en = Literal("Insurance cooperative", lang="en")
 
-concept_prefLabel_media_en = Literal("Press media", lang="en")
+concept_prefLabel_it_en = Literal("Electronic identification", lang="en")
+concept_altLabelNarrower_it_en = Literal("Digital signature", lang="en")

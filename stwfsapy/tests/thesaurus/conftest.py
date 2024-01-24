@@ -22,9 +22,9 @@ from rdflib.namespace import SKOS, RDF
 @pytest.fixture
 def tuples():
     return [
-        (c.concept_ref_printed, c.concept_prefLabel_printed_en),
-        (c.concept_ref_media, c.concept_prefLabel_media_en),
-        (c.concept_ref_printed, c.concept_prefLabel_printed_missing)
+        (c.concept_ref_insurance, c.concept_prefLabel_insurance_en),
+        (c.concept_ref_it, c.concept_prefLabel_it_en),
+        (c.concept_ref_insurance, c.concept_prefLabel_insurance_missing)
     ]
 
 
@@ -32,17 +32,25 @@ def tuples():
 def label_graph():
     g = Graph()
     g.add((
-        c.concept_ref_printed,
+        c.concept_ref_insurance,
         SKOS.prefLabel,
-        c.concept_prefLabel_printed_en))
+        c.concept_prefLabel_insurance_en))
     g.add((
-        c.concept_ref_printed,
+        c.concept_ref_insurance,
         SKOS.altLabel,
-        c.concept_altLabel_printed_en))
+        c.concept_altLabel_insurance_en))
     g.add((
-        c.concept_ref_media,
-        SKOS.altLabel,
-        c.concept_altLabel_printed_en))
+        c.concept_ref_insurance,
+        c.ZBWEXT.altLabelRelated,
+        c.concept_altLabelRelated_insurance_en))
+    g.add((
+        c.concept_ref_it,
+        SKOS.prefLabel,
+        c.concept_prefLabel_it_en))
+    g.add((
+        c.concept_ref_it,
+        c.ZBWEXT.altLabelNarrower,
+        c.concept_altLabelNarrower_it_en))
     return g
 
 
@@ -50,19 +58,19 @@ def label_graph():
 def typed_label_graph(label_graph):
     g = label_graph
     g.add((
-        c.concept_ref_printed,
+        c.concept_ref_insurance,
         SKOS.prefLabel,
-        c.concept_prefLabel_printed_de))
+        c.concept_prefLabel_insurance_de))
     g.add((
-        c.thsys_ref_print,
+        c.thsys_ref_insurance,
         SKOS.prefLabel,
-        c.thsys_prefLabel_print_en))
+        c.thsys_prefLabel_insurance_en))
     g.add((
-        c.concept_ref_media,
+        c.concept_ref_it,
         RDF.type,
         c.test_ref_type))
     g.add((
-        c.concept_ref_printed,
+        c.concept_ref_insurance,
         RDF.type,
         c.test_ref_type))
     return g
