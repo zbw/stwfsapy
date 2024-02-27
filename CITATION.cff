@@ -12,7 +12,7 @@ authors:
     affiliation: "ZBW - Leibniz Information Centre for Economics"
 title: "stwfsapy (a library for matching labels of thesaurus concepts via finite-state automata)"
 abstract: "This library provides functionality to find the labels of SKOS thesaurus concepts in text. A deterministic finite automaton is constructed from the labels of the thesaurus concepts to perform the matching. In addition, a classifier is trained to score the matched concept occurrences."
-version: 0.3.0
+version: 0.4.0
 license: Apache-2.0
 date-released: 2021-10-18
 repository-code: "https://github.com/zbw/stwfsapy"
