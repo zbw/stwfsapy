@@ -19,6 +19,6 @@ from stwfsapy.tests.thesaurus import common as c
 
 
 def test_extract_deprecated(label_graph):
-    label_graph.add((c.concept_ref_printed, OWL.deprecated, Literal(True)))
+    label_graph.add((c.concept_ref_insurance, OWL.deprecated, Literal(True)))
     res = list(t.extract_deprecated(label_graph))
-    assert res == [c.concept_ref_printed]
+    assert res == [c.concept_ref_insurance]

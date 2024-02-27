@@ -16,14 +16,19 @@
 from typing import Tuple, FrozenSet, Iterable, Any, Optional
 from rdflib import Graph
 from rdflib.term import Literal, URIRef
-from rdflib.namespace import SKOS, OWL, RDF
+from rdflib.namespace import Namespace, SKOS, OWL, RDF
+
+ZBWEXT = Namespace("http://zbw.eu/namespaces/zbw-extensions/")
 
 
 def extract_labels(g: Graph) -> Iterable[Tuple[URIRef, Literal]]:
     """
-    Extracts SKOS.prefLabels and SKOS.altLabels from a rdflib.Graph
+    Extracts SKOS.prefLabels, SKOS.altLabels, SKOS.hiddenLabel,
+    ZBWEXT.altLabelRelated and ZBWEXT.altLabelNarrower from a rdflib.Graph
     """
-    return g[: SKOS.prefLabel | SKOS.altLabel]
+    # return g[: SKOS.prefLabel | SKOS.altLabel]
+    return g[: SKOS.prefLabel | SKOS.altLabel | SKOS.hiddenLabel |
+             ZBWEXT.altLabelRelated | ZBWEXT.altLabelNarrower]
 
 
 def extract_by_type_uri(
@@ -106,7 +111,8 @@ def retrieve_concept_labels(
         allowed: Optional[FrozenSet[URIRef]] = frozenset(),
         langs: FrozenSet[str] = frozenset()
         ) -> Iterable[Tuple[URIRef, str]]:
-    """Extracts altLabels and prefLabels from a SKOS graph.
+    """Extracts altLabels, altLabelNarrower,
+    altLabelRelated and prefLabels from a SKOS graph.
 
     Only the labels that are in one of the specified language will be reported.
     In addition the concept URIs can be limited by a set.

@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from stwfsapy.text_features import mk_text_features
-from scipy.sparse.lil import lil_matrix
+from scipy.sparse import lil_matrix
 from stwfsapy import predictor as p
 import stwfsapy.thesaurus as t
 from stwfsapy.automata.dfa import Dfa

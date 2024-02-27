@@ -21,9 +21,9 @@ import stwfsapy.tests.thesaurus.common as c
 @pytest.fixture
 def multi_lang_tuples():
     return [
-        (c.concept_ref_printed, c.concept_prefLabel_printed_en),
-        (c.concept_ref_printed, c.concept_prefLabel_printed_de),
-        (c.concept_ref_printed, c.concept_prefLabel_printed_missing)
+        (c.concept_ref_insurance, c.concept_prefLabel_insurance_en),
+        (c.concept_ref_insurance, c.concept_prefLabel_insurance_de),
+        (c.concept_ref_insurance, c.concept_prefLabel_insurance_missing)
     ]
 
 

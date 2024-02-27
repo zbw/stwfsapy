@@ -33,8 +33,8 @@ def patch_module(mocker):
 @pytest.fixture
 def concept_set():
     return {
-        c.concept_ref_printed,
-        c.concept_ref_media
+        c.concept_ref_insurance,
+        c.concept_ref_it
     }
 
 
@@ -78,12 +78,12 @@ def test_integration(typed_label_graph, concept_set):
         langs={"en"},
     ))
     assert (
-        c.concept_ref_printed,
-        c.concept_prefLabel_printed_en.value) in result
+        c.concept_ref_insurance,
+        c.concept_prefLabel_insurance_en.value) in result
     assert (
-        c.concept_ref_printed,
-        c.concept_altLabel_printed_en.value) in result
+        c.concept_ref_insurance,
+        c.concept_altLabel_insurance_en.value) in result
     assert (
-        c.concept_ref_printed,
-        c.concept_prefLabel_printed_de.value) not in result
-    assert c.thsys_ref_print not in map(lambda t: t[0], result)
+        c.concept_ref_insurance,
+        c.concept_prefLabel_insurance_de.value) not in result
+    assert c.thsys_ref_insurance not in map(lambda t: t[0], result)

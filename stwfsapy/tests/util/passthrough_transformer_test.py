@@ -25,7 +25,7 @@ def test_array_input():
     ]
     pt = PassthroughTransformer()
     out_feat = pt.transform(in_feat)
-    assert type(out_feat) == np.ndarray
+    assert isinstance(out_feat, np.ndarray)
     assert (sp.diags([[1, 7, -3]], [0]).toarray() == out_feat).all()
 
 
