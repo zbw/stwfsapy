@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "stwfsapy"
-version = "0.4.0-dev"
+version = "0.4.0"
 description = "A library for match labels of thesaurus concepts to text and assigning scores to found occurrences."
 authors = ["AutoSE <autose@zbw.eu>"]
 license = "Apache-2.0"
