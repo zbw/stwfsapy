@@ -15,6 +15,7 @@ homepage = "https://github.com/zbw/stwfsapy"
 python = ">=3.9,<3.13"
 scikit-learn = ">0.24,<2.0"
 rdflib = "7.*"
+requests = "^2.32.3"
 
 
 [tool.poetry.group.dev.dependencies]
