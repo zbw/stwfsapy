@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "stwfsapy"
-version = "0.5.0"
+version = "0.5.1"
 description = "A library for match labels of thesaurus concepts to text and assigning scores to found occurrences."
 authors = ["AutoSE <autose@zbw.eu>"]
 license = "Apache-2.0"
@@ -15,6 +15,7 @@ homepage = "https://github.com/zbw/stwfsapy"
 python = ">=3.9,<3.13"
 scikit-learn = ">0.24,<2.0"
 rdflib = "7.*"
+requests = "^2.32.3"
 
 
 [tool.poetry.group.dev.dependencies]
