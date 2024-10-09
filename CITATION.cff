@@ -17,7 +17,7 @@ title: "stwfsapy (a library for matching labels of thesaurus concepts via finite
 abstract: "This library provides functionality to find the labels of SKOS thesaurus concepts in text. A deterministic finite automaton is constructed from the labels of the thesaurus concepts to perform the matching. In addition, a classifier is trained to score the matched concept occurrences."
 version: 0.5.0
 license: Apache-2.0
-date-released: 2024-08-28S
+date-released: 2024-08-29
 repository-code: "https://github.com/zbw/stwfsapy"
 contact:
   - name: "Automatization of subject indexing using methods from artificial intelligence (AutoSE)"
