@@ -19,14 +19,14 @@ requests = "^2.32.3"
 
 
 [tool.poetry.group.dev.dependencies]
-pytest = "~7.2"
-pytest-mock = "~3.10"
+pytest = "~7.4"
+pytest-mock = "~3.14"
 
 
 [tool.poetry.group.ci.dependencies]
-pytest-cov = "~4.0"
+pytest-cov = "~6.0"
 flake8 = "~5"
-safety = "~2.3"
+safety = "~3.2"
 bandit = "~1.7"
 
 
