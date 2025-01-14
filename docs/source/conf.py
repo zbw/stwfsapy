@@ -16,7 +16,7 @@ sys.path.insert(0, os.path.abspath("../.."))
 # -- Project information
 
 project = 'stwfsapy'
-copyright = '2021-2023, AutoSE'
+copyright = '2020-2025, AutoSE'
 author = 'AutoSE'
 
 # -- General configuration
