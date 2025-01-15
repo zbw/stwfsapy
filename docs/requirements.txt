@@ -1,2 +1,2 @@
 sphinx-rtd-theme
-sphinx-autodoc-typehints==1.21.*
+sphinx-autodoc-typehints==3.*
