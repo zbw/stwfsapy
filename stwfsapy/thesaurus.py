@@ -49,7 +49,7 @@ def extract_deprecated(g: Graph):
 
 
 def extract_relation_by_uri(g: Graph, uri: URIRef, reverse: bool):
-    subj_objs = g[:uri:]
+    subj_objs = g.subject_objects(uri) # replace with g[:uri:] after rdflib v7.1.3
     if reverse:
         return map(lambda x: (x[1], x[0]), subj_objs)
     else:
