@@ -1,7 +1,6 @@
 # stwfsapy
 [![CI](https://github.com/zbw/stwfsapy/actions/workflows/ci.yml/badge.svg)](https://github.com/zbw/stwfsapy/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/zbw/stwfsapy/branch/master/graph/badge.svg)](https://codecov.io/gh/zbw/stwfsapy)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![security: bandit](https://img.shields.io/badge/security-bandit-yellow.svg)](https://github.com/PyCQA/bandit)
 [![readthedocs](https://readthedocs.org/projects/stwfsapy-zbw/badge/?version=latest)](https://stwfsapy-zbw.readthedocs.io)
