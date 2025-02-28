@@ -98,7 +98,7 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             ):
         """Creates the predictor.
 
-        :param graph: The SKOS onthology used to extract the labels.
+        :param graph: The SKOS ontology used to extract the labels.
         :param concept_type_uri:
             The uri of the concept type.
             It is assumed that for every concept c,
