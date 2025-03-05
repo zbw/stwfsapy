@@ -1,6 +1,9 @@
 # stwfsapy
 [![CI](https://github.com/zbw/stwfsapy/actions/workflows/ci.yml/badge.svg)](https://github.com/zbw/stwfsapy/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/zbw/stwfsapy/branch/master/graph/badge.svg)](https://codecov.io/gh/zbw/stwfsapy)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![security: bandit](https://img.shields.io/badge/security-bandit-yellow.svg)](https://github.com/PyCQA/bandit)
+[![readthedocs](https://readthedocs.org/projects/stwfsapy-zbw/badge/?version=latest)](https://stwfsapy-zbw.readthedocs.io)
 ## About
 This library provides the functionality to find SKOS thesaurus concepts in a text.
 It is a reimplementation in Python of [stwfsa](https://github.com/zbw/stwfsa) combined with the concept scoring from [1].
@@ -91,7 +94,7 @@ p.predict_proba(['one input text', 'Another input text.'])
 The indices of the concepts are stored in `p.concept_map_`.
 
 ### Options
-All options for the predictor are documented at https://stwfsapy.readthedocs.io/ .
+All options for the predictor are documented at https://stwfsapy-zbw.readthedocs.io .
 
 ### Save Model
 A trained predictor `p` can be stored by calling `p.store('/path/to/storage/location')`.
