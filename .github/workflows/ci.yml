@@ -40,9 +40,12 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
         if: matrix.python-version == '3.9'
 
-      - name: Look for security vulnerabilities in dependencies
-        run: poetry run safety check --full-report
-        continue-on-error: true
+      #- name: Look for security vulnerabilities in dependencies
+      #  run: poetry run safety check --full-report
+      #  continue-on-error: true
+
+      - name: Verify pre-commit on all files
+        run: poetry run pre-commit run --all-files
 
       - name: Look for security issues in code
         run: poetry run bandit -c pyproject.toml -r stwfsapy
