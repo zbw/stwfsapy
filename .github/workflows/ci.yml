@@ -27,7 +27,7 @@ jobs:
 
       - name: Install dependencies
         run: poetry install --no-root
-        
+
       - name: Lint Code
         run: poetry run ruff check stwfsapy
 
