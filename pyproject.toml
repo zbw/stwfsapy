@@ -12,7 +12,7 @@ classifiers = [
 homepage = "https://github.com/zbw/stwfsapy"
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.13"
+python = ">=3.9, <3.13"
 scikit-learn = ">0.24,<2.0"
 rdflib = "7.*"
 requests = "^2.32.3"
@@ -27,9 +27,7 @@ pytest-mock = "~3.14"
 pytest-cov = "~6.0"
 ruff = "~0.9"
 bandit = "~1.7"
-pre-commit = "~4.1"
-safety = "2.3.5"
-jinja2 = "<3.1.6"
+safety = "3.3"
 
 [build-system]
 requires = ["poetry-core"]
