@@ -26,9 +26,8 @@ pytest-mock = "~3.14"
 [tool.poetry.group.ci.dependencies]
 pytest-cov = "~6.0"
 ruff = "~0.9"
-safety = "~3.3"
 bandit = "~1.7"
-
+pre-commit = "~4.1"
 
 [build-system]
 requires = ["poetry-core"]
