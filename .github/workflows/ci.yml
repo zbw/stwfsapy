@@ -26,7 +26,9 @@ jobs:
           cache: 'poetry'
 
       - name: Install dependencies
-        run: poetry install --no-root
+        run: |
+          poetry install --no-root
+          poetry lock
 
       - name: Lint Code
         run: poetry run ruff check stwfsapy
