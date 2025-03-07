@@ -12,7 +12,7 @@ classifiers = [
 homepage = "https://github.com/zbw/stwfsapy"
 
 [tool.poetry.dependencies]
-python = ">=3.9, <3.13"
+python = ">=3.9,<3.13"
 scikit-learn = ">0.24,<2.0"
 rdflib = "7.*"
 requests = "^2.32.3"
