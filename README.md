@@ -21,7 +21,7 @@ Each training sample should be annotated with one or more concepts from the thes
 
 ### Requirements
 
-Python ``>= 3.9`` is required.
+Python ``>= 3.10`` is required.
 
 ### With pip
 stwfsapy is available on [PyPI](pypi.org) . You can install stwfsapy using pip:
