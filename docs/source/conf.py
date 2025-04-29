@@ -49,7 +49,3 @@ epub_show_urls = 'footnote'
 
 autoclass_content = "both" 
 autodoc_typehints = "none"
-autodoc_default_options = {
-    'members': True,
-    'inherited-members': False,  # Disable inherited methods
-}
