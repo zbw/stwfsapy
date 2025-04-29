@@ -479,6 +479,11 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             concepts.append((last[0], last[1], last[2], last[3], last[4], 1))
 
     def store(self, path):
+        """
+        Stores a predictor instance into a zip file.
+
+        :params  path: Path to the zip file storing the trained predictor.
+        """
         with ZipFile(path, 'w') as zfile:
             with zfile.open(_NAME_PREDICTOR_FILE, 'w', force_zip64=True) as fp:
                 fp.write(
