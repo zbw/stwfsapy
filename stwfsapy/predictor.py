@@ -483,6 +483,8 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
         Stores a predictor instance into a zip file.
 
         :params  path: Path to the zip file storing the trained predictor.
+
+        Returns: None
         """
         with ZipFile(path, 'w') as zfile:
             with zfile.open(_NAME_PREDICTOR_FILE, 'w', force_zip64=True) as fp:
