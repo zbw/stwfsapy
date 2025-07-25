@@ -29,7 +29,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
-from scipy.sparse import csr_matrix
+from scipy.sparse import csr_array
 from stwfsapy import thesaurus as t
 from stwfsapy.automata import nfa, construction, conversion, dfa
 from stwfsapy.thesaurus_features import ThesaurusFeatureTransformation
@@ -282,13 +282,13 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
         self.pipeline_.fit(matches, y=train_y)
         return self
 
-    def predict_proba(self, X) -> csr_matrix:
+    def predict_proba(self, X) -> csr_array:
         match_X, doc_counts = self.match_and_extend(X)
         if match_X:
             predictions = self.pipeline_.predict_proba(match_X)[:, 1]
         else:
             predictions = []
-        return self._create_sparse_matrix(
+        return self._create_sparse_array(
             predictions,
             [tpl[0] for tpl in match_X],
             doc_counts
@@ -320,25 +320,25 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             in combined
         ]
 
-    def predict(self, X) -> csr_matrix:
+    def predict(self, X) -> csr_array:
         match_X, doc_counts = self.match_and_extend(X)
         if match_X:
             predictions = self.pipeline_.predict(match_X)
         else:
             predictions = []
-        return self._create_sparse_matrix(
+        return self._create_sparse_array(
             predictions,
             [tpl[0] for tpl in match_X],
             doc_counts
         )
 
-    def _create_sparse_matrix(
+    def _create_sparse_array(
             self,
             values: Nl,
             concept_names: List[str],
             doc_counts: List[int]
-            ) -> csr_matrix:
-        return csr_matrix(
+            ) -> csr_array:
+        return csr_array(
             (
                 values,
                 (
@@ -395,7 +395,7 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             for inp, truth_refs in zip(inputs, map(str, truth_refss)):
                 text = input_handler(inp)
                 if self.use_txt_vec:
-                    txt_vec = self.text_vectorizer_.transform([inp])[0]
+                    txt_vec = self.text_vectorizer_.transform([inp])
                 else:
                     txt_vec = 0
                 txt_feat = self.text_features_.transform([text])[0]
@@ -420,7 +420,7 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             for inp in inputs:
                 text = input_handler(inp)
                 if self.use_txt_vec:
-                    txt_vec = self.text_vectorizer_.transform([inp])[0]
+                    txt_vec = self.text_vectorizer_.transform([inp])
                 else:
                     txt_vec = 0
                 txt_feat = self.text_features_.transform([text])[0]

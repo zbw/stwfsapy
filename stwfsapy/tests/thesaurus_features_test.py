@@ -19,7 +19,7 @@ from stwfsapy import thesaurus as t
 from stwfsapy import thesaurus_features as tf
 from stwfsapy.tests.thesaurus import common as tc
 from stwfsapy.tests import common as c
-from scipy.sparse import coo_matrix, csr_matrix
+from scipy.sparse import coo_array, csr_array
 from sklearn.exceptions import NotFittedError
 import pytest
 
@@ -46,7 +46,7 @@ def test_unfitted_raises():
 def test_transform():
     trans = tf.ThesaurusFeatureTransformation(None, None, None, None)
     trans.mapping_ = {
-        'a': coo_matrix([[1]]), 'b': coo_matrix([[2]]), 'c': coo_matrix([[3]])}
+        'a': coo_array([[1]]), 'b': coo_array([[2]]), 'c': coo_array([[3]])}
     res = trans.transform(['c', 'c', 'a'])
     assert (res.toarray() == array([[3], [3], [1]])).all()
 
@@ -90,7 +90,7 @@ def test_transform_unknown():
 
     feature_dim = 12
     trans.feature_dim_ = feature_dim
-    known = csr_matrix(([1], ([0], [4])), shape=(1, feature_dim))
+    known = csr_array(([1], ([0], [4])), shape=(1, feature_dim))
     trans.mapping_ = {'key': known}
     random_results = trans.transform([
         'some random stuff edsfysdfhjsedf',

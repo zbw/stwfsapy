@@ -13,14 +13,14 @@
 # limitations under the License.
 
 from stwfsapy.text_features import mk_text_features
-from scipy.sparse import lil_matrix
+from scipy.sparse import lil_array
 from stwfsapy import predictor as p
 import stwfsapy.thesaurus as t
 from stwfsapy.automata.dfa import Dfa
 import stwfsapy.tests.common as c
 from stwfsapy.automata.construction import ConstructionState
 import pytest
-from scipy.sparse import csr_matrix
+from scipy.sparse import csr_array
 import numpy as np
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.compose import ColumnTransformer
@@ -62,8 +62,8 @@ expected_matches = [
     ("9", [0], 0), ("11", [0, 1], 1)]
 
 
-def make_test_result_matrix(values):
-    return csr_matrix((
+def make_test_result_array(values):
+    return csr_array((
         values,
         (
             [
@@ -113,7 +113,7 @@ def no_match_predictor(mocker):
 
 
 def mock_vec_transform(X):
-    ret = lil_matrix((len(X), 5000))
+    ret = lil_array((len(X), 5000))
     for idx, x in enumerate(X):
         ret[idx] = len(x)
     return ret
@@ -145,10 +145,10 @@ def test_result_collection():
     assert [(r[0], list(r[1])) for r in res] == _collection_result
 
 
-def test_sparse_matrix_creation():
+def test_sparse_array_creation():
     predictor = p.StwfsapyPredictor(None, None, None, None)
     predictor.concept_map_ = _concept_map
-    res = predictor._create_sparse_matrix(
+    res = predictor._create_sparse_array(
         _predictions[:, 1],
         [c[0] for c in _concepts_with_text],
         _doc_counts
@@ -418,7 +418,7 @@ def check_fit_arg(vec_fun, text_feature_fun, txt, actual, expected):
 def test_predict(mocked_predictor):
     res = mocked_predictor.predict([])
     assert (
-        res.toarray() == make_test_result_matrix(_classifications).toarray()
+        res.toarray() == make_test_result_array(_classifications).toarray()
         ).all()
     mocked_predictor.match_and_extend.assert_called_once_with(
         []
@@ -431,7 +431,7 @@ def test_predict(mocked_predictor):
 def test_predict_proba(mocked_predictor):
     res = mocked_predictor.predict_proba([])
     assert (
-        res.toarray() == make_test_result_matrix(
+        res.toarray() == make_test_result_array(
             _predictions[:, 1]).toarray()).all()
     mocked_predictor.match_and_extend.assert_called_once_with(
         []
