@@ -8,7 +8,6 @@
 # -- Path setup --------------------------------------------------------------
 
 import os
-import re
 import sys
 
 sys.path.insert(0, os.path.abspath("../.."))
@@ -49,7 +48,3 @@ epub_show_urls = 'footnote'
 
 autoclass_content = "both" 
 autodoc_typehints = "none"
-autodoc_default_options = {
-    'members': True,
-    'inherited-members': False,  # Disable inherited methods
-}

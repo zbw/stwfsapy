@@ -272,6 +272,15 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
         ])
 
     def fit(self, X, y=None, **kwargs):
+        """
+        Fits the classifier to the given training data.
+
+        :params  X: Iterable of text inputs.
+        :params  y: Iterable of correct concepts given by their URI for supervised training.
+
+        Returns:
+            self: The fitted StwfsapyPredictor instance.
+        """
         self._init()
         return self._fit_after_init(X, y=y)
 
@@ -283,6 +292,14 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
         return self
 
     def predict_proba(self, X) -> csr_array:
+        """
+        Predicts probability scores for each concept per document.
+
+        :params  X: Iterable of input texts.
+
+        Returns:
+            A sparse matrix of shape (n_samples, n_concepts) with concept match probabilities.
+        """
         match_X, doc_counts = self.match_and_extend(X)
         if match_X:
             predictions = self.pipeline_.predict_proba(match_X)[:, 1]
@@ -298,8 +315,15 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             self,
             texts
             ) -> List[List[Tuple[str, float]]]:
-        """For a given list of texts,
-        this method returns the matched concepts and their scores."""
+        """
+        Returns a list of suggested concepts and associated confidence scores
+        for each text in the input.
+
+        :params  texts: Iterable of strings (documents).
+
+        Returns:
+            A list of lists, where each inner list contains tuples of (concept, probability).
+        """
         match_X, doc_counts = self.match_and_extend(texts)
         if match_X:
             predictions = self.pipeline_.predict_proba(match_X)[:, 1]
@@ -321,6 +345,14 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
         ]
 
     def predict(self, X) -> csr_array:
+        """
+        Predicts binary concept match labels for each input text.
+
+        :params  X: Iterable of input strings.
+
+        Returns:
+            A sparse matrix of shape (n_samples, n_concepts) indicating predicted concept matches.
+        """
         match_X, doc_counts = self.match_and_extend(X)
         if match_X:
             predictions = self.pipeline_.predict(match_X)
@@ -447,6 +479,14 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             concepts.append((last[0], last[1], last[2], last[3], last[4], 1))
 
     def store(self, path):
+        """
+        Stores a predictor instance into a zip file.
+
+        :params  path: Path to the zip file storing the trained predictor.
+
+        Returns: 
+            None
+        """
         with ZipFile(path, 'w') as zfile:
             with zfile.open(_NAME_PREDICTOR_FILE, 'w', force_zip64=True) as fp:
                 fp.write(
@@ -500,6 +540,14 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
 
     @staticmethod
     def load(path):
+        """
+        Loads a predictor instance from a previously stored zip file.
+
+        :params  path: Path to the zip file.
+
+        Returns:
+            A reconstructed `StwfsapyPredictor` instance.
+        """
         with ZipFile(path, 'r') as zfile:
             with zfile.open(_NAME_PREDICTOR_FILE, 'r') as fp:
                 conf = loads(fp.read().decode('utf-8'))
