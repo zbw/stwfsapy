@@ -70,15 +70,15 @@ def test_fit(full_graph):
         assert x.shape[1] == 6
     # Can not test positions because retrieval from graph is not deterministic.
     # Therefore, test non zero entries only.
-    assert mapping[c.test_concept_uri_0_0].getnnz() == 1
-    assert mapping[c.test_concept_uri_01_0].getnnz() == 2
-    assert mapping[c.test_concept_uri_01_00].getnnz() == 2
-    assert mapping[c.test_concept_uri_10_0].getnnz() == 2
-    assert mapping[c.test_concept_uri_10_1].getnnz() == 2
-    assert mapping[c.test_concept_uri_100_0].getnnz() == 3
-    assert mapping[c.test_concept_uri_100_00].getnnz() == 3
-    assert mapping[c.test_concept_uri_100_01].getnnz() == 3
-    assert mapping[c.test_concept_uri_100_02].getnnz() == 3
+    assert mapping[c.test_concept_uri_0_0].nnz == 1
+    assert mapping[c.test_concept_uri_01_0].nnz == 2
+    assert mapping[c.test_concept_uri_01_00].nnz == 2
+    assert mapping[c.test_concept_uri_10_0].nnz == 2
+    assert mapping[c.test_concept_uri_10_1].nnz == 2
+    assert mapping[c.test_concept_uri_100_0].nnz == 3
+    assert mapping[c.test_concept_uri_100_00].nnz == 3
+    assert mapping[c.test_concept_uri_100_01].nnz == 3
+    assert mapping[c.test_concept_uri_100_02].nnz == 3
 
 
 def test_transform_unknown():
@@ -96,8 +96,8 @@ def test_transform_unknown():
         'some random stuff edsfysdfhjsedf',
         'key'])
     assert random_results.shape == (2, feature_dim)
-    assert random_results.getrow(0).getnnz() == 0
-    assert random_results.getrow(1).getnnz() == 1
+    assert random_results[[0], :].nnz == 0
+    assert random_results[[1], :].nnz == 1
 
 
 def test_empty_relation(full_graph):
@@ -110,4 +110,4 @@ def test_empty_relation(full_graph):
     trans.fit([], [])
     features = trans.transform(['empty'])
     assert features.shape == (1, 1)
-    assert features.getnnz() == 0
+    assert features.nnz == 0

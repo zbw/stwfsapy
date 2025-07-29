@@ -156,9 +156,9 @@ def test_sparse_array_creation():
     assert res.shape[0] == len(_doc_counts)
     assert res.shape[1] == 23
     for i, count in enumerate(_doc_counts):
-        row = res.getrow(i)
+        row = res[[i], :]
         slice_start = sum(_doc_counts[:i])
-        assert row.getnnz() == count
+        assert row.nnz == count
         # reverse slices because of mapping.
         assert list(row.nonzero()[1]) == list(reversed([
             22-i for i in _concepts[slice_start: slice_start+count]]))
@@ -458,13 +458,13 @@ def test_suggest(mocked_predictor):
 
 def test_predict_no_match(no_match_predictor):
     res = no_match_predictor.predict([])
-    assert res.getnnz() == 0
+    assert res.nnz == 0
     assert res.shape == (3, len(_concept_map))
 
 
 def test_predict_proba_no_match(no_match_predictor):
     res = no_match_predictor.predict_proba([])
-    assert res.getnnz() == 0
+    assert res.nnz == 0
     assert res.shape == (3, len(_concept_map))
 
 
