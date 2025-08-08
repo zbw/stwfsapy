@@ -12,7 +12,8 @@ In addition, a classifier is trained to score the matched concept occurrences.
 
 ## Data Requirements
 The construction of the automaton requires a SKOS thesaurus represented as a `rdflib` `Graph`.
-Concepts should be related to labels by `skos:prefLabel`, `skos:altLabel`, `zbwext:altLabelNarrower`, `zbwext:altLabelRelated` or `skos:hiddenLabel`.
+Concepts should be related to labels by one of the relations `skos:prefLabel`, `skos:altLabel`, or `skos:hiddenLabel`.
+(This implementation also includes `zbwext:altLabelNarrower` and `zbwext:altLabelRelated` as possible concept-label relations which are specific to ZBW.)
 Concepts have to be identifiable by `rdf:type`.
 The training of the predictor requires annotated text.
 Each training sample should be annotated with one or more concepts from the thesaurus.
