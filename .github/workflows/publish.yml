@@ -4,7 +4,7 @@ on:
   push:
     tags:
       - "*"
-
+permissions: {}
 jobs:
   test:
     runs-on: ubuntu-latest
