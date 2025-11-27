@@ -31,9 +31,9 @@ def test_array_input():
 
 def test_sparse_input():
     in_feat = [
-        sp.lil_matrix(np.array([[1, 0, 0]])),
-        sp.lil_matrix(np.array([[0, 7, 0]])),
-        sp.lil_matrix(np.array([[0, 0, -3]]))
+        sp.lil_array(np.array([[1, 0, 0]])),
+        sp.lil_array(np.array([[0, 7, 0]])),
+        sp.lil_array(np.array([[0, 0, -3]]))
     ]
     pt = PassthroughTransformer()
     out_feat = pt.transform(in_feat)

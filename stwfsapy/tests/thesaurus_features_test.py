@@ -19,7 +19,7 @@ from stwfsapy import thesaurus as t
 from stwfsapy import thesaurus_features as tf
 from stwfsapy.tests.thesaurus import common as tc
 from stwfsapy.tests import common as c
-from scipy.sparse import coo_matrix, csr_matrix
+from scipy.sparse import coo_array, csr_array
 from sklearn.exceptions import NotFittedError
 import pytest
 
@@ -46,7 +46,7 @@ def test_unfitted_raises():
 def test_transform():
     trans = tf.ThesaurusFeatureTransformation(None, None, None, None)
     trans.mapping_ = {
-        'a': coo_matrix([[1]]), 'b': coo_matrix([[2]]), 'c': coo_matrix([[3]])}
+        'a': coo_array([[1]]), 'b': coo_array([[2]]), 'c': coo_array([[3]])}
     res = trans.transform(['c', 'c', 'a'])
     assert (res.toarray() == array([[3], [3], [1]])).all()
 
@@ -70,15 +70,15 @@ def test_fit(full_graph):
         assert x.shape[1] == 6
     # Can not test positions because retrieval from graph is not deterministic.
     # Therefore, test non zero entries only.
-    assert mapping[c.test_concept_uri_0_0].getnnz() == 1
-    assert mapping[c.test_concept_uri_01_0].getnnz() == 2
-    assert mapping[c.test_concept_uri_01_00].getnnz() == 2
-    assert mapping[c.test_concept_uri_10_0].getnnz() == 2
-    assert mapping[c.test_concept_uri_10_1].getnnz() == 2
-    assert mapping[c.test_concept_uri_100_0].getnnz() == 3
-    assert mapping[c.test_concept_uri_100_00].getnnz() == 3
-    assert mapping[c.test_concept_uri_100_01].getnnz() == 3
-    assert mapping[c.test_concept_uri_100_02].getnnz() == 3
+    assert mapping[c.test_concept_uri_0_0].nnz == 1
+    assert mapping[c.test_concept_uri_01_0].nnz == 2
+    assert mapping[c.test_concept_uri_01_00].nnz == 2
+    assert mapping[c.test_concept_uri_10_0].nnz == 2
+    assert mapping[c.test_concept_uri_10_1].nnz == 2
+    assert mapping[c.test_concept_uri_100_0].nnz == 3
+    assert mapping[c.test_concept_uri_100_00].nnz == 3
+    assert mapping[c.test_concept_uri_100_01].nnz == 3
+    assert mapping[c.test_concept_uri_100_02].nnz == 3
 
 
 def test_transform_unknown():
@@ -90,14 +90,14 @@ def test_transform_unknown():
 
     feature_dim = 12
     trans.feature_dim_ = feature_dim
-    known = csr_matrix(([1], ([0], [4])), shape=(1, feature_dim))
+    known = csr_array(([1], ([0], [4])), shape=(1, feature_dim))
     trans.mapping_ = {'key': known}
     random_results = trans.transform([
         'some random stuff edsfysdfhjsedf',
         'key'])
     assert random_results.shape == (2, feature_dim)
-    assert random_results.getrow(0).getnnz() == 0
-    assert random_results.getrow(1).getnnz() == 1
+    assert random_results[[0], :].nnz == 0
+    assert random_results[[1], :].nnz == 1
 
 
 def test_empty_relation(full_graph):
@@ -110,4 +110,4 @@ def test_empty_relation(full_graph):
     trans.fit([], [])
     features = trans.transform(['empty'])
     assert features.shape == (1, 1)
-    assert features.getnnz() == 0
+    assert features.nnz == 0
