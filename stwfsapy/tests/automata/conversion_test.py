@@ -23,9 +23,7 @@ def test_conversion(input_graph, mocker):
     # Still mock to see that there are no unknown elements
     add_spy = mocker.spy(converter.dfa, "add_state")
     symbol_transition_spy = mocker.spy(converter.dfa, "set_symbol_transition")
-    nwc_transition_spy = mocker.spy(
-        converter.dfa,
-        "set_non_word_char_transition")
+    nwc_transition_spy = mocker.spy(converter.dfa, "set_non_word_char_transition")
     acceptance_spy = mocker.spy(converter.dfa, "add_acceptances")
     result = converter.start_conversion()
     assert converter.queue.qsize() == 0
@@ -89,11 +87,9 @@ def test_initialization(input_graph):
 def test_transition_collection(input_graph):
     converter = c.NfaToDfaConverter(input_graph)
     state_set = {0, 1, 3, 5}
-    (
-        symbol_transitions,
-        non_word_char_transitions,
-        accepts
-    ) = converter._collect_nfa_transitions(state_set)
+    (symbol_transitions, non_word_char_transitions, accepts) = (
+        converter._collect_nfa_transitions(state_set)
+    )
     for state_id in state_set:
         state = input_graph.states[state_id]
         for k, idxs in state.symbol_transitions.items():
@@ -132,15 +128,9 @@ def test_transition_creation(input_graph):
     set5 = frozenset([5])
     acceptance = {accept}
     non_word_char_transitions = set(set24)
-    symbol_transitions = {
-        symbol0: set(set13),
-        symbol1: set(set5)
-    }
+    symbol_transitions = {symbol0: set(set13), symbol1: set(set5)}
     converter._create_dfa_transitions(
-        0,
-        symbol_transitions,
-        non_word_char_transitions,
-        acceptance
+        0, symbol_transitions, non_word_char_transitions, acceptance
     )
     state = converter.dfa.states[0]
     assert state.accepts == [accept]

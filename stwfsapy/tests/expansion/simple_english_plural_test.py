@@ -17,24 +17,24 @@ from stwfsapy.expansion import simple_english_plural_fun
 
 
 def test_trailing_non_alpha():
-    label = 'fo0'
+    label = "fo0"
     assert simple_english_plural_fun(label) == label
 
 
 def test_trailing_s():
-    label = 'bas'
+    label = "bas"
     assert simple_english_plural_fun(label) == label
 
 
 def test_default_endingn():
-    label = 'bar'
-    assert simple_english_plural_fun(label) == 'bars?'
+    label = "bar"
+    assert simple_english_plural_fun(label) == "bars?"
 
 
 def test_trailing_y():
-    label = 'daily'
-    prefix_idx = len(label)-1
+    label = "daily"
+    prefix_idx = len(label) - 1
     res = simple_english_plural_fun(label)
     assert len(res) == len(label) + 6
     assert label[:prefix_idx] == res[:prefix_idx]
-    assert res[prefix_idx:] == '(y|ies)'
+    assert res[prefix_idx:] == "(y|ies)"

@@ -35,8 +35,9 @@ def test_convert_docs():
     features = PositionFeatures()
     res = features.transform(position_feature_data)
     assert res.tolist() == [
-        [0/3, 4/3, 4/3],
-        [1/6, 23/6, 22/6],
-        [7/15, 36/15, 29/15],
-        [8/12, 102/12, 94/12],
-        [13/70, 13/70, 0]]
+        [0 / 3, 4 / 3, 4 / 3],
+        [1 / 6, 23 / 6, 22 / 6],
+        [7 / 15, 36 / 15, 29 / 15],
+        [8 / 12, 102 / 12, 94 / 12],
+        [13 / 70, 13 / 70, 0],
+    ]

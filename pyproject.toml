@@ -21,11 +21,13 @@ rdflib = "~7.1"
 [tool.poetry.group.dev.dependencies]
 pytest = "~8.4"
 pytest-mock = "~3.14"
+black = "~25.11"
+pre-commit = "~4.5"
 
 
 [tool.poetry.group.ci.dependencies]
 pytest-cov = "~6.2"
-ruff = "~0.12"
+ruff = "~0.14"
 safety = "~3.7"
 bandit = "~1.8"
 

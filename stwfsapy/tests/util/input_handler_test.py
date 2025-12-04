@@ -39,17 +39,17 @@ def test_filepath_handler(handler_file):
 
 
 def test_get_content_handler():
-    assert h.handle_content == h.get_input_handler('content')
+    assert h.handle_content == h.get_input_handler("content")
 
 
 def test_get_file_handler():
-    assert h.handle_file == h.get_input_handler('file')
+    assert h.handle_file == h.get_input_handler("file")
 
 
 def test_get_filename_handler():
-    assert h.handle_filename == h.get_input_handler('filename')
+    assert h.handle_filename == h.get_input_handler("filename")
 
 
 def test_get_unknown_handler():
     with pytest.raises(h.UnknownInputTypeException):
-        h.get_input_handler('dfsjdfs')
+        h.get_input_handler("dfsjdfs")

@@ -81,7 +81,7 @@ def test_push_empty():
 def test_push(some_heap, mocker):
     spy = mocker.spy(some_heap, "_sift_up")
     some_heap.push(15, 13)
-    spy.assert_called_once_with(len(some_heap.heap)-1)
+    spy.assert_called_once_with(len(some_heap.heap) - 1)
 
 
 def test_pop_(some_heap, mocker):
@@ -114,7 +114,7 @@ def test_can_decrease_key(some_heap, mocker):
     last = some_heap.heap[-1]
     some_heap.change_priority(last[1], 0)
     check_heap(some_heap)
-    spy_up.assert_called_once_with(len(some_heap.heap)-1)
+    spy_up.assert_called_once_with(len(some_heap.heap) - 1)
     spy_down.assert_not_called()
 
 

@@ -37,6 +37,9 @@ jobs:
       - name: Lint Code
         run: poetry run ruff check stwfsapy
 
+      - name: Test Black Code Style compliance
+        run: poetry run black . --check --diff
+
       - name: Test Code
         run: poetry run pytest --cov=./ --cov-config=.coveragerc --cov-report=xml
 

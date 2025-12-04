@@ -17,66 +17,66 @@ from stwfsapy.expansion import base_expansion
 
 
 def test_curly_open():
-    input = 'some { thing'
+    input = "some { thing"
     out = base_expansion(input)
-    assert out == 'some \\{ thing'
+    assert out == "some \\{ thing"
 
 
 def test_curly_close():
-    input = 'some } thing'
+    input = "some } thing"
     out = base_expansion(input)
-    assert out == 'some \\} thing'
+    assert out == "some \\} thing"
 
 
 def test_curly_both():
-    input = 'some {thing}'
+    input = "some {thing}"
     out = base_expansion(input)
-    assert out == 'some \\{thing\\}'
+    assert out == "some \\{thing\\}"
 
 
 def test_round_open():
-    input = 'some ( thing'
+    input = "some ( thing"
     out = base_expansion(input)
-    assert out == 'some \\( thing'
+    assert out == "some \\( thing"
 
 
 def test_round_close():
-    input = 'some ) thing'
+    input = "some ) thing"
     out = base_expansion(input)
-    assert out == 'some \\) thing'
+    assert out == "some \\) thing"
 
 
 def test_round_both():
-    input = 'some (thing)'
+    input = "some (thing)"
     out = base_expansion(input)
-    assert out == 'some \\(thing\\)'
+    assert out == "some \\(thing\\)"
 
 
 def test_square_open():
-    input = 'some [ thing'
+    input = "some [ thing"
     out = base_expansion(input)
-    assert out == 'some \\[ thing'
+    assert out == "some \\[ thing"
 
 
 def test_square_close():
-    input = 'some ] thing'
+    input = "some ] thing"
     out = base_expansion(input)
-    assert out == 'some \\] thing'
+    assert out == "some \\] thing"
 
 
 def test_square_both():
-    input = 'some [thing]'
+    input = "some [thing]"
     out = base_expansion(input)
-    assert out == 'some \\[thing\\]'
+    assert out == "some \\[thing\\]"
 
 
 def test_asterisk():
-    input = 'Something text with * inside'
+    input = "Something text with * inside"
     out = base_expansion(input)
-    assert out == 'Something text with \\* inside'
+    assert out == "Something text with \\* inside"
 
 
 def test_question_mark():
-    input = 'Something text with ? inside'
+    input = "Something text with ? inside"
     out = base_expansion(input)
-    assert out == 'Something text with \\? inside'
+    assert out == "Something text with \\? inside"

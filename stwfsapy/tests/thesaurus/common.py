@@ -40,9 +40,7 @@ concept_prefLabel_insurance_de = Literal("Privatversicherung", lang="de")
 concept_prefLabel_insurance_missing = Literal("Privatversicherung")
 
 concept_altLabel_insurance_en = Literal("Mutual insurance", lang="en")
-concept_altLabelRelated_insurance_en = Literal(
-    "Insurance cooperative",
-    lang="en")
+concept_altLabelRelated_insurance_en = Literal("Insurance cooperative", lang="en")
 
 concept_prefLabel_it_en = Literal("Electronic identification", lang="en")
 concept_altLabelNarrower_it_en = Literal("Digital signature", lang="en")

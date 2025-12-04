@@ -35,8 +35,7 @@ class NfaToDfaConverter:
         """Queue for controlling the processing order."""
         self.queue.put(idx0)
         start_states = frozenset(self.nfa.starts)
-        self.state_represents: Dict[int, List[int]] = {
-            idx0: list(start_states)}
+        self.state_represents: Dict[int, List[int]] = {idx0: list(start_states)}
         """Maps a state index of the DFA to a set of NFA state indices."""
         self.state_cache: Dict[FrozenSet[int], int] = {start_states: 0}
         """Maps a set of NFA state indices to a DFA state index."""
@@ -48,52 +47,45 @@ class NfaToDfaConverter:
         return self.dfa
 
     def perform_step(self, dfa_start_state_idx: int):
-        (
-            symbol_transitions,
-            non_word_char_transitions,
-            accepts
-        ) = self._collect_nfa_transitions(
-            self.state_represents[dfa_start_state_idx])
+        (symbol_transitions, non_word_char_transitions, accepts) = (
+            self._collect_nfa_transitions(self.state_represents[dfa_start_state_idx])
+        )
         self._create_dfa_transitions(
-            dfa_start_state_idx,
-            symbol_transitions,
-            non_word_char_transitions,
-            accepts)
+            dfa_start_state_idx, symbol_transitions, non_word_char_transitions, accepts
+        )
 
     def _collect_nfa_transitions(self, states: Iterable[int]) -> Tuple:
         symbol_transitions = defaultdict(set)
         non_word_char_transitions = set()
         accepts = set()
         for nfa_start_idx in states:
-            for (
-                symbol,
-                nfa_end_state_idxs) in (
-                    self.nfa.states[nfa_start_idx].symbol_transitions.items()):
+            for symbol, nfa_end_state_idxs in self.nfa.states[
+                nfa_start_idx
+            ].symbol_transitions.items():
                 symbol_transitions[symbol].update(nfa_end_state_idxs)
             non_word_char_transitions.update(
-                    self.nfa.states[nfa_start_idx].non_word_char_transitions)
+                self.nfa.states[nfa_start_idx].non_word_char_transitions
+            )
             accepts.update(self.nfa.states[nfa_start_idx].accepts)
         return symbol_transitions, non_word_char_transitions, accepts
 
     def _create_dfa_transitions(
-            self,
-            dfa_start_state_idx: int,
-            symbol_transitions: Dict[str, Set[int]],
-            non_word_char_transitions: Set[int],
-            accepts: Set[object]):
+        self,
+        dfa_start_state_idx: int,
+        symbol_transitions: Dict[str, Set[int]],
+        non_word_char_transitions: Set[int],
+        accepts: Set[object],
+    ):
         for symbol, nfa_end_state_idxs in symbol_transitions.items():
-            dfa_end_state_idx = self._get_or_create_dfa_state(
-                nfa_end_state_idxs)
+            dfa_end_state_idx = self._get_or_create_dfa_state(nfa_end_state_idxs)
             self.dfa.set_symbol_transition(
-                dfa_start_state_idx,
-                dfa_end_state_idx,
-                symbol)
+                dfa_start_state_idx, dfa_end_state_idx, symbol
+            )
         if len(non_word_char_transitions) > 0:
-            dfa_end_state_idx = self._get_or_create_dfa_state(
-                non_word_char_transitions)
+            dfa_end_state_idx = self._get_or_create_dfa_state(non_word_char_transitions)
             self.dfa.set_non_word_char_transition(
-                dfa_start_state_idx,
-                dfa_end_state_idx)
+                dfa_start_state_idx, dfa_end_state_idx
+            )
         if len(accepts) > 0:
             self.dfa.add_acceptances(dfa_start_state_idx, accepts)
 

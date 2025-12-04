@@ -30,13 +30,15 @@ _NAME_DIGIT_FEATURE = "n_digits"
 
 
 def mk_text_features():
-    return FeatureUnion([
-        (_NAME_CHAR_FEATURE, CountFeature(CountType.N_CHAR)),
-        (_NAME_WORD_FEATURE, CountFeature(CountType.N_WORD)),
-        (_NAME_SPECIAL_CHARS_FEATURE, CountFeature(CountType.N_SPECIAL)),
-        (_NAME_UPPER_FEATURE, CountFeature(CountType.N_UPPER)),
-        (_NAME_DIGIT_FEATURE, CountFeature(CountType.N_DIGIT)),
-    ])
+    return FeatureUnion(
+        [
+            (_NAME_CHAR_FEATURE, CountFeature(CountType.N_CHAR)),
+            (_NAME_WORD_FEATURE, CountFeature(CountType.N_WORD)),
+            (_NAME_SPECIAL_CHARS_FEATURE, CountFeature(CountType.N_SPECIAL)),
+            (_NAME_UPPER_FEATURE, CountFeature(CountType.N_UPPER)),
+            (_NAME_DIGIT_FEATURE, CountFeature(CountType.N_DIGIT)),
+        ]
+    )
 
 
 class CountType(Enum):

@@ -21,21 +21,15 @@ import stwfsapy.tests.thesaurus.common as c
 @pytest.fixture
 def patch_module(mocker):
     thesaurus_module = t
-    mocker.patch.object(
-        thesaurus_module, "_filter_by_langs")
-    mocker.patch.object(
-        thesaurus_module, "filter_subject_tuples_from_set")
-    mocker.patch.object(
-        thesaurus_module, "_unwrap_labels")
+    mocker.patch.object(thesaurus_module, "_filter_by_langs")
+    mocker.patch.object(thesaurus_module, "filter_subject_tuples_from_set")
+    mocker.patch.object(thesaurus_module, "_unwrap_labels")
     # return mocker
 
 
 @pytest.fixture
 def concept_set():
-    return {
-        c.concept_ref_insurance,
-        c.concept_ref_it
-    }
+    return {c.concept_ref_insurance, c.concept_ref_it}
 
 
 def test_no_language_option(label_graph, patch_module):
@@ -64,26 +58,22 @@ def test_none_prefix_option(label_graph, patch_module):
 
 
 def test_prefix_option(label_graph, concept_set, patch_module):
-    t.retrieve_concept_labels(
-        label_graph,
-        concept_set
-    )
+    t.retrieve_concept_labels(label_graph, concept_set)
     t.filter_subject_tuples_from_set.assert_called()
 
 
 def test_integration(typed_label_graph, concept_set):
-    result = list(t.retrieve_concept_labels(
-        typed_label_graph,
-        allowed=concept_set,
-        langs={"en"},
-    ))
+    result = list(
+        t.retrieve_concept_labels(
+            typed_label_graph,
+            allowed=concept_set,
+            langs={"en"},
+        )
+    )
+    assert (c.concept_ref_insurance, c.concept_prefLabel_insurance_en.value) in result
+    assert (c.concept_ref_insurance, c.concept_altLabel_insurance_en.value) in result
     assert (
         c.concept_ref_insurance,
-        c.concept_prefLabel_insurance_en.value) in result
-    assert (
-        c.concept_ref_insurance,
-        c.concept_altLabel_insurance_en.value) in result
-    assert (
-        c.concept_ref_insurance,
-        c.concept_prefLabel_insurance_de.value) not in result
+        c.concept_prefLabel_insurance_de.value,
+    ) not in result
     assert c.thsys_ref_insurance not in map(lambda t: t[0], result)

@@ -18,7 +18,7 @@ from stwfsapy.automata import construction as c
 
 from stwfsapy.tests.automata.data import accept
 
-expression = 'test'
+expression = "test"
 
 
 def test_init_with_empty_graph():
@@ -67,7 +67,7 @@ def test_adds_acceptance():
 
 def test_handles_multiple_alternations():
     graph = nfa.Nfa()
-    construction = c.ConstructionState(graph, 'a|b|c', accept)
+    construction = c.ConstructionState(graph, "a|b|c", accept)
     construction.construct()
     assert graph.starts == [0]
     assert graph.states[-1].accepts == [accept]
@@ -77,7 +77,7 @@ def test_handles_multiple_alternations():
 
 def test_registers_escape():
     graph = nfa.Nfa()
-    construction = c. ConstructionState(graph, '\\', accept)
+    construction = c.ConstructionState(graph, "\\", accept)
     construction._set_up()
     construction._perform_step(0)
     assert graph.starts == []
@@ -86,19 +86,19 @@ def test_registers_escape():
 
 def test_handles_escaped_symbol(mocker):
     graph = nfa.Nfa()
-    construction = c.ConstructionState(graph, '?', accept)
+    construction = c.ConstructionState(graph, "?", accept)
     construction._set_up()
     assert graph.starts == []
     construction.escape_next = True
     spy = mocker.spy(construction, "_process_symbol")
     construction._perform_step(0)
-    spy.assert_called_once_with('?')
+    spy.assert_called_once_with("?")
 
 
 def test_handles_opening_brace(input_graph):
     append_to = [2, 4, 5]
     before_braces = [[0], [1, 3]]
-    construction = c.ConstructionState(input_graph, '(', accept)
+    construction = c.ConstructionState(input_graph, "(", accept)
     construction._set_up()
     construction.append_to = append_to.copy()
     construction.before_braces = before_braces.copy()
@@ -119,12 +119,9 @@ def test_handles_closing_brace(input_graph, mocker):
     old_append_len = len(append_to)
     before_braces = [[0], [1, 3]]
     ret = [12, 14]
-    construction = c.ConstructionState(input_graph, ')', accept)
+    construction = c.ConstructionState(input_graph, ")", accept)
     construction._set_up()
-    mocker.patch.object(
-        construction.dangling_alternations,
-        "pop",
-        lambda: ret)
+    mocker.patch.object(construction.dangling_alternations, "pop", lambda: ret)
     construction.append_to = append_to.copy()
     construction.before_braces = before_braces.copy()
     construction._perform_step(0)
@@ -138,14 +135,14 @@ def test_handles_alternation(input_graph):
     append_to = [2, 4, 5]
     before_braces = [[0], [1, 3]]
     after_braces = [6, 7]
-    construction = c.ConstructionState(input_graph, '|', accept)
+    construction = c.ConstructionState(input_graph, "|", accept)
     construction._set_up()
     construction.append_to = append_to.copy()
     construction.before_braces = before_braces.copy()
     construction.after_braces = after_braces.copy()
     construction._perform_step(0)
     assert input_graph.starts == [0, 1]
-    assert construction.append_to == [len(construction.graph.states)-1]
+    assert construction.append_to == [len(construction.graph.states) - 1]
     assert construction.dangling_alternations.stack[-1] == append_to
 
 
@@ -153,7 +150,7 @@ def test_handles_optional(input_graph):
     append_to = [2, 4, 5]
     before_braces = [[0], [1, 3]]
     after_braces = [6, 7]
-    construction = c.ConstructionState(input_graph, '?', accept)
+    construction = c.ConstructionState(input_graph, "?", accept)
     construction._set_up()
     construction.append_to = append_to.copy()
     construction.before_braces = before_braces.copy()
@@ -168,7 +165,7 @@ def test_handles_optional(input_graph):
 def test_handles_kleene_closure(input_graph):
     append_to = [2, 4, 5]
     before_braces = [[0], [1, 3]]
-    construction = c.ConstructionState(input_graph, '*', accept)
+    construction = c.ConstructionState(input_graph, "*", accept)
     construction._set_up()
     construction.append_to = append_to.copy()
     construction.before_braces = before_braces.copy()
@@ -178,5 +175,6 @@ def test_handles_kleene_closure(input_graph):
         for bb_idx in construction.before_braces[-1]:
             assert bb_idx in input_graph.states[idx].empty_transitions
     for bb_idx in construction.before_braces[-1]:
-        assert len(input_graph.states) - 1 in input_graph.states[
-            bb_idx].empty_transitions
+        assert (
+            len(input_graph.states) - 1 in input_graph.states[bb_idx].empty_transitions
+        )

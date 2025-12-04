@@ -32,17 +32,18 @@ class ConstructionState:
         self.expression_start_idx: int = self.graph.add_state()
         """Start node of the expression."""
         self.graph.add_non_word_char_transition(
-            self.start_idx,
-            self.expression_start_idx)
+            self.start_idx, self.expression_start_idx
+        )
         alternation_start_idx = self.graph.add_state()
         self.graph.add_empty_transition(
-            self.expression_start_idx,
-            alternation_start_idx)
+            self.expression_start_idx, alternation_start_idx
+        )
         self.append_to: List[int] = [alternation_start_idx]
         """States that are the start of the next transition."""
         self.before_braces: List[List[int]] = [
             [self.expression_start_idx],
-            [alternation_start_idx]]
+            [alternation_start_idx],
+        ]
         """Stack of pointers to states directly preceding an opening brace."""
         self.dangling_alternations: _AlternationManager = _AlternationManager()
         """Handles the end of alternations."""
@@ -137,7 +138,7 @@ class ConstructionState:
         self.append_to = [after_idx]
 
 
-class _AlternationManager():
+class _AlternationManager:
 
     def __init__(self):
         self.stack = []

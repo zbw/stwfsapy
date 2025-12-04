@@ -18,14 +18,14 @@ from sklearn.base import BaseEstimator, TransformerMixin
 
 
 class PassthroughTransformer(BaseEstimator, TransformerMixin):
-    ''' Helper Class to better handle array input for ColumnTransformer.'''
+    """Helper Class to better handle array input for ColumnTransformer."""
 
     def fit(self, X, y=None):
         return self
 
     def transform(self, X, y=None):
         if sp.issparse(X[0]):
-            ret = sp.vstack(X, format='csr')
+            ret = sp.vstack(X, format="csr")
         else:
             ret = np.vstack(X)
         return ret
