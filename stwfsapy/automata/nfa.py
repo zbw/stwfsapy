@@ -85,26 +85,16 @@ class Nfa:
             ptr_idx = queue.pop()
             ptr = self.states[ptr_idx]
             if len(ptr.empty_transitions) > 0:
-                raise Exception(
-                    "There is an empty transition loop in the NFA.")
+                raise Exception("There is an empty transition loop in the NFA.")
             for incoming_idx in ptr.incoming_empty_transitions.copy():
                 incoming = self.states[incoming_idx]
-                self._remove_empty_transition(
-                    incoming_idx,
-                    incoming,
-                    ptr_idx,
-                    ptr)
+                self._remove_empty_transition(incoming_idx, incoming, ptr_idx, ptr)
                 if len(incoming.incoming_empty_transitions) > 0:
-                    queue.change_priority(
-                        incoming_idx,
-                        len(incoming.empty_transitions))
+                    queue.change_priority(incoming_idx, len(incoming.empty_transitions))
 
     def _remove_empty_transition(
-            self,
-            start_idx: int,
-            start: State,
-            end_idx: int,
-            end: State):
+        self, start_idx: int, start: State, end_idx: int, end: State
+    ):
         for symbol, states in end.symbol_transitions.items():
             for state_idx in states:
                 start.symbol_transitions[symbol].add(state_idx)

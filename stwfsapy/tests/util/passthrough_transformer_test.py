@@ -18,11 +18,7 @@ import scipy.sparse as sp
 
 
 def test_array_input():
-    in_feat = [
-        np.array([1, 0, 0]),
-        np.array([0, 7, 0]),
-        np.array([0, 0, -3])
-    ]
+    in_feat = [np.array([1, 0, 0]), np.array([0, 7, 0]), np.array([0, 0, -3])]
     pt = PassthroughTransformer()
     out_feat = pt.transform(in_feat)
     assert isinstance(out_feat, np.ndarray)
@@ -33,7 +29,7 @@ def test_sparse_input():
     in_feat = [
         sp.lil_matrix(np.array([[1, 0, 0]])),
         sp.lil_matrix(np.array([[0, 7, 0]])),
-        sp.lil_matrix(np.array([[0, 0, -3]]))
+        sp.lil_matrix(np.array([[0, 0, -3]])),
     ]
     pt = PassthroughTransformer()
     out_feat = pt.transform(in_feat)

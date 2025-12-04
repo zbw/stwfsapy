@@ -23,7 +23,7 @@ def multi_lang_tuples():
     return [
         (c.concept_ref_insurance, c.concept_prefLabel_insurance_en),
         (c.concept_ref_insurance, c.concept_prefLabel_insurance_de),
-        (c.concept_ref_insurance, c.concept_prefLabel_insurance_missing)
+        (c.concept_ref_insurance, c.concept_prefLabel_insurance_missing),
     ]
 
 

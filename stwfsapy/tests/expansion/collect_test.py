@@ -28,10 +28,7 @@ _conf_keys = list(signature(e.collect_expansion_functions).parameters)
 
 
 def _create_config_map(lst):
-    return {
-        k: bool(int(v))
-        for k, v
-        in zip(_conf_keys, lst)}
+    return {k: bool(int(v)) for k, v in zip(_conf_keys, lst)}
 
 
 def test_combination_0000():

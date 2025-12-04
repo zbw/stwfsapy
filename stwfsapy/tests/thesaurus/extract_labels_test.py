@@ -19,9 +19,9 @@ import stwfsapy.tests.thesaurus.common as c
 
 def test_extract_labels(label_graph):
     extracted = list(t.extract_labels(label_graph))
-    assert (c.concept_ref_insurance,
-            c.concept_prefLabel_insurance_en) in extracted
-    assert (c.concept_ref_insurance,
-            c.concept_altLabel_insurance_en) in extracted
-    assert (c.concept_ref_insurance,
-            c.concept_altLabelRelated_insurance_en) in extracted
+    assert (c.concept_ref_insurance, c.concept_prefLabel_insurance_en) in extracted
+    assert (c.concept_ref_insurance, c.concept_altLabel_insurance_en) in extracted
+    assert (
+        c.concept_ref_insurance,
+        c.concept_altLabelRelated_insurance_en,
+    ) in extracted

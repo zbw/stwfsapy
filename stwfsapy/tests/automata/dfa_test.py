@@ -17,7 +17,7 @@ import pytest
 
 from stwfsapy.automata import dfa
 
-symbol = 's'
+symbol = "s"
 
 
 @pytest.fixture
@@ -32,10 +32,10 @@ def two_state_graph():
 def foo_graph(two_state_graph):
     two_state_graph.set_non_word_char_transition(0, 1)
     two_state_graph.add_state()
-    two_state_graph.set_symbol_transition(1, 2, 'f')
+    two_state_graph.set_symbol_transition(1, 2, "f")
     two_state_graph.add_state()
-    two_state_graph.set_symbol_transition(2, 3, 'o')
-    two_state_graph.set_symbol_transition(3, 3, 'o')
+    two_state_graph.set_symbol_transition(2, 3, "o")
+    two_state_graph.set_symbol_transition(3, 3, "o")
     two_state_graph.add_state()
     two_state_graph.set_non_word_char_transition(3, 4)
     two_state_graph.add_acceptances(4, ["bar"])
@@ -76,12 +76,11 @@ def test_search(foo_graph):
     text = "fooo"
     res = list(foo_graph.search(text))
     assert len(res) == 1
-    assert res[0][0] == 'bar'
+    assert res[0][0] == "bar"
     assert res[0][1] == text
     assert res[0][2] == 0
     assert res[0][3] == 4
 
 
 def test_serialization_inversion(foo_graph):
-    assert foo_graph == dfa.Dfa.from_dict(
-        foo_graph.to_dict(lambda x: x), lambda x: x)
+    assert foo_graph == dfa.Dfa.from_dict(foo_graph.to_dict(lambda x: x), lambda x: x)

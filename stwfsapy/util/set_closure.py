@@ -16,9 +16,7 @@
 from typing import Set, Dict, Hashable, Tuple, List
 
 
-def set_closure(
-        sets: Dict[Hashable, Set[Hashable]]
-        ) -> Dict[Hashable, Set[Hashable]]:
+def set_closure(sets: Dict[Hashable, Set[Hashable]]) -> Dict[Hashable, Set[Hashable]]:
     """Computes the closure for each element of a antisymmetric relation.
     The relation is given by a mapping from elements
     to a set of related elements.

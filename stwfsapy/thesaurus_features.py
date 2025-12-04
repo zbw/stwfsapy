@@ -25,13 +25,13 @@ from collections import defaultdict
 
 class ThesaurusFeatureTransformation(BaseEstimator, TransformerMixin):
     def __init__(
-            self,
-            graph: rdflib.Graph,
-            concepts: Set[rdflib.term.URIRef],
-            thesauri: Set[rdflib.term.URIRef],
-            thesaurus_relation: rdflib.term.URIRef,
-            inverse_relation: bool = False
-            ):
+        self,
+        graph: rdflib.Graph,
+        concepts: Set[rdflib.term.URIRef],
+        thesauri: Set[rdflib.term.URIRef],
+        thesaurus_relation: rdflib.term.URIRef,
+        inverse_relation: bool = False,
+    ):
         self.graph = graph
         self.concepts = concepts
         self.thesauri = thesauri
@@ -42,28 +42,25 @@ class ThesaurusFeatureTransformation(BaseEstimator, TransformerMixin):
     def fit(self, X=None, y=None, **kwargs):
         """Creates the mapping from concepts
         to the thesauri that are broader than the concept."""
-        broaders = list(t.extract_relation_by_uri(
-            self.graph,
-            self.thesaurus_relation,
-            self.inverse_relation))
+        broaders = list(
+            t.extract_relation_by_uri(
+                self.graph, self.thesaurus_relation, self.inverse_relation
+            )
+        )
         concept_po = _collect_po_from_tuples(
-            t.filter_subject_tuples_from_set(broaders, self.concepts))
+            t.filter_subject_tuples_from_set(broaders, self.concepts)
+        )
         thesauri_po = _collect_po_from_tuples(
-            t.filter_subject_tuples_from_set(broaders, self.thesauri),
-            self.thesauri)
+            t.filter_subject_tuples_from_set(broaders, self.thesauri), self.thesauri
+        )
         for thesaurus in self.thesauri:
             thesauri_po[thesaurus].add(thesaurus)
         thesauri_closure = set_closure(thesauri_po)
-        thesaurus_indices = dict(zip(
-            thesauri_closure,
-            range(len(thesauri_closure))))
+        thesaurus_indices = dict(zip(thesauri_closure, range(len(thesauri_closure))))
         concept_thesauri_mapping = {
             concept: set.union(
-                *(
-                    thesauri_closure.get(broader, set())
-                    for broader
-                    in broaders
-                ))
+                *(thesauri_closure.get(broader, set()) for broader in broaders)
+            )
             for concept, broaders in concept_po.items()
         }
         self.feature_dim_ = max(len(thesaurus_indices), 1)
@@ -73,16 +70,12 @@ class ThesaurusFeatureTransformation(BaseEstimator, TransformerMixin):
                     [1 for _ in thesaurii],
                     (
                         [0 for _ in thesaurii],
-                        [
-                            thesaurus_indices[thesaurus]
-                            for thesaurus
-                            in thesaurii]
-                    )
+                        [thesaurus_indices[thesaurus] for thesaurus in thesaurii],
+                    ),
                 ),
-                shape=(1, len(thesaurus_indices))
+                shape=(1, len(thesaurus_indices)),
             )
-            for concept, thesaurii
-            in concept_thesauri_mapping.items()
+            for concept, thesaurii in concept_thesauri_mapping.items()
         }
         return self
 
@@ -91,10 +84,7 @@ class ThesaurusFeatureTransformation(BaseEstimator, TransformerMixin):
         try:
             res = self.mapping_[x]
         except KeyError:
-            res = csr_matrix(
-                ([], ([], [])),
-                shape=(1, self.feature_dim_)
-            )
+            res = csr_matrix(([], ([], [])), shape=(1, self.feature_dim_))
         return res
 
     def transform(self, X) -> csr_matrix:
@@ -104,9 +94,9 @@ class ThesaurusFeatureTransformation(BaseEstimator, TransformerMixin):
 
 
 def _collect_po_from_tuples(
-        tuples: Iterable[Tuple[rdflib.term.URIRef, rdflib.term.URIRef]],
-        base_elements: Set[rdflib.term.URIRef] = set()
-        ) -> DefaultDict[rdflib.term.URIRef, Set[rdflib.term.URIRef]]:
+    tuples: Iterable[Tuple[rdflib.term.URIRef, rdflib.term.URIRef]],
+    base_elements: Set[rdflib.term.URIRef] = set(),
+) -> DefaultDict[rdflib.term.URIRef, Set[rdflib.term.URIRef]]:
     ret = defaultdict(set)
     for e in base_elements:
         ret[e].add(e)

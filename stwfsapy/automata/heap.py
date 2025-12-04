@@ -92,12 +92,12 @@ class BinaryMinHeap:
 
 
 def _parent_index(idx: int):
-    return (idx-1) // 2
+    return (idx - 1) // 2
 
 
 def _lchild_index(idx: int):
-    return 2*idx+1
+    return 2 * idx + 1
 
 
 def _rchild_index(idx: int):
-    return 2*idx+2
+    return 2 * idx + 2

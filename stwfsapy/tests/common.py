@@ -35,14 +35,13 @@ test_thesauri = [
     test_thesaurus_ref_1,
     test_thesaurus_ref_10,
     test_thesaurus_ref_100,
-
-    ]
+]
 thsrs_broader = [
     (test_thesaurus_ref_00, test_thesaurus_ref_0),
     (test_thesaurus_ref_01, test_thesaurus_ref_0),
     (test_thesaurus_ref_10, test_thesaurus_ref_1),
     (test_thesaurus_ref_100, test_thesaurus_ref_10),
-    ]
+]
 
 test_concept_uri_0_0 = "http://test.org/concept/0_0"
 test_concept_uri_01_0 = "http://test.org/concept/01_0"
@@ -74,7 +73,7 @@ test_labels = [
     (test_concept_ref_100_00, Literal("concept-100_00", lang="en")),
     (test_concept_ref_100_01, Literal("concept-100_01", lang="en")),
     (test_concept_ref_100_02, Literal("concept-100_02", lang="en")),
-    ]
+]
 
 test_concepts = [
     test_concept_ref_0_0,
@@ -86,7 +85,7 @@ test_concepts = [
     test_concept_ref_100_00,
     test_concept_ref_100_01,
     test_concept_ref_100_02,
-    ]
+]
 
 cncpt_broaders = [
     (test_concept_ref_0_0, test_thesaurus_ref_0),
@@ -102,13 +101,13 @@ cncpt_broaders = [
     (test_concept_ref_100_00, test_concept_ref_100_0),
     (test_concept_ref_100_01, test_concept_ref_100_0),
     (test_concept_ref_100_02, test_concept_ref_100_0),
-    ]
+]
 
 
 doc_feature_data = [
-    ('cncpt_1', 'f'*3, [3, 4, 0, 2], 0),
-    ('cncpt_2', 'f'*6, [1, 8, 23, 12], 1),
-    ('cncpt_1', 'f'*15, [12, 36, 25, 7], 0),
-    ('cncpt_2', 'f'*12, [8, 102, 17, 9, 20], 0),
-    ('cncpt_3', 'f'*70, [13], 1)
+    ("cncpt_1", "f" * 3, [3, 4, 0, 2], 0),
+    ("cncpt_2", "f" * 6, [1, 8, 23, 12], 1),
+    ("cncpt_1", "f" * 15, [12, 36, 25, 7], 0),
+    ("cncpt_2", "f" * 12, [8, 102, 17, 9, 20], 0),
+    ("cncpt_3", "f" * 70, [13], 1),
 ]

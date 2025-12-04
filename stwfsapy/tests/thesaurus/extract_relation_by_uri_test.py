@@ -29,7 +29,8 @@ def test_can_reverse(mocker):
     def mock_iter(a):
         yield (1, 3)
         yield (2, 4)
+
     g = graph.Graph()
-    mocker.patch.object(g, 'subject_objects', mock_iter)
+    mocker.patch.object(g, "subject_objects", mock_iter)
     res = t.extract_relation_by_uri(g, SKOS.broader, True)
     assert list(res) == [(3, 1), (4, 2)]

@@ -17,8 +17,8 @@ import pytest
 from stwfsapy.automata import nfa
 
 
-symbol0 = 's'
-symbol1 = 't'
+symbol0 = "s"
+symbol1 = "t"
 accept = "Acceptance!"
 
 

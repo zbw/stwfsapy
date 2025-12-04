@@ -18,11 +18,13 @@ from sklearn.exceptions import NotFittedError
 from stwfsapy.tests.upper_case_letters import upper_case_letters
 import pytest
 
-_text = "abcdefghijklmnopqrstuvwxyzäöü" + \
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ" + \
-    " " + \
-    "0123456789" + \
-    "\"'?!()&%$"
+_text = (
+    "abcdefghijklmnopqrstuvwxyzäöü"
+    + "ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ"
+    + " "
+    + "0123456789"
+    + "\"'?!()&%$"
+)
 
 
 def test_count_char():
@@ -110,4 +112,4 @@ def test_international_upper_case_recall():
 
 def test_international_upper_case_precision():
     for c in upper_case_letters:
-        assert 1 == tf._count_upper(f'xy{c}z')
+        assert 1 == tf._count_upper(f"xy{c}z")

@@ -24,8 +24,9 @@ def test_extract_by_type_uri(typed_label_graph):
 
 
 def test_extract_by_type_uri_with_remove(typed_label_graph):
-    res = list(t.extract_by_type_uri(
-        typed_label_graph,
-        c.test_ref_type,
-        {c.concept_ref_insurance}))
+    res = list(
+        t.extract_by_type_uri(
+            typed_label_graph, c.test_ref_type, {c.concept_ref_insurance}
+        )
+    )
     assert res == [c.concept_ref_it]

@@ -27,17 +27,21 @@ def extract_labels(g: Graph) -> Iterable[Tuple[URIRef, Literal]]:
     ZBWEXT.altLabelRelated and ZBWEXT.altLabelNarrower from a rdflib.Graph
     """
     # return g[: SKOS.prefLabel | SKOS.altLabel]
-    return g[: SKOS.prefLabel | SKOS.altLabel | SKOS.hiddenLabel |
-             ZBWEXT.altLabelRelated | ZBWEXT.altLabelNarrower]
+    return g[
+        : SKOS.prefLabel
+        | SKOS.altLabel
+        | SKOS.hiddenLabel
+        | ZBWEXT.altLabelRelated
+        | ZBWEXT.altLabelNarrower
+    ]
 
 
 def extract_by_type_uri(
-        g: Graph,
-        type_URI: URIRef,
-        remove: Optional[FrozenSet[URIRef]] = None) -> Iterable[URIRef]:
+    g: Graph, type_URI: URIRef, remove: Optional[FrozenSet[URIRef]] = None
+) -> Iterable[URIRef]:
     """Extract all elements of a specific type from a rdflib graph.
     Allows to exclude the elements that are in a specified set."""
-    by_type = g[:RDF.type:type_URI]
+    by_type = g[: RDF.type : type_URI]
     if not remove:
         return by_type
     else:
@@ -45,7 +49,7 @@ def extract_by_type_uri(
 
 
 def extract_deprecated(g: Graph):
-    return g[:OWL.deprecated: Literal(True)]
+    return g[: OWL.deprecated : Literal(True)]
 
 
 def extract_relation_by_uri(g: Graph, uri: URIRef, reverse: bool):
@@ -61,28 +65,23 @@ def _predicate_uri_from_set(uri: URIRef, uri_set: FrozenSet[URIRef]):
 
 
 def filter_subject_tuples_from_set(
-        tuples: Iterable[Tuple[URIRef, Any]],
-        uri_set: FrozenSet[URIRef]
-        ) -> Iterable[Tuple[URIRef, Any]]:
+    tuples: Iterable[Tuple[URIRef, Any]], uri_set: FrozenSet[URIRef]
+) -> Iterable[Tuple[URIRef, Any]]:
     """Filters an iterable of tuples.
     Keeps only tuples where the first element is
     present in the provided set."""
     return filter(lambda t: _predicate_uri_from_set(t[0], uri_set), tuples)
 
 
-def _predicate_refs_from_set_complement(
-        uri: URIRef,
-        uri_set: FrozenSet[URIRef]):
+def _predicate_refs_from_set_complement(uri: URIRef, uri_set: FrozenSet[URIRef]):
     return uri not in uri_set
 
 
 def _filter_refs_from_set_complement(
-        tuples: Iterable[URIRef],
-        uri_set: FrozenSet[URIRef],
-        ):
-    return filter(
-        lambda t: _predicate_refs_from_set_complement(t, uri_set),
-        tuples)
+    tuples: Iterable[URIRef],
+    uri_set: FrozenSet[URIRef],
+):
+    return filter(lambda t: _predicate_refs_from_set_complement(t, uri_set), tuples)
 
 
 def _predicate_langs(lit: Literal, langs: FrozenSet[str]) -> bool:
@@ -90,9 +89,8 @@ def _predicate_langs(lit: Literal, langs: FrozenSet[str]) -> bool:
 
 
 def _filter_by_langs(
-        tuples: Iterable[Tuple[URIRef, Literal]],
-        langs: FrozenSet[str]
-        ) -> Iterable[Tuple[URIRef, Literal]]:
+    tuples: Iterable[Tuple[URIRef, Literal]], langs: FrozenSet[str]
+) -> Iterable[Tuple[URIRef, Literal]]:
     return filter(lambda t: _predicate_langs(t[1], langs), tuples)
 
 
@@ -101,16 +99,16 @@ def _unwrap_label(tuple: Tuple[URIRef, Literal]) -> Tuple[URIRef, str]:
 
 
 def _unwrap_labels(
-        tuples: Iterable[Tuple[URIRef, Literal]]
-        ) -> Iterable[Tuple[URIRef, str]]:
+    tuples: Iterable[Tuple[URIRef, Literal]],
+) -> Iterable[Tuple[URIRef, str]]:
     return map(_unwrap_label, tuples)
 
 
 def retrieve_concept_labels(
-        g: Graph,
-        allowed: Optional[FrozenSet[URIRef]] = frozenset(),
-        langs: FrozenSet[str] = frozenset()
-        ) -> Iterable[Tuple[URIRef, str]]:
+    g: Graph,
+    allowed: Optional[FrozenSet[URIRef]] = frozenset(),
+    langs: FrozenSet[str] = frozenset(),
+) -> Iterable[Tuple[URIRef, str]]:
     """Extracts altLabels, altLabelNarrower,
     altLabelRelated and prefLabels from a SKOS graph.
 
@@ -141,9 +139,7 @@ def retrieve_concept_labels(
     else:
         filtered_by_language = refs_with_labels
     if allowed:
-        filtered_by_set = filter_subject_tuples_from_set(
-            filtered_by_language,
-            allowed)
+        filtered_by_set = filter_subject_tuples_from_set(filtered_by_language, allowed)
     else:
         filtered_by_set = filtered_by_language
     unwrapped_labels = _unwrap_labels(filtered_by_set)
