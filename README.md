@@ -19,7 +19,7 @@ Concepts have to be identifiable by `rdf:type`.
 The training of the predictor requires annotated text.
 Each training sample should be annotated with one or more concepts from the thesaurus.
 
-## Installation 
+## Installation
 
 ### Requirements
 
@@ -32,7 +32,7 @@ stwfsapy is available on [PyPI](pypi.org) . You can install stwfsapy using pip:
 
 This will install a python package called `stwfsapy`.
 
-Note that it is generally recommended to use a [virtual environment](https://docs.python.org/3/tutorial/venv.html) to avoid 
+Note that it is generally recommended to use a [virtual environment](https://docs.python.org/3/tutorial/venv.html) to avoid
  conflicting behaviour with the system package manager.
 
 ### From source
@@ -41,7 +41,7 @@ You also have the option to checkout the repository and install the packages fro
 
 ```shell
 # call inside the project directory
-poetry install --without ci 
+poetry install --without ci
 ```
 
 ## Usage
@@ -105,7 +105,7 @@ Afterwards it can be loaded as follows:
 from stwfsapy.predictor import StwfsapyPredictor
 
 StwfsapyPredictor.load('/path/to/storage/location')
-``` 
+```
 
 ## Contribute
 
@@ -113,7 +113,7 @@ Contributions via pull requests are welcome. Please create an issue beforehand
 to explain and discuss the reasons for the respective contribution. We recommend
 [forking](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo) the repository, if you have not already done so, before working on any possible pull request.
 
-`stwfsapy` code should follow the [Black style] (https://black.readthedocs.io/en/stable/). The Black tool is included as a development dependency; you can run `black .` in the project root to autoformat code. There is also the possibility of doing linting and code formatting with a Git Pre-Commit hook script. To this end a  `.pre-commit-config.yaml` configuration file has been added. The [pre-commit](https://pre-commit.com/) tool has been included as a development dependency. You would have to run the command `pre-commit install` inside your local virtual environment. Subsequently, the Black and Ruff tools will automatically check the linting and formatting of modified or new scripts after each time a `git commit` command is executed.
+`stwfsapy` code should follow the [Black style](https://black.readthedocs.io/en/stable/). The Black tool is included as a development dependency; you can run `black .` in the project root to autoformat code. There is also the possibility of doing linting and code formatting with a Git Pre-Commit hook script. To this end a  `.pre-commit-config.yaml` configuration file has been added. The [pre-commit](https://pre-commit.com/) tool has been included as a development dependency. You would have to run the command `pre-commit install` inside your local virtual environment. Subsequently, the Black and Ruff tools will automatically check the linting and formatting of modified or new scripts after each time a `git commit` command is executed.
 
 ## References
 [1] [Toepfer, Martin, and Christin Seifert. "Fusion architectures for automatic subject indexing under concept drift" International Journal on Digital Libraries (IJDL), 2018.](https://ris.utwente.nl/ws/portalfiles/portal/248044709/Toepfer2018fusion.pdf)
