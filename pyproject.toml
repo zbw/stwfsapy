@@ -33,6 +33,8 @@ bandit = "~1.8"
 
 [tool.ruff]
 target-version = "py310"
+
+[tool.ruff.lint]
 select = [
     # pycodestyle
     "E",
