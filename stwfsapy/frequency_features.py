@@ -13,11 +13,12 @@
 # limitations under the License.
 
 
-from collections import defaultdict, OrderedDict
+from collections import OrderedDict, defaultdict
+from math import log
+
+import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.exceptions import NotFittedError
-from math import log
-import numpy as np
 
 
 class FrequencyFeatures(BaseEstimator, TransformerMixin):

@@ -13,12 +13,13 @@
 # limitations under the License.
 
 
-from stwfsapy.frequency_features import FrequencyFeatures
-from sklearn.exceptions import NotFittedError
-import numpy as np
 from math import log
 
+import numpy as np
 import pytest
+from sklearn.exceptions import NotFittedError
+
+from stwfsapy.frequency_features import FrequencyFeatures
 
 frequency_input = [
     ("cncpt_1", [3, 4, 0, 2], 0),

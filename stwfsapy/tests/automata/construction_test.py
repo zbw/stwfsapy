@@ -13,9 +13,8 @@
 # limitations under the License.
 
 
-from stwfsapy.automata import nfa
 from stwfsapy.automata import construction as c
-
+from stwfsapy.automata import nfa
 from stwfsapy.tests.automata.data import accept
 
 expression = "test"

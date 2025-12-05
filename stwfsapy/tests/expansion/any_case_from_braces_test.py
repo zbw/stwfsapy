@@ -13,8 +13,9 @@
 # limitations under the License.
 
 
-from stwfsapy import expansion as e
 import common as c
+
+from stwfsapy import expansion as e
 
 replacement_fun_any = e._replace_by_pattern_fun(e._any_case_from_braces_expression)
 

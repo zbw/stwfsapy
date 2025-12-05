@@ -14,11 +14,11 @@
 
 """The tests in this file compare the behaviors of
 stwfsapy and zaptain-stwfsa regarding overlap of potential matches."""
-from stwfsapy.automata import nfa
-import stwfsapy.automata.construction as const
-import stwfsapy.automata.conversion as conv
 import pytest
 
+import stwfsapy.automata.construction as const
+import stwfsapy.automata.conversion as conv
+from stwfsapy.automata import nfa
 
 label_global = "global"
 id_global = "id_global"

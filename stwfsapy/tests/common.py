@@ -15,7 +15,6 @@
 from rdflib import URIRef
 from rdflib.term import Literal
 
-
 test_type_thesaurus = URIRef("http://type.org/thesaurus")
 test_type_concept = URIRef("http://type.org/concept")
 

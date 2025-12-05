@@ -14,10 +14,10 @@
 
 
 from collections import defaultdict
-from typing import Tuple, Set, Dict, FrozenSet, Iterable, List
-from stwfsapy.automata import dfa
-from stwfsapy.automata import nfa
 from queue import Queue
+from typing import Dict, FrozenSet, Iterable, List, Set, Tuple
+
+from stwfsapy.automata import dfa, nfa
 
 
 class NfaToDfaConverter:

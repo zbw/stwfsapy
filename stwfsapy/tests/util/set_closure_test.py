@@ -13,8 +13,9 @@
 # limitations under the License.
 
 
-from stwfsapy.util.set_closure import set_closure, RelationLoopException
 from pytest import fixture, raises
+
+from stwfsapy.util.set_closure import RelationLoopException, set_closure
 
 _branching_k = 3
 _depth = 5

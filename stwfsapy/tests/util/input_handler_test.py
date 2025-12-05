@@ -12,8 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from stwfsapy.util import input_handler as h
 import pytest
+
+from stwfsapy.util import input_handler as h
 
 file_content = "Some text inside a file"
 

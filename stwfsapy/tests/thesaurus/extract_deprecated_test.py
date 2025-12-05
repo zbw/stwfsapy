@@ -14,6 +14,7 @@
 
 from rdflib.namespace import OWL
 from rdflib.term import Literal
+
 from stwfsapy import thesaurus as t
 from stwfsapy.tests.thesaurus import common as c
 

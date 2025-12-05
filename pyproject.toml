@@ -40,8 +40,6 @@ select = [
     "E",
     # Pyflakes
     "F",
-    # flake8-bugbear
-    "B",
     # isort
     "I"
 ]

@@ -13,9 +13,9 @@
 # limitations under the License.
 
 
-from stwfsapy.automata import nfa
 from stwfsapy.automata import construction as const
 from stwfsapy.automata import conversion as conv
+from stwfsapy.automata import nfa
 from stwfsapy.tests.automata.data import accept
 
 

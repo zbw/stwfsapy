@@ -13,8 +13,9 @@
 # limitations under the License.
 
 
-import stwfsapy.expansion as e
 from inspect import signature
+
+import stwfsapy.expansion as e
 
 _name_abbreviation_fun = e._expand_abbreviation_with_punctuation_fun.__name__
 _name_ampersand_fun = e._expand_ampersand_with_spaces_fun.__name__

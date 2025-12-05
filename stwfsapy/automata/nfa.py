@@ -14,7 +14,8 @@
 
 
 from collections import defaultdict
-from typing import Set, List, Any, DefaultDict
+from typing import Any, DefaultDict, List, Set
+
 from stwfsapy.automata.heap import BinaryMinHeap
 
 

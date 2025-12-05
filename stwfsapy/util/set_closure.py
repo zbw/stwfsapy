@@ -13,7 +13,7 @@
 # limitations under the License.
 
 
-from typing import Set, Dict, Hashable, Tuple, List
+from typing import Dict, Hashable, List, Set, Tuple
 
 
 def set_closure(sets: Dict[Hashable, Set[Hashable]]) -> Dict[Hashable, Set[Hashable]]:

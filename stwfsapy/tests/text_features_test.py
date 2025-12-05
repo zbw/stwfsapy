@@ -13,10 +13,11 @@
 # limitations under the License.
 
 
-from stwfsapy import text_features as tf
-from sklearn.exceptions import NotFittedError
-from stwfsapy.tests.upper_case_letters import upper_case_letters
 import pytest
+from sklearn.exceptions import NotFittedError
+
+from stwfsapy import text_features as tf
+from stwfsapy.tests.upper_case_letters import upper_case_letters
 
 _text = (
     "abcdefghijklmnopqrstuvwxyzäöü"
