@@ -13,8 +13,9 @@
 # limitations under the License.
 
 
-from stwfsapy.automata import heap
 import pytest
+
+from stwfsapy.automata import heap
 
 
 def check_heap(queue):

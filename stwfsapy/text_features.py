@@ -13,13 +13,13 @@
 # limitations under the License.
 
 
-from enum import Enum
-from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.pipeline import FeatureUnion
-from sklearn.exceptions import NotFittedError
-import numpy as np
 import re
+from enum import Enum
 
+import numpy as np
+from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.exceptions import NotFittedError
+from sklearn.pipeline import FeatureUnion
 
 _NAME_VECTOR_FEATURE = "vectorizer"
 _NAME_CHAR_FEATURE = "n_chars"

@@ -13,33 +13,32 @@
 # limitations under the License.
 
 
-from stwfsapy.util.passthrough_transformer import PassthroughTransformer
-from stwfsapy.frequency_features import FrequencyFeatures
-from stwfsapy.position_features import PositionFeatures
-from collections import defaultdict
-from typing import Dict, FrozenSet, List, Iterable, Container, Tuple, TypeVar, Union
-from scipy.sparse import spmatrix
-from numpy import array
-from logging import getLogger
-from rdflib.term import URIRef
-from rdflib import Graph
-from sklearn.base import BaseEstimator, ClassifierMixin
-from sklearn.pipeline import Pipeline
-from sklearn.compose import ColumnTransformer
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.feature_extraction.text import TfidfVectorizer
-from scipy.sparse import csr_matrix
-from stwfsapy import thesaurus as t
-from stwfsapy.automata import nfa, construction, conversion, dfa
-from stwfsapy.thesaurus_features import ThesaurusFeatureTransformation
-from stwfsapy.text_features import mk_text_features
-from stwfsapy.util.input_handler import get_input_handler
-from stwfsapy import case_handlers
-from stwfsapy import expansion
 import pickle as pkl
+from collections import defaultdict
 from json import dumps, loads
+from logging import getLogger
+from typing import Container, Dict, FrozenSet, Iterable, List, Tuple, TypeVar, Union
 from zipfile import ZipFile
 
+from numpy import array
+from rdflib import Graph
+from rdflib.term import URIRef
+from scipy.sparse import csr_matrix, spmatrix
+from sklearn.base import BaseEstimator, ClassifierMixin
+from sklearn.compose import ColumnTransformer
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.pipeline import Pipeline
+from sklearn.tree import DecisionTreeClassifier
+
+from stwfsapy import case_handlers, expansion
+from stwfsapy import thesaurus as t
+from stwfsapy.automata import construction, conversion, dfa, nfa
+from stwfsapy.frequency_features import FrequencyFeatures
+from stwfsapy.position_features import PositionFeatures
+from stwfsapy.text_features import mk_text_features
+from stwfsapy.thesaurus_features import ThesaurusFeatureTransformation
+from stwfsapy.util.input_handler import get_input_handler
+from stwfsapy.util.passthrough_transformer import PassthroughTransformer
 
 T = TypeVar("T")
 N = TypeVar("N", int, float)
@@ -273,7 +272,8 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
         Fits the classifier to the given training data.
 
         :params  X: Iterable of text inputs.
-        :params  y: Iterable of correct concepts given by their URI for supervised training.
+        :params  y: Iterable of correct concepts given by their URI for supervised
+        training.
 
         Returns:
             self: The fitted StwfsapyPredictor instance.
@@ -295,7 +295,8 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
         :params  X: Iterable of input texts.
 
         Returns:
-            A sparse matrix of shape (n_samples, n_concepts) with concept match probabilities.
+            A sparse matrix of shape (n_samples, n_concepts) with concept match
+            probabilities.
         """
         match_X, doc_counts = self.match_and_extend(X)
         if match_X:
@@ -314,7 +315,8 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
         :params  texts: Iterable of strings (documents).
 
         Returns:
-            A list of lists, where each inner list contains tuples of (concept, probability).
+            A list of lists, where each inner list contains tuples of
+            (concept, probability).
         """
         match_X, doc_counts = self.match_and_extend(texts)
         if match_X:
@@ -336,7 +338,8 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
         :params  X: Iterable of input strings.
 
         Returns:
-            A sparse matrix of shape (n_samples, n_concepts) indicating predicted concept matches.
+            A sparse matrix of shape (n_samples, n_concepts) indicating predicted
+            concept matches.
         """
         match_X, doc_counts = self.match_and_extend(X)
         if match_X:

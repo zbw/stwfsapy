@@ -13,14 +13,16 @@
 # limitations under the License.
 
 
-from typing import Set, Iterable, Tuple, DefaultDict
+from collections import defaultdict
+from typing import DefaultDict, Iterable, Set, Tuple
+
 import rdflib
 from scipy.sparse import csr_matrix, vstack
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.exceptions import NotFittedError
+
 from stwfsapy import thesaurus as t
 from stwfsapy.util.set_closure import set_closure
-from collections import defaultdict
 
 
 class ThesaurusFeatureTransformation(BaseEstimator, TransformerMixin):

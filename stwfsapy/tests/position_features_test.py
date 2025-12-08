@@ -13,9 +13,9 @@
 # limitations under the License.
 
 
-from stwfsapy.position_features import PositionFeatures
 import numpy as np
 
+from stwfsapy.position_features import PositionFeatures
 
 position_feature_data = [
     (3, [3, 4, 0, 2]),

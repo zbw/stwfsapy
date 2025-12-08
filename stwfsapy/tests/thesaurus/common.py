@@ -13,9 +13,8 @@
 # limitations under the License.
 
 
-from rdflib.term import URIRef, Literal
 from rdflib.namespace import Namespace
-
+from rdflib.term import Literal, URIRef
 
 test_ref_type = URIRef("http://zbw.eu/stw/descriptor")
 ZBWEXT = Namespace("http://zbw.eu/namespaces/zbw-extensions/")

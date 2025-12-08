@@ -13,10 +13,11 @@
 # limitations under the License.
 
 
-from typing import Tuple, FrozenSet, Iterable, Any, Optional
+from typing import Any, FrozenSet, Iterable, Optional, Tuple
+
 from rdflib import Graph
+from rdflib.namespace import OWL, RDF, SKOS, Namespace
 from rdflib.term import Literal, URIRef
-from rdflib.namespace import Namespace, SKOS, OWL, RDF
 
 ZBWEXT = Namespace("http://zbw.eu/namespaces/zbw-extensions/")
 

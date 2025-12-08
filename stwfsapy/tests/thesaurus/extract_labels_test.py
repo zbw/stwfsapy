@@ -13,8 +13,8 @@
 # limitations under the License.
 
 
-import stwfsapy.thesaurus as t
 import stwfsapy.tests.thesaurus.common as c
+import stwfsapy.thesaurus as t
 
 
 def test_extract_labels(label_graph):

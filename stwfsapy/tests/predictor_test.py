@@ -12,23 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from stwfsapy.text_features import mk_text_features
-from scipy.sparse import lil_matrix
-from stwfsapy import predictor as p
-import stwfsapy.thesaurus as t
-from stwfsapy.automata.dfa import Dfa
-import stwfsapy.tests.common as c
-from stwfsapy.automata.construction import ConstructionState
-import pytest
-from scipy.sparse import csr_matrix
-import numpy as np
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.compose import ColumnTransformer
-from stwfsapy import case_handlers as handlers
 from unittest.mock import call
+
+import numpy as np
+import pytest
 from rdflib import Graph
 from rdflib.namespace import SKOS
 from rdflib.term import Literal
+from scipy.sparse import csr_matrix, lil_matrix
+from sklearn.compose import ColumnTransformer
+from sklearn.tree import DecisionTreeClassifier
+
+import stwfsapy.tests.common as c
+import stwfsapy.thesaurus as t
+from stwfsapy import case_handlers as handlers
+from stwfsapy import predictor as p
+from stwfsapy.automata.construction import ConstructionState
+from stwfsapy.automata.dfa import Dfa
+from stwfsapy.text_features import mk_text_features
 
 _doc_counts = [2, 4, 3]
 _concepts = list(range(9, 18))

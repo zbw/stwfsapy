@@ -14,8 +14,9 @@
 
 
 import pytest
-import stwfsapy.thesaurus as t
+
 import stwfsapy.tests.thesaurus.common as c
+import stwfsapy.thesaurus as t
 
 
 @pytest.fixture

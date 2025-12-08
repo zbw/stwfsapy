@@ -13,7 +13,7 @@
 # limitations under the License.
 
 
-from typing import List, Dict, Iterable, Tuple, Any, Callable, Optional
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
 
 _KEY_STATE_SYMBOL_TRANSITIONS = "symbol_transitions"
 _KEY_STATE_NON_WORD_CHAR_TRANSITION = "non_word_char_transitions"

@@ -13,7 +13,7 @@
 # limitations under the License.
 
 
-from typing import List, Dict, Tuple, Any, SupportsFloat
+from typing import Any, Dict, List, SupportsFloat, Tuple
 
 
 class BinaryMinHeap:

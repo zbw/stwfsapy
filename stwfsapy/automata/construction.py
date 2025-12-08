@@ -14,6 +14,7 @@
 
 
 from typing import List
+
 from stwfsapy.automata import nfa
 
 

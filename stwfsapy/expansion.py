@@ -13,9 +13,8 @@
 # limitations under the License.
 
 
-from typing import Callable, Pattern, List
 import re
-
+from typing import Callable, List, Pattern
 
 _symbol_base_expression = re.compile(r"([\[\]()\{\}*?])")
 

@@ -14,6 +14,7 @@
 
 
 import pytest
+
 from stwfsapy.automata import nfa
 from stwfsapy.tests.automata.data import symbol0
 

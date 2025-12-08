@@ -13,15 +13,16 @@
 # limitations under the License.
 
 
+import pytest
 from numpy import array
 from rdflib.namespace import SKOS
-from stwfsapy import thesaurus as t
-from stwfsapy import thesaurus_features as tf
-from stwfsapy.tests.thesaurus import common as tc
-from stwfsapy.tests import common as c
 from scipy.sparse import coo_matrix, csr_matrix
 from sklearn.exceptions import NotFittedError
-import pytest
+
+from stwfsapy import thesaurus as t
+from stwfsapy import thesaurus_features as tf
+from stwfsapy.tests import common as c
+from stwfsapy.tests.thesaurus import common as tc
 
 
 def test_collect_po_from_tuples():

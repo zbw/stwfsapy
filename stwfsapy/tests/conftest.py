@@ -15,6 +15,7 @@
 from pytest import fixture
 from rdflib.graph import Graph
 from rdflib.namespace import RDF, SKOS
+
 from stwfsapy.tests import common as c
 
 
