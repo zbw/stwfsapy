@@ -10,14 +10,14 @@ authors:
   - family-names: Rajendram Bashyam
     given-names: Lakshmi
     affiliation: "ZBW - Leibniz Information Centre for Economics"
-  - family-names: Majal 
+  - family-names: Majal
     given-names: Ghulam Mustafa
     affiliation: "ZBW - Leibniz Information Centre for Economics"
 title: "stwfsapy (a library for matching labels of thesaurus concepts via finite-state automata)"
 abstract: "This library provides functionality to find the labels of SKOS thesaurus concepts in text. A deterministic finite automaton is constructed from the labels of the thesaurus concepts to perform the matching. In addition, a classifier is trained to score the matched concept occurrences."
-version: 0.6.1
+version: 0.6.2
 license: Apache-2.0
-date-released: 2025-06-24
+date-released: 2025-12-12
 repository-code: "https://github.com/zbw/stwfsapy"
 contact:
   - name: "Automatization of subject indexing using methods from artificial intelligence (AutoSE)"
