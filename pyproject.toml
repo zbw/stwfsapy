@@ -34,7 +34,7 @@ ci = [
     "bandit~=1.9",
 ]
 
-[tool.uv_build-backend]
+[tool.uv.build-backend]
 module-name = "stwfsapy"
 module-root = ""
 
