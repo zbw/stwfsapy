@@ -34,6 +34,10 @@ ci = [
     "bandit~=1.9",
 ]
 
+[tool.uv_build-backend]
+module-name = "stwfsapy"
+module-root = ""
+
 [tool.ruff]
 target-version = "py310"
 
@@ -54,4 +58,3 @@ exclude_dirs = ["stwfsapy/tests"]
 [build-system]
 requires = ["uv_build>=0.9.27,<0.10.0"]
 build-backend = "uv_build"
-
