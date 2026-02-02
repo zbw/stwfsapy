@@ -37,11 +37,11 @@ Note that it is generally recommended to use a [virtual environment](https://doc
 
 ### From source
 You also have the option to checkout the repository and install the packages from source. You need
-[poetry](https://python-poetry.org) to perform the task:
+[uv](https://docs.astral.sh/uv/) to perform the task:
 
 ```shell
 # call inside the project directory
-poetry install --without ci
+uv sync --no-group ci
 ```
 
 ## Usage
