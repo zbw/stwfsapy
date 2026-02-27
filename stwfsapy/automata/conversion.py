@@ -47,7 +47,7 @@ class NfaToDfaConverter:
         return self.dfa
 
     def perform_step(self, dfa_start_state_idx: int):
-        (symbol_transitions, non_word_char_transitions, accepts) = (
+        symbol_transitions, non_word_char_transitions, accepts = (
             self._collect_nfa_transitions(self.state_represents[dfa_start_state_idx])
         )
         self._create_dfa_transitions(

@@ -87,7 +87,7 @@ def test_initialization(input_graph):
 def test_transition_collection(input_graph):
     converter = c.NfaToDfaConverter(input_graph)
     state_set = {0, 1, 3, 5}
-    (symbol_transitions, non_word_char_transitions, accepts) = (
+    symbol_transitions, non_word_char_transitions, accepts = (
         converter._collect_nfa_transitions(state_set)
     )
     for state_id in state_set:

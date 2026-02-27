@@ -1,6 +1,6 @@
 [project]
 name = "stwfsapy"
-version = "0.7.0"
+version = "0.7.0-dev"
 description = "A library for match labels of thesaurus concepts to text and assigning scores to found occurrences."
 authors = [{name ="AutoSE", email = "autose@zbw.eu"}]
 requires-python = ">=3.10,<3.14"
@@ -11,9 +11,9 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Artificial Intelligence"
 ]
 dependencies=[
-    "scipy~=1.15",
-    "scikit-learn>0.24,<2.0",
-    "rdflib~=7.5"
+    "scipy~=1.15.0",
+    "scikit-learn>0.24,<1.8",
+    "rdflib~=7.5.0"
 ]
 
 [project.urls]
@@ -22,16 +22,16 @@ documentation = "https://stwfsapy-zbw.readthedocs.io"
 
 [dependency-groups]
 dev = [
-    "pytest~=8.4",
-    "pytest-mock~=3.14",
-    "black~=25.11",
-    "pre-commit~=4.5",
+    "pytest~=8.4.0",
+    "pytest-mock~=3.14.0",
+    "black~=26.1.0",
+    "pre-commit~=4.5.0",
 ]
 ci = [
-    "pytest-cov~=6.2",
-    "ruff~=0.14",
-    "safety~=3.7",
-    "bandit~=1.9",
+    "pytest-cov~=6.2.0",
+    "ruff~=0.14.0",
+    "safety~=3.7.0",
+    "bandit~=1.9.0",
 ]
 
 [tool.uv.build-backend]

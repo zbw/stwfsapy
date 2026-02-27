@@ -14,6 +14,7 @@
 
 """The tests in this file compare the behaviors of
 stwfsapy and zaptain-stwfsa regarding overlap of potential matches."""
+
 import pytest
 
 import stwfsapy.automata.construction as const
