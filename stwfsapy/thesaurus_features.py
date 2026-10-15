@@ -17,7 +17,7 @@ from collections import defaultdict
 from typing import DefaultDict, Iterable, Set, Tuple
 
 import rdflib
-from scipy.sparse import csr_matrix, vstack
+from scipy.sparse import csr_array, vstack
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.exceptions import NotFittedError
 
@@ -67,7 +67,7 @@ class ThesaurusFeatureTransformation(BaseEstimator, TransformerMixin):
         }
         self.feature_dim_ = max(len(thesaurus_indices), 1)
         self.mapping_ = {
-            str(concept): csr_matrix(
+            str(concept): csr_array(
                 (
                     [1 for _ in thesaurii],
                     (
@@ -86,10 +86,10 @@ class ThesaurusFeatureTransformation(BaseEstimator, TransformerMixin):
         try:
             res = self.mapping_[x]
         except KeyError:
-            res = csr_matrix(([], ([], [])), shape=(1, self.feature_dim_))
+            res = csr_array(([], ([], [])), shape=(1, self.feature_dim_))
         return res
 
-    def transform(self, X) -> csr_matrix:
+    def transform(self, X) -> csr_array:
         if self.mapping_ is None:
             raise NotFittedError
         return vstack([self._transform_single(x) for x in X])

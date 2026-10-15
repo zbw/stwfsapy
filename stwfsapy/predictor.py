@@ -20,10 +20,11 @@ from logging import getLogger
 from typing import Container, Dict, FrozenSet, Iterable, List, Tuple, TypeVar, Union
 from zipfile import ZipFile
 
-from numpy import array
+from numpy import ndarray
 from rdflib import Graph
 from rdflib.term import URIRef
-from scipy.sparse import csr_matrix, spmatrix
+from scipy.sparse import csr_array, sparray
+from sklearn import config_context
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.compose import ColumnTransformer
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -288,22 +289,22 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
         self.pipeline_.fit(matches, y=train_y)
         return self
 
-    def predict_proba(self, X) -> csr_matrix:
+    def predict_proba(self, X) -> csr_array:
         """
         Predicts probability scores for each concept per document.
 
         :params  X: Iterable of input texts.
 
         Returns:
-            A sparse matrix of shape (n_samples, n_concepts) with concept match
-            probabilities.
+            A sparse array of shape (n_samples, n_concepts)
+            with concept match probabilities.
         """
         match_X, doc_counts = self.match_and_extend(X)
         if match_X:
             predictions = self.pipeline_.predict_proba(match_X)[:, 1]
         else:
             predictions = []
-        return self._create_sparse_matrix(
+        return self._create_sparse_array(
             predictions, [tpl[0] for tpl in match_X], doc_counts
         )
 
@@ -331,29 +332,29 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             for concepts, scores in combined
         ]
 
-    def predict(self, X) -> csr_matrix:
+    def predict(self, X) -> csr_array:
         """
         Predicts binary concept match labels for each input text.
 
         :params  X: Iterable of input strings.
 
         Returns:
-            A sparse matrix of shape (n_samples, n_concepts) indicating predicted
-            concept matches.
+            A sparse array of shape (n_samples, n_concepts)
+            indicating predicted concept matches.
         """
         match_X, doc_counts = self.match_and_extend(X)
         if match_X:
             predictions = self.pipeline_.predict(match_X)
         else:
             predictions = []
-        return self._create_sparse_matrix(
+        return self._create_sparse_array(
             predictions, [tpl[0] for tpl in match_X], doc_counts
         )
 
-    def _create_sparse_matrix(
+    def _create_sparse_array(
         self, values: Nl, concept_names: List[str], doc_counts: List[int]
-    ) -> csr_matrix:
-        return csr_matrix(
+    ) -> csr_array:
+        return csr_array(
             (
                 values,
                 (
@@ -382,7 +383,10 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
 
     def match_and_extend(
         self, inputs: Iterable[str], truth_refss: Iterable[Container] = None
-    ) -> Tuple[List[Tuple[str, spmatrix, array, int, List[int], int]], List[int]]:
+    ) -> Tuple[
+        List[Tuple[str, ndarray, Union[sparray, int], int, List[int], int]],
+        List[int],
+    ]:
         """Retrieves concepts by their labels from text.
         If ground truth values are present,
         it will also return a list of labels for scoring matches.
@@ -394,10 +398,7 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             ret_y = []
             for inp, truth_refs in zip(inputs, map(str, truth_refss)):
                 text = input_handler(inp)
-                if self.use_txt_vec:
-                    txt_vec = self.text_vectorizer_.transform([inp])[0]
-                else:
-                    txt_vec = 0
+                txt_vec = self._text_vector(inp)
                 txt_feat = self.text_features_.transform([text])[0]
                 matched_concepts: Dict[str, List[int]] = defaultdict(list)
                 for match in self.dfa_.search(text):
@@ -415,10 +416,7 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
             doc_counts: List[int] = []
             for inp in inputs:
                 text = input_handler(inp)
-                if self.use_txt_vec:
-                    txt_vec = self.text_vectorizer_.transform([inp])[0]
-                else:
-                    txt_vec = 0
+                txt_vec = self._text_vector(inp)
                 txt_feat = self.text_features_.transform([text])[0]
                 matched_concepts = defaultdict(list)
                 for match in self.dfa_.search(text):
@@ -432,6 +430,14 @@ class StwfsapyPredictor(BaseEstimator, ClassifierMixin):
                 self._mark_last_concept_in_doc(concepts)
                 doc_counts.append(len(matched_concepts))
             return concepts, doc_counts
+
+    def _text_vector(self, text: str) -> Union[sparray, int]:
+        if not self.use_txt_vec:
+            return 0
+        # scikit-learn returns sparse matrices by default.
+        # This can be removed once sparray becomes the default.
+        with config_context(sparse_interface="sparray"):
+            return self.text_vectorizer_.transform([text])
 
     def _mark_last_concept_in_doc(self, concepts):
         if concepts:

@@ -19,8 +19,9 @@ import pytest
 from rdflib import Graph
 from rdflib.namespace import SKOS
 from rdflib.term import Literal
-from scipy.sparse import csr_matrix, lil_matrix
+from scipy.sparse import csr_array, lil_array, sparray
 from sklearn.compose import ColumnTransformer
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.tree import DecisionTreeClassifier
 
 import stwfsapy.tests.common as c
@@ -67,8 +68,8 @@ expected_matches = [
 ]
 
 
-def make_test_result_matrix(values):
-    return csr_matrix(
+def make_test_result_array(values):
+    return csr_array(
         (
             values,
             (
@@ -117,7 +118,7 @@ def no_match_predictor(mocker):
 
 
 def mock_vec_transform(X):
-    ret = lil_matrix((len(X), 5000))
+    ret = lil_array((len(X), 5000))
     for idx, x in enumerate(X):
         ret[idx] = len(x)
     return ret
@@ -144,18 +145,18 @@ def test_result_collection():
     assert [(r[0], list(r[1])) for r in res] == _collection_result
 
 
-def test_sparse_matrix_creation():
+def test_sparse_array_creation():
     predictor = p.StwfsapyPredictor(None, None, None, None)
     predictor.concept_map_ = _concept_map
-    res = predictor._create_sparse_matrix(
+    res = predictor._create_sparse_array(
         _predictions[:, 1], [c[0] for c in _concepts_with_text], _doc_counts
     )
     assert res.shape[0] == len(_doc_counts)
     assert res.shape[1] == 23
     for i, count in enumerate(_doc_counts):
-        row = res.getrow(i)
+        row = res[[i], :]
         slice_start = sum(_doc_counts[:i])
-        assert row.getnnz() == count
+        assert row.nnz == count
         # reverse slices because of mapping.
         assert list(row.nonzero()[1]) == list(
             reversed([22 - i for i in _concepts[slice_start : slice_start + count]])
@@ -351,16 +352,14 @@ def check_fit_arg(vec_fun, text_feature_fun, txt, actual, expected):
 
 def test_predict(mocked_predictor):
     res = mocked_predictor.predict([])
-    assert (res.toarray() == make_test_result_matrix(_classifications).toarray()).all()
+    assert (res.toarray() == make_test_result_array(_classifications).toarray()).all()
     mocked_predictor.match_and_extend.assert_called_once_with([])
     mocked_predictor.pipeline_.predict.assert_called_once_with(_concepts_with_text)
 
 
 def test_predict_proba(mocked_predictor):
     res = mocked_predictor.predict_proba([])
-    assert (
-        res.toarray() == make_test_result_matrix(_predictions[:, 1]).toarray()
-    ).all()
+    assert (res.toarray() == make_test_result_array(_predictions[:, 1]).toarray()).all()
     mocked_predictor.match_and_extend.assert_called_once_with([])
     mocked_predictor.pipeline_.predict_proba.assert_called_once_with(
         _concepts_with_text
@@ -382,13 +381,13 @@ def test_suggest(mocked_predictor):
 
 def test_predict_no_match(no_match_predictor):
     res = no_match_predictor.predict([])
-    assert res.getnnz() == 0
+    assert res.nnz == 0
     assert res.shape == (3, len(_concept_map))
 
 
 def test_predict_proba_no_match(no_match_predictor):
     res = no_match_predictor.predict_proba([])
-    assert res.getnnz() == 0
+    assert res.nnz == 0
     assert res.shape == (3, len(_concept_map))
 
 
@@ -634,3 +633,16 @@ def test_warning(mocker):
     logging_spy.warning.assert_called_once_with(
         'Could not process label "invalid_label" of concept "test_concept".'
     )
+
+
+def test_text_vector_without_vec():
+    predictor = p.StwfsapyPredictor(None, None, None, None, use_txt_vec=False)
+    assert predictor._text_vector("some text") == 0
+
+
+def test_text_vector_is_sparray():
+    predictor = p.StwfsapyPredictor(None, None, None, None, use_txt_vec=True)
+    predictor.text_vectorizer_ = TfidfVectorizer().fit(["some text", "other text"])
+    res = predictor._text_vector("some text")
+    assert isinstance(res, sparray)
+    assert res.shape == (1, 3)
